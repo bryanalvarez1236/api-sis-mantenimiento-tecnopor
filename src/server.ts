@@ -1,4 +1,5 @@
 import express, { Application } from 'express'
+import cors from 'cors'
 import { PORT } from './config/environment'
 import testRouter from './routes/test.routes'
 
@@ -13,6 +14,7 @@ class Server {
   }
 
   private middlewares() {
+    this.app.use(cors())
     this.app.use(express.json())
   }
 
