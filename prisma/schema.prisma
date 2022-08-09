@@ -1,0 +1,31 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model machines {
+  code         String      @id
+  name         String      @unique @db.VarChar
+  maker        String?     @db.VarChar
+  location     String?     @db.VarChar
+  model        String?     @db.VarChar
+  specificData String?
+  function     String?     @db.VarChar
+  criticality  Criticality
+  imageURL     String?     @db.VarChar
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+enum Criticality {
+  HIGH
+  MEDIUM
+  LOW
+}
