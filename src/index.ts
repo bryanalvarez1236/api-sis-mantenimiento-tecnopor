@@ -2,4 +2,6 @@ import 'dotenv/config'
 
 import server from './server'
 
-server.listen()
+const app = server.listen()
+
+export { app, server }

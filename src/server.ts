@@ -23,9 +23,13 @@ class Server {
   }
 
   public listen() {
-    this.app.listen(PORT, () => {
+    return this.app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`)
     })
+  }
+
+  public getApp() {
+    return this.app
   }
 }
 
