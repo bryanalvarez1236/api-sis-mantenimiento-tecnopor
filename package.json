@@ -9,7 +9,10 @@
     "test": "jest --verbose",
     "test:watch": "npm run test -- --watch",
     "lint": "eslint --ignore-path .gitignore . --ext .ts",
-    "lint:fix": "npm run lint -- --fix"
+    "lint:fix": "npm run lint -- --fix",
+    "prisma:generate": "prisma generate",
+    "prisma:db:push": "prisma db push",
+    "prisma:db:pull": "prisma db pull"
   },
   "keywords": [],
   "author": "",
