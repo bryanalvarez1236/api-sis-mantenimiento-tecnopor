@@ -10,22 +10,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model machines {
-  code         String      @id
-  name         String      @unique @db.VarChar
-  maker        String?     @db.VarChar
-  location     String?     @db.VarChar
-  model        String?     @db.VarChar
-  specificData String?
-  function     String?     @db.VarChar
-  criticality  Criticality
-  imageURL     String?     @db.VarChar
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+model Machine {
+  code                   String                   @id
+  name                   String                   @db.VarChar
+  maker                  String?                  @db.VarChar
+  location               String?                  @db.VarChar
+  model                  String?                  @db.VarChar
+  specificData           String?
+  function               String?                  @db.VarChar
+  technicalDocumentation TechnicalDocumentation[]
+  criticality            Criticality
+  image                  MachineImage?
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @default(now()) @updatedAt
+}
+
+model MachineImage {
+  id          String  @id @default(uuid())
+  publicId    String
+  url         String
+  machine     Machine @relation(fields: [machineCode], references: [code])
+  machineCode String  @unique
 }
 
 enum Criticality {
   HIGH
   MEDIUM
   LOW
+}
+
+enum TechnicalDocumentation {
+  OPERATIONS_MANUAL
+  MAINTENANCE_MANUAL
+  ELECTRICAL_PLANS
+  MECHANICAL_PLANS
 }
