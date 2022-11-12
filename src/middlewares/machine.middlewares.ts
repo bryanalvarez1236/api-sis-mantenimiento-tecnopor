@@ -1,20 +1,21 @@
 import { NextFunction, Request, Response } from 'express'
 
-export function transformBody(req: Request, res: Response, next: NextFunction) {
+export function transformBody(
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) {
   const { body } = req
-  if (body.technicalDocumentation) {
-    try {
-      const arrayTechnicalDocumentation = JSON.parse(
-        body.technicalDocumentation
-      )
-      const technicalDocumentation = new Set(arrayTechnicalDocumentation)
-      if (technicalDocumentation.size !== arrayTechnicalDocumentation.length) {
-        throw Error()
-      }
-      body.technicalDocumentation = technicalDocumentation
-    } catch (error) {
-      return res.status(400).json({ message: 'Body invalid' })
+  const { technicalDocumentation: technicalDocumentationInput } = body
+  if (technicalDocumentationInput) {
+    if (typeof technicalDocumentationInput === 'string') {
+      body.technicalDocumentation = [technicalDocumentationInput]
+    } else {
+      const technicalDocumentation = new Set(technicalDocumentationInput)
+      body.technicalDocumentation = [...technicalDocumentation]
     }
+  } else {
+    body.technicalDocumentation = []
   }
   return next()
 }

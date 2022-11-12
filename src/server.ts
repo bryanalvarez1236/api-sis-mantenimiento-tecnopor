@@ -4,10 +4,11 @@ import fileUpload from 'express-fileupload'
 import { PORT } from './config/environment'
 import testRouter from './routes/test.routes'
 import machineRouter, { machineRoute } from './routes/machine.routes'
+import activityRouter, { activityRoute } from './routes/activity.route'
 
-class Server {
+export class Server {
   private app: Application
-  private route = '/api'
+  static route = '/api'
 
   constructor() {
     this.app = express()
@@ -30,10 +31,11 @@ class Server {
   private routes() {
     this.app.use(testRouter)
     this.app.use(this.createRoute(machineRoute), machineRouter)
+    this.app.use(this.createRoute(activityRoute), activityRouter)
   }
 
   private createRoute(route: string) {
-    return `${this.route}${route}`
+    return `${Server.route}${route}`
   }
 
   public listen() {

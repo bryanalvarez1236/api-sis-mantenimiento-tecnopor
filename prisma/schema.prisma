@@ -12,15 +12,17 @@ datasource db {
 
 model Machine {
   code                   String                   @id
-  name                   String                   @db.VarChar
-  maker                  String?                  @db.VarChar
-  location               String?                  @db.VarChar
-  model                  String?                  @db.VarChar
-  specificData           String?
-  function               String?                  @db.VarChar
+  name                   String
+  maker                  String
+  location               String
+  model                  String
+  specificData           String
+  function               String
   technicalDocumentation TechnicalDocumentation[]
   criticality            Criticality
   image                  MachineImage?
+  engines                Engine[]
+  activities             Activity[]
   createdAt              DateTime                 @default(now())
   updatedAt              DateTime                 @default(now()) @updatedAt
 }
@@ -31,6 +33,39 @@ model MachineImage {
   url         String
   machine     Machine @relation(fields: [machineCode], references: [code])
   machineCode String  @unique
+}
+
+model Engine {
+  code        String   @id
+  machine     Machine  @relation(fields: [machineCode], references: [code])
+  machineCode String
+  function    String
+  mark        String
+  type        String
+  powerHp     Float
+  powerKw     Float
+  voltage     String
+  current     String
+  rpm         Int
+  cosPhi      Float
+  performance Float
+  frequency   Int
+  poles       Int
+  ip          Int
+  boot        Boot
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+}
+
+model Activity {
+  code         String       @id
+  machine      Machine      @relation(fields: [machineCode], references: [code])
+  machineCode  String
+  name         String
+  frequency    Int
+  activityType ActivityType
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @default(now()) @updatedAt
 }
 
 enum Criticality {
@@ -44,4 +79,18 @@ enum TechnicalDocumentation {
   MAINTENANCE_MANUAL
   ELECTRICAL_PLANS
   MECHANICAL_PLANS
+}
+
+enum Boot {
+  DIRECT
+  SOFT
+}
+
+enum ActivityType {
+  CONDITION_CHECK
+  VISUAL_INSPECTIONS
+  LUBRICATION
+  AUTONOMOUS_MAINTENANCE
+  PERIODIC_MAINTENANCE
+  CORRECTIVE_MAINTENANCE
 }

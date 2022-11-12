@@ -25,10 +25,6 @@ export async function createMachine(req: Request, res: Response) {
         image: { create: { publicId: public_id, url: secure_url } },
       }
     }
-    const { technicalDocumentation } = data
-    if (technicalDocumentation) {
-      data.technicalDocumentation = [...technicalDocumentation]
-    }
     const newMachine = await prisma.machine.create({
       data,
       include: { image: { select: { url: true } } },
@@ -66,7 +62,7 @@ export async function getMachineByCode(req: Request, res: Response) {
   if (!machine) {
     return res
       .status(404)
-      .json({ message: `No existe la máquina con el código '${code}'` })
+      .json({ message: `La máquina con el código '${code}' no existe` })
   }
   return res.json(machine)
 }
@@ -83,7 +79,7 @@ export async function updateMachine(req: Request, res: Response) {
   if (!foundMachine) {
     return res
       .status(404)
-      .json({ message: `No existe la máquina con el código '${code}'` })
+      .json({ message: `La máquina con el código '${code}' no existe` })
   }
 
   const { body, files } = req
