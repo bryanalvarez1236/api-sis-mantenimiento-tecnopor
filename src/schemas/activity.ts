@@ -46,8 +46,9 @@ const activityShapeCreate = {
   ...activityShapeUpdate,
   code: z
     .string({ required_error: 'El código de la actividad es requerido' })
-    .length(5, {
-      message: 'El código de la actividad debe tener 5 caracteres',
+    .regex(/^[A-Z]{3}[0-9]{2}$/, {
+      message:
+        "El código de la actividad debe tener el formato: LLLNN (donde 'L' es letra mayúscula y 'N' es número)",
     }),
 }
 

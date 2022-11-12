@@ -1,5 +1,14 @@
 import { z } from 'zod'
 
+const areaValues = [
+  'PRE_EXPANDED',
+  'RECYCLED',
+  'LOCKED',
+  'CUTTING',
+  'PRESTRESSED_JOISTS',
+  'SERVICES',
+]
+
 const technicalDocumentationValues = [
   'OPERATIONS_MANUAL',
   'MAINTENANCE_MANUAL',
@@ -32,6 +41,25 @@ const machineShapeUpdate = {
     .max(11, {
       message: 'La ubicación de la máquina debe tener máximo 11 caracteres',
     }),
+  area: z.enum(
+    [
+      'PRE_EXPANDED',
+      'RECYCLED',
+      'LOCKED',
+      'CUTTING',
+      'PRESTRESSED_JOISTS',
+      'SERVICES',
+    ],
+    {
+      errorMap: () => {
+        return {
+          message: `El área de la máquina solo puede tener los valores: ${areaValues
+            .map((t) => `'${t}'`)
+            .join(' | ')}`,
+        }
+      },
+    }
+  ),
   model: z
     .string({ required_error: 'El modelo de la máquina es requerido' })
     .min(1, {
@@ -91,8 +119,9 @@ const machineShapeCreate = {
   ...machineShapeUpdate,
   code: z
     .string({ required_error: 'El código de la máquina es requerido' })
-    .length(12, {
-      message: 'El código de la máquina debe tener 12 caracteres',
+    .regex(/^[A-Z]{2}-[0-9]{2}-[A-Z]{3}-[0-9]{2}$/, {
+      message:
+        "El código de la máquina debe tener el formato: LL-NN-LLL-NN (donde 'L' es letra mayúscula y 'N' es número)",
     }),
 }
 

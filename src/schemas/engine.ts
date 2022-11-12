@@ -87,8 +87,9 @@ const engineShapeCreate = {
   ...engineShapeUpdate,
   code: z
     .string({ required_error: 'El código del motor es requerido' })
-    .length(20, {
-      message: 'El código del motor debe tener 20 caracteres',
+    .regex(/^[A-Z]{2}-[0-9]{2}-[A-Z]{3}-[0-9]{2}-MOT-[0-9]{3}$/, {
+      message:
+        "El código del motor debe tener el formato: LL-NN-LLL-NN-MOT-NNN (donde 'L' es letra mayúscula y 'N' es número)",
     }),
 }
 

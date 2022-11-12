@@ -15,6 +15,7 @@ model Machine {
   name                   String
   maker                  String
   location               String
+  area                   MachineArea
   model                  String
   specificData           String
   function               String
@@ -66,6 +67,15 @@ model Activity {
   activityType ActivityType
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @default(now()) @updatedAt
+}
+
+enum MachineArea {
+  PRE_EXPANDED
+  RECYCLED
+  LOCKED
+  CUTTING
+  PRESTRESSED_JOISTS
+  SERVICES
 }
 
 enum Criticality {
