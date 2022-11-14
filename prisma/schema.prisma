@@ -74,8 +74,9 @@ enum MachineArea {
   RECYCLED
   LOCKED
   CUTTING
-  PRESTRESSED_JOISTS
+  JOISTS
   SERVICES
+  GENERAL
 }
 
 enum Criticality {

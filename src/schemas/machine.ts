@@ -5,8 +5,9 @@ const areaValues = [
   'RECYCLED',
   'LOCKED',
   'CUTTING',
-  'PRESTRESSED_JOISTS',
+  'JOISTS',
   'SERVICES',
+  'GENERAL',
 ]
 
 const technicalDocumentationValues = [
@@ -47,8 +48,9 @@ const machineShapeUpdate = {
       'RECYCLED',
       'LOCKED',
       'CUTTING',
-      'PRESTRESSED_JOISTS',
+      'JOISTS',
       'SERVICES',
+      'GENERAL',
     ],
     {
       errorMap: () => {

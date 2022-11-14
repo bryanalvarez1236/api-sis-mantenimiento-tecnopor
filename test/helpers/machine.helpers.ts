@@ -44,7 +44,7 @@ export const newMachine: CreateMachineDto = {
   name: 'ABLANDADOR',
   maker: '-',
   location: 'EPS',
-  area: 'PRESTRESSED_JOISTS',
+  area: 'JOISTS',
   model: '-',
   specificData: 'SISTEMA AUTOMATICO CON 2 CABEZALES',
   function: 'ABLANDAR AGUA PARA CALDERO',
