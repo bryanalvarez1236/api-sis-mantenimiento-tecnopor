@@ -21,9 +21,9 @@ export async function getMachineActivitiesByMachineCode(
       .json({ message: `La máquina con el código '${machineCode}' no existe` })
   }
 
-  const { activities } = foundMachine
+  const { activities, name } = foundMachine
 
-  return res.json(activities)
+  return res.json({ activities, machineName: name })
 }
 
 export async function getActivityByCode(req: Request, res: Response) {

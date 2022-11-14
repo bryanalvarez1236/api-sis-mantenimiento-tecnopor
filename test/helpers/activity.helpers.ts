@@ -22,6 +22,11 @@ interface ActivityResponseDto
   updatedAt: string
 }
 
+interface ActivitiesResponseDto {
+  machineName: string
+  activities: ActivityResponseDto[]
+}
+
 export const activityDate = new Date()
 
 export const createdActivity: CreateActivityDto = {
@@ -64,6 +69,9 @@ export const responseUpdateActivity: ActivityResponseDto = {
   ...updateActivity,
 }
 
-export const activities: ActivityResponseDto[] = [responseCreatedActivity]
+export const activities: ActivitiesResponseDto = {
+  machineName: createdMachine.name,
+  activities: [responseCreatedActivity],
+}
 
 export const activityAlreadyExists = `La actividad con el código '${createdActivity.code}' ya existe`
