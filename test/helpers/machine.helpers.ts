@@ -5,7 +5,7 @@ import { createMachineDto, updateMachineDto } from '../../src/schemas/machine'
 import { serverRoute } from './api'
 
 export const MACHINE_ENDPOINT = `${serverRoute}${machineRoute}`
-export const machineCodeNotExists = 'does-not-exist'
+export const machineCodeNotExists = 'MC-00-DNE-00'
 export const machineNotExistsMessage = `La máquina con el código '${machineCodeNotExists}' no existe`
 
 export type CreateMachineDto = z.infer<typeof createMachineDto>

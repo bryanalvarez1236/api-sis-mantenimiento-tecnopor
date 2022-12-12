@@ -37,8 +37,8 @@ model MachineImage {
 }
 
 model Engine {
-  code        String   @id
-  machine     Machine  @relation(fields: [machineCode], references: [code])
+  code        String      @id
+  machine     Machine     @relation(fields: [machineCode], references: [code])
   machineCode String
   function    String
   mark        String
@@ -54,19 +54,35 @@ model Engine {
   poles       Int
   ip          Int
   boot        Boot
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
+  workOrders  WorkOrder[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @default(now()) @updatedAt
 }
 
 model Activity {
-  code         String       @id
+  code         String       @id @default(uuid())
   machine      Machine      @relation(fields: [machineCode], references: [code])
   machineCode  String
   name         String
-  frequency    Int
+  frequency    Int?
   activityType ActivityType
+  workOrders   WorkOrder[]
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @default(now()) @updatedAt
+}
+
+model WorkOrder {
+  id           Int            @id @default(autoincrement())
+  engine       Engine         @relation(fields: [engineCode], references: [code])
+  engineCode   String
+  activity     Activity       @relation(fields: [activityCode], references: [code])
+  activityCode String
+  failureCause String?
+  startDate    DateTime?
+  endDate      DateTime?
+  state        WorkOrderState @default(PLANNED)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @default(now()) @updatedAt
 }
 
 enum MachineArea {
@@ -104,4 +120,11 @@ enum ActivityType {
   AUTONOMOUS_MAINTENANCE
   PERIODIC_MAINTENANCE
   CORRECTIVE_MAINTENANCE
+}
+
+enum WorkOrderState {
+  PLANNED
+  VALIDATED
+  DOING
+  DONE
 }

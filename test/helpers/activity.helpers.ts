@@ -9,7 +9,7 @@ import { Activity } from '@prisma/client'
 import { createdMachine, machineCodeNotExists } from './machine.helpers'
 
 export const ACTIVITY_ENDPOINT = `${serverRoute}${activityRoute}`
-export const activityCodeNotExists = machineCodeNotExists
+export const activityCodeNotExists = 'DNE00'
 export const activityNotExistsMessage = `La actividad con el código '${activityCodeNotExists}' no existe`
 export const activityNotAcceptable = `La actividad no está disponible en la máquina con el código '${machineCodeNotExists}'`
 

@@ -11,7 +11,7 @@ import {
 
 export const engineDate = new Date()
 
-export const engineCodeNotExists = machineCodeNotExists
+export const engineCodeNotExists = `${machineCodeNotExists}-MOT-000`
 export const engineNotExistsMessage = `El motor con el código '${engineCodeNotExists}' no existe`
 export const engineUpdateNotAcceptable = `El motor a actualizar no está disponible en la máquina con el código '${machineCodeNotExists}'`
 export const engineGetNotAcceptable = `El motor no está disponible en la máquina con el código '${machineCodeNotExists}'`

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const activityTypeValues = [
+export const ACTIVITY_TYPE_VALUES = [
   'CONDITION_CHECK',
   'VISUAL_INSPECTIONS',
   'LUBRICATION',
@@ -30,9 +30,9 @@ const activityShapeUpdate = {
     {
       errorMap: () => {
         return {
-          message: `El tipo de actividad solo puede tener los valores: ${activityTypeValues
-            .map((t) => `'${t}'`)
-            .join(' | ')}`,
+          message: `El tipo de actividad solo puede tener los valores: ${ACTIVITY_TYPE_VALUES.map(
+            (t) => `'${t}'`
+          ).join(' | ')}`,
         }
       },
     }
@@ -55,3 +55,5 @@ const activityShapeCreate = {
 export const createActivityDto = z.object(activityShapeCreate)
 
 export const updateActivityDto = z.object(activityShapeUpdate)
+
+export type CreateActivityDto = z.infer<typeof createActivityDto>

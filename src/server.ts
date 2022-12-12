@@ -5,6 +5,7 @@ import { PORT } from './config/environment'
 import testRouter from './routes/test.routes'
 import machineRouter, { machineRoute } from './routes/machine.routes'
 import activityRouter, { activityRoute } from './routes/activity.route'
+import workOrderRouter, { workOrderRoute } from './routes/workOrder.routes'
 
 export class Server {
   private app: Application
@@ -32,6 +33,7 @@ export class Server {
     this.app.use(testRouter)
     this.app.use(this.createRoute(machineRoute), machineRouter)
     this.app.use(this.createRoute(activityRoute), activityRouter)
+    this.app.use(this.createRoute(workOrderRoute), workOrderRouter)
   }
 
   private createRoute(route: string) {
