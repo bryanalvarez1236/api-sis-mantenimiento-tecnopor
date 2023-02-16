@@ -31,8 +31,8 @@ export async function getWorkOrderById(req: Request, res: Response) {
   } = req
 
   try {
-    const { state, ...foundWorkOrder } =
-      await workOrderService.getWorkOrderById(id)
+    const foundWorkOrder = await workOrderService.getWorkOrderById(id)
+    const state = 'DOING'
     return res.json({
       ...foundWorkOrder,
       state,

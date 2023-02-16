@@ -96,3 +96,7 @@ const engineShapeCreate = {
 export const createEngineDto = z.object(engineShapeCreate)
 
 export const updateEngineDto = z.object(engineShapeUpdate)
+
+export type CreateEngineDto = z.infer<typeof createEngineDto>
+
+export type UpdateEngineDto = z.infer<typeof updateEngineDto>

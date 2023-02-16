@@ -1,7 +1,11 @@
-import { Machine, MachineImage } from '@prisma/client'
 import { z } from 'zod'
 import { machineRoute } from '../../src/routes/machine.routes'
-import { createMachineDto, updateMachineDto } from '../../src/schemas/machine'
+import {
+  createMachineDto,
+  MachineImageDto,
+  MachineResponseDto,
+  updateMachineDto,
+} from '../../src/schemas/machine'
 import { serverRoute } from './api'
 
 export const MACHINE_ENDPOINT = `${serverRoute}${machineRoute}`
@@ -14,14 +18,6 @@ type UpdateMachineDto = z.infer<typeof updateMachineDto>
 export const mockedImage = {
   public_id: 'mocked-image',
   secure_url: 'https://../mocked-image.png',
-}
-
-interface MachineResponseDto extends Omit<Machine, 'createdAt' | 'updatedAt'> {
-  createdAt: string
-  updatedAt: string
-  image?: {
-    url: string
-  }
 }
 
 export const machineDate = new Date()
@@ -52,7 +48,7 @@ export const newMachine: CreateMachineDto = {
   technicalDocumentation: [],
 }
 
-export const createdMachineImage: Omit<MachineImage, 'id' | 'machineCode'> = {
+export const createdMachineImage: MachineImageDto = {
   publicId: 'cloudinary-puclic-id',
   url: 'https://../created-machine-image.png',
 }

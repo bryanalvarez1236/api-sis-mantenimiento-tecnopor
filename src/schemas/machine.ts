@@ -1,3 +1,4 @@
+import { Machine } from '@prisma/client'
 import { z } from 'zod'
 
 const areaValues = [
@@ -130,3 +131,29 @@ const machineShapeCreate = {
 export const createMachineDto = z.object(machineShapeCreate)
 
 export const updateMachineDto = z.object(machineShapeUpdate)
+
+interface MachineImageResponseDto {
+  url: string
+}
+
+export interface MachineImageDto extends MachineImageResponseDto {
+  publicId: string
+}
+
+export type CreateMachineDto = z.infer<typeof createMachineDto> & {
+  image?: { create: MachineImageDto }
+}
+
+export type UpdateMachineDto = z.infer<typeof updateMachineDto> & {
+  image?: {
+    create?: MachineImageDto
+    update?: MachineImageDto
+  }
+}
+
+export interface MachineResponseDto
+  extends Omit<Machine, 'createdAt' | 'updatedAt'> {
+  createdAt: string
+  updatedAt: string
+  image?: MachineImageResponseDto
+}

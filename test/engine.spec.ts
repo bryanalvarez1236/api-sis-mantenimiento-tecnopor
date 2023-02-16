@@ -7,9 +7,7 @@ import {
   createdMachineWithEngines,
   engineCodeNotExists,
   engineDate,
-  engineGetNotAcceptable,
   engineNotExistsMessage,
-  engineUpdateNotAcceptable,
   ENGINE_ENDPOINT,
   newEngine,
   responseNewEngine,
@@ -80,17 +78,6 @@ describe('Engines EndPoint => GET', () => {
 
     expect(message).toBe(engineNotExistsMessage)
   })
-
-  it('GET: get a engine on wrong machine', async () => {
-    const { body } = await api
-      .get(`${ENGINE_ENDPOINT(machineCodeNotExists)}/${createdEngine.code}`)
-      .expect('Content-Type', /json/)
-      .expect(406)
-
-    const { message } = body
-
-    expect(message).toBe(engineGetNotAcceptable)
-  })
 })
 
 describe('Engines EndPoint => POST', () => {
@@ -154,18 +141,6 @@ describe('Engines EndPoint => PUT', () => {
 
     const { message } = body
     expect(message).toBe(engineNotExistsMessage)
-  })
-
-  it('PUT: update a engine on wrong machine', async () => {
-    const { body } = await api
-      .put(`${ENGINE_ENDPOINT(machineCodeNotExists)}/${createdEngine.code}`)
-      .set('Accept', 'application/json')
-      .send(updateEngine)
-      .expect('Content-Type', /json/)
-      .expect(406)
-
-    const { message } = body
-    expect(message).toBe(engineUpdateNotAcceptable)
   })
 
   it('PUT: try to update a engine without its fields', async () => {

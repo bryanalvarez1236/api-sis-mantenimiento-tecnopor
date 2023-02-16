@@ -1,27 +1,39 @@
-import { ActivityType, Prisma, WorkOrderState } from '@prisma/client'
-import { ServiceError } from '.'
+import { Prisma, WorkOrderState } from '@prisma/client'
+import {
+  CheckSelect,
+  CreateArgsType,
+  FindUniqueArgs,
+  FindUniqueType,
+  getCreateArgsConfig,
+  getFindManyArgsConfig,
+  getUpdateArgsConfig,
+  PromiseArray,
+  ReturnCheck,
+  ServiceError,
+  UpdateArgsType,
+} from '.'
 import { getDateBoliviaTimeZone } from '../libs/date'
 import prisma from '../libs/db'
 import {
   CreateWorkOrderDto,
-  UpdateWorkOrderDto,
-  validateWorkOrderState,
-  WORK_ORDER_CHANGE_STATE,
+  UpdateWorkOrderGeneralDto,
+  WorkOrderResponseDto,
 } from '../schemas/workOrder'
 import * as engineService from './engine.service'
 import * as activityService from './activity.service'
 
+type WorkOrderFindManyArgs = Prisma.WorkOrderFindManyArgs
+type WorkOrderCreateArgs = Prisma.WorkOrderCreateArgs
+type WorkOrderFindUniqueArgs = Prisma.WorkOrderFindUniqueArgs
+type WorkOrderUpdateArgs = Prisma.WorkOrderUpdateArgs
+
+type WorkOrderClient<T> = Prisma.Prisma__WorkOrderClient<T>
+type WorkOrderGetPayload<T extends FindUniqueType<WorkOrderFindUniqueArgs>> =
+  Prisma.WorkOrderGetPayload<T>
+
 const WORK_ORDER_INCLUDE = {
-  activity: {
-    select: { name: true, activityType: true },
-  },
-  engine: {
-    select: {
-      function: true,
-      machine: {
-        select: { code: true, area: true, name: true, criticality: true },
-      },
-    },
+  machine: {
+    select: { name: true, area: true },
   },
 }
 const WORK_ORDER_ORDER_BY: Prisma.Enumerable<Prisma.WorkOrderOrderByWithRelationInput> =
@@ -66,151 +78,207 @@ function getRange(dateRange: DateRange) {
   return range
 }
 
-export async function getWorkOrders(dateRange: string) {
+// interface WorkOrderWithMachineEngine {
+//   include: {
+//     engine: {
+//       select: {
+//         function: true
+//       }
+//     }
+//     machine: {
+//       select: {
+//         code: true
+//         area: true
+//         name: true
+//       }
+//     }
+//   }
+// }
+
+export async function getWorkOrders<
+  T extends WorkOrderFindManyArgs,
+  S extends PromiseArray<WorkOrderResponseDto>,
+  U extends PromiseArray<WorkOrderGetPayload<T>>
+>(dateRange = 'WEEKLY', config?: T): ReturnCheck<T, S, U> {
   if (typeof dateRange !== 'string') {
-    throw new ServiceError(
-      'El rango a ver según las fechas creadas de las órdenes de trabajo debe ser un texto',
-      400
-    )
+    throw new ServiceError({
+      status: 400,
+      message:
+        'El rango a ver según las fechas creadas de las órdenes de trabajo debe ser un texto',
+    })
   }
   if (!(dateRange in DateRange)) {
-    throw new ServiceError(
-      "El rango a ver según las fechas creadas de las órdenes de trabajo solo puede ser 'WEEKLY' | 'MONTHLY' | 'ANNUAL'",
-      400
-    )
+    throw new ServiceError({
+      status: 400,
+      message:
+        "El rango a ver según las fechas creadas de las órdenes de trabajo solo puede ser 'WEEKLY' | 'MONTHLY' | 'ANNUAL'",
+    })
   }
   const { gte, lte } = getRange(dateRange as DateRange)
 
-  const workOrders = await prisma.workOrder.findMany({
-    where: {
-      createdAt: { gte, lte },
+  const defaultConfig = getFindManyArgsConfig<WorkOrderFindManyArgs>(
+    {
+      where: { createdAt: { gte, lte } },
+      include: WORK_ORDER_INCLUDE,
+      orderBy: WORK_ORDER_ORDER_BY,
     },
-    include: WORK_ORDER_INCLUDE,
-    orderBy: WORK_ORDER_ORDER_BY,
+    config
+  )
+
+  const workOrders = await prisma.workOrder.findMany({
+    ...defaultConfig,
+    include: { ...config?.include, ...WORK_ORDER_INCLUDE },
   })
 
-  return workOrders.map(({ engine: { machine, ...engine }, ...workOrder }) => ({
-    ...workOrder,
-    engine,
-    machine,
-  }))
+  return workOrders.map(
+    ({ machine: { name: machineName, area: machineArea }, ...workOrder }) => ({
+      ...workOrder,
+      machineName,
+      machineArea,
+    })
+  ) as never as CheckSelect<T, S, U>
 }
 
-export async function getWorkOrderById(workOrderId: string) {
-  const id = +workOrderId
-  if (isNaN(id)) {
-    throw new ServiceError(
-      'El código de la orden de trabajo debe ser un número',
-      400
-    )
-  }
-  const foundWorkOrder = await prisma.workOrder.findUnique({
-    where: { id },
-    include: WORK_ORDER_INCLUDE,
-  })
-  if (!foundWorkOrder) {
-    throw new ServiceError(
-      `La orden de trabajo con el código '${id}' no existe`,
-      404
-    )
-  }
-  const {
-    engine: { machine, ...engine },
-    ...workOrder
-  } = foundWorkOrder
-  return { ...workOrder, engine, machine }
-}
-
-export async function createWorkOrder(createWorkOrderDto: CreateWorkOrderDto) {
-  const {
-    engineCode,
-    activity: { code: activityCode, name: activityName, activityType },
-  } = createWorkOrderDto
-  if (!activityCode && (!activityName || !activityType)) {
-    throw new ServiceError(
-      'Se debe mandar el código de la actividad, o el nombre de actividad y su tipo',
-      400
-    )
-  }
-
-  const foundEngine = await engineService.getEngineByCode(engineCode)
-  const { machineCode } = foundEngine
-  let foundActivity
-  if (activityCode) {
-    foundActivity = await activityService.getActivityByCode(activityCode)
-    if (machineCode !== foundActivity.machineCode) {
-      throw new ServiceError(
-        `El motor con el código ${engineCode} no pertenece a la misma máquina que la actividad con el código ${activityCode}`,
-        412
-      )
-    }
-  } else {
-    foundActivity = await activityService.createActivity({
-      activityType: activityType as ActivityType,
-      machineCode,
-      name: activityName as string,
+export async function getWorkOrderById<
+  T extends FindUniqueType<WorkOrderFindUniqueArgs>,
+  S extends WorkOrderClient<WorkOrderResponseDto>,
+  P extends WorkOrderGetPayload<T>,
+  U extends WorkOrderClient<P>
+>(
+  workOrderId: string,
+  config?: FindUniqueArgs<T, WorkOrderFindUniqueArgs>
+): ReturnCheck<T, S, U> {
+  console.log({ config })
+  const code = +workOrderId
+  if (isNaN(code)) {
+    throw new ServiceError({
+      status: 400,
+      message: 'El código de la orden de trabajo debe ser un número',
     })
   }
 
-  const createdWorkOrder = await prisma.workOrder.create({
-    data: {
-      engineCode,
-      activityCode: foundActivity.code,
+  const foundWorkOrder = await prisma.workOrder.findUnique({
+    where: { code },
+    include: {
+      machine: { select: { name: true, area: true } },
     },
-    include: WORK_ORDER_INCLUDE,
   })
 
+  if (!foundWorkOrder) {
+    throw new ServiceError({
+      status: 404,
+      message: `La orden de trabajo con el código '${code}' no existe`,
+    })
+  }
   const {
-    engine: { machine, ...engine },
+    machine: { name: machineName, area: machineArea },
     ...workOrder
-  } = createdWorkOrder
-  return { ...workOrder, engine, machine }
+  } = foundWorkOrder
+  return {
+    ...workOrder,
+    machineName,
+    machineArea,
+  } as never as CheckSelect<T, S, U>
 }
 
-export async function updateWorkOrderById(
-  workOrderId: string,
-  updateWorkOrderDto: UpdateWorkOrderDto
-) {
-  const foundWorkOrder = await getWorkOrderById(workOrderId)
-  const { id, state: currentState } = foundWorkOrder
-  if (currentState === 'DONE') {
-    throw new ServiceError(
-      `La orden de trabajo con el código '${id}' ya no puede ser editada`,
-      405
+export async function createWorkOrder<
+  T extends CreateArgsType<WorkOrderCreateArgs>,
+  S extends WorkOrderClient<WorkOrderResponseDto>,
+  P extends WorkOrderGetPayload<T>,
+  U extends WorkOrderClient<P>
+>(createWorkOrderDto: CreateWorkOrderDto, config?: T): ReturnCheck<T, S, U> {
+  const { engineCode, activityCode } = createWorkOrderDto
+
+  if (engineCode) {
+    const { function: engineFunction } = await engineService.getEngineByCode(
+      engineCode,
+      { select: { function: true } }
     )
+    createWorkOrderDto.engineFunction = engineFunction
+  }
+  if (activityCode) {
+    const { name: activityName } = await activityService.getActivityByCode(
+      activityCode,
+      { select: { name: true } }
+    )
+    createWorkOrderDto.activityName = activityName
   }
 
-  const { failureCause } = updateWorkOrderDto
-  const {
-    activity: { activityType },
-  } = foundWorkOrder
-  if (activityType !== 'CORRECTIVE_MAINTENANCE' && !!failureCause) {
-    throw new ServiceError(
-      'La causa de falla de la orden de trabajo solo es para los mantenimientos correctivos',
-      400
-    )
-  }
+  const defaultConfig = getCreateArgsConfig<WorkOrderCreateArgs>(
+    { data: createWorkOrderDto, include: WORK_ORDER_INCLUDE },
+    config
+  )
 
-  const { state: updateState } = updateWorkOrderDto
-  const valid = validateWorkOrderState(currentState, updateState)
-  if (!valid) {
-    throw new ServiceError(
-      'El estado de la orden de trabajo a actualizar es inválido',
-      400
-    )
-  }
-
-  const updatedWorkOrder = await prisma.workOrder.update({
-    data: updateWorkOrderDto,
-    where: { id },
-    include: WORK_ORDER_INCLUDE,
+  const createdWorkOrder = await prisma.workOrder.create({
+    ...defaultConfig,
+    include: { ...config?.include, ...WORK_ORDER_INCLUDE },
   })
 
   const {
-    engine: { machine, ...engine },
+    machine: { name: machineName, area: machineArea },
+    ...workOrder
+  } = createdWorkOrder
+
+  return {
+    ...workOrder,
+    machineName,
+    machineArea,
+  } as never as CheckSelect<T, S, U>
+}
+
+export async function updateWorkOrderById<
+  T extends UpdateArgsType<WorkOrderUpdateArgs>,
+  S extends WorkOrderClient<WorkOrderResponseDto>,
+  P extends WorkOrderGetPayload<T>,
+  U extends WorkOrderClient<P>
+>(
+  workOrderId: string,
+  updateWorkOrderDto: UpdateWorkOrderGeneralDto,
+  config?: T
+): ReturnCheck<T, S, U> {
+  const {
+    state: currentState,
+    activityType,
+    code,
+  } = await getWorkOrderById(workOrderId, {
+    select: { state: true, activityType: true, code: true },
+  })
+  const { state: nextState, failureCause } = updateWorkOrderDto
+  validateNextState(currentState, nextState)
+
+  if (activityType !== 'CORRECTIVE' && !!failureCause) {
+    throw new ServiceError({
+      status: 400,
+      message:
+        'La causa de falla de la orden de trabajo solo es para los mantenimientos correctivos',
+    })
+  } else {
+    updateWorkOrderDto.failureCause = undefined
+  }
+
+  const defaultConfig = getUpdateArgsConfig<WorkOrderUpdateArgs>(
+    {
+      data: { ...updateWorkOrderDto },
+      where: { code },
+      include: WORK_ORDER_INCLUDE,
+    },
+    config
+  )
+
+  const updatedWorkOrder = await prisma.workOrder.update({
+    ...defaultConfig,
+    include: { ...config?.include, ...WORK_ORDER_INCLUDE },
+  })
+
+  const {
+    machine: { name: machineName, area: machineArea },
     ...workOrder
   } = updatedWorkOrder
-  return { ...workOrder, engine, machine }
+  return {
+    ...workOrder,
+    machineName,
+    machineArea,
+  } as never as CheckSelect<T, S, U>
 }
 
 export async function getWorkOrdersCount() {
@@ -228,22 +296,46 @@ export async function getWorkOrdersCount() {
   return { count, machines }
 }
 
-export async function moveToNextState(workOrderId: string) {
-  const { id, state } = await getWorkOrderById(workOrderId)
-  const { nextState } = WORK_ORDER_CHANGE_STATE[state]
+// export async function moveToNextState(workOrderId: string) {
+//   const { id, state } = (await getWorkOrderById(workOrderId)) as {
+//     id: number
+//     state: unknown
+//   }
+//   console.log({ state })
+//   const { nextState } = WORK_ORDER_CHANGE_STATE['DOING']
 
-  if (!nextState) {
-    throw new ServiceError('No existe siguiente estado', 405)
+//   if (!nextState) {
+//     // throw new ServiceError(405, 'No existe siguiente estado')
+//   }
+
+//   const updatedWorkOrder = await prisma.workOrder.update({
+//     data: { state: nextState as WorkOrderState },
+//     where: { id },
+//     include: WORK_ORDER_INCLUDE,
+//   })
+//   const {
+//     engine: { machine, ...engine },
+//     ...workOrder
+//   } = updatedWorkOrder
+//   return { ...workOrder, engine, machine }
+// }
+
+const NEXT_STATE = {
+  PLANNED: 'VALIDATED',
+  VALIDATED: 'DOING',
+  DOING: 'DONE',
+}
+
+function validateNextState(
+  currentState: WorkOrderState,
+  nextState: WorkOrderState
+) {
+  const valid =
+    NEXT_STATE[currentState as keyof typeof NEXT_STATE] === nextState
+  if (!valid) {
+    throw new ServiceError({
+      status: 400,
+      message: `No está permitido actualizar el estado ${currentState} a ${nextState}`,
+    })
   }
-
-  const updatedWorkOrder = await prisma.workOrder.update({
-    data: { state: nextState as WorkOrderState },
-    where: { id },
-    include: WORK_ORDER_INCLUDE,
-  })
-  const {
-    engine: { machine, ...engine },
-    ...workOrder
-  } = updatedWorkOrder
-  return { ...workOrder, engine, machine }
 }

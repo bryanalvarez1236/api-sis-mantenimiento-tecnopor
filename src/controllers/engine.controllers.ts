@@ -1,47 +1,32 @@
 import { Request, Response } from 'express'
-import prisma from '../libs/db'
+import { ThrowError } from '../services'
+import * as engineService from '../services/engine.service'
 
 export async function getMachineEngines(req: Request, res: Response) {
   const {
     params: { machineCode },
   } = req
-
-  const foundMachine = await prisma.machine.findUnique({
-    where: { code: machineCode },
-    include: { engines: true, image: { select: { url: true } } },
-  })
-
-  if (!foundMachine) {
-    return res
-      .status(404)
-      .json({ message: `La máquina con el código '${machineCode}' no existe` })
+  try {
+    const foundMachine = await engineService.getMachineEngines(machineCode)
+    return res.json(foundMachine)
+  } catch (error) {
+    const { message, status } = error as ThrowError
+    return res.status(status).json({ message })
   }
-
-  return res.json(foundMachine)
 }
 
 export async function getEngineByCode(req: Request, res: Response) {
   const {
-    params: { machineCode, engineCode },
+    params: { engineCode },
   } = req
 
-  const foundEngine = await prisma.engine.findUnique({
-    where: { code: engineCode },
-  })
-
-  if (!foundEngine) {
-    return res
-      .status(404)
-      .json({ message: `El motor con el código '${engineCode}' no existe` })
+  try {
+    const foundEngine = await engineService.getEngineByCode(engineCode)
+    return res.json(foundEngine)
+  } catch (error) {
+    const { status, message } = error as ThrowError
+    return res.status(status).json({ message })
   }
-
-  if (foundEngine.machineCode !== machineCode) {
-    return res.status(406).json({
-      message: `El motor no está disponible en la máquina con el código '${machineCode}'`,
-    })
-  }
-
-  return res.json(foundEngine)
 }
 
 export async function createEngine(req: Request, res: Response) {
@@ -50,50 +35,29 @@ export async function createEngine(req: Request, res: Response) {
     body,
   } = req
 
-  const foundMachine = await prisma.machine.findUnique({
-    where: { code: machineCode },
-  })
-
-  if (!foundMachine) {
-    return res
-      .status(404)
-      .json({ message: `La máquina con el código '${machineCode}' no existe` })
+  try {
+    const createdEngine = await engineService.createEngine(body, machineCode)
+    return res.status(201).json(createdEngine)
+  } catch (error) {
+    const { status, message } = error as ThrowError
+    return res.status(status).json({ message })
   }
-
-  const createdEngine = await prisma.engine.create({
-    data: { ...body, machine: { connect: { code: machineCode } } },
-  })
-
-  return res.status(201).json(createdEngine)
 }
 
 export async function updateEngineByCode(req: Request, res: Response) {
   const {
-    params: { machineCode, engineCode },
+    params: { engineCode },
     body,
   } = req
 
-  const foundEngine = await prisma.engine.findUnique({
-    where: { code: engineCode },
-    select: { machineCode: true },
-  })
-
-  if (!foundEngine) {
-    return res
-      .status(404)
-      .json({ message: `El motor con el código '${engineCode}' no existe` })
+  try {
+    const updatedEngine = await engineService.updateEngineByCode(
+      engineCode,
+      body
+    )
+    return res.json(updatedEngine)
+  } catch (error) {
+    const { status, message } = error as ThrowError
+    return res.status(status).json({ message })
   }
-
-  if (foundEngine.machineCode !== machineCode) {
-    return res.status(406).json({
-      message: `El motor a actualizar no está disponible en la máquina con el código '${machineCode}'`,
-    })
-  }
-
-  const updatedEngine = await prisma.engine.update({
-    where: { code: engineCode },
-    data: body,
-  })
-
-  return res.json(updatedEngine)
 }

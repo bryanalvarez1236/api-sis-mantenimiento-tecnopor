@@ -6,12 +6,12 @@ import {
   updateActivityDto,
 } from '../../src/schemas/activity'
 import { Activity } from '@prisma/client'
-import { createdMachine, machineCodeNotExists } from './machine.helpers'
+import { createdMachine } from './machine.helpers'
 
 export const ACTIVITY_ENDPOINT = `${serverRoute}${activityRoute}`
 export const activityCodeNotExists = 'DNE00'
 export const activityNotExistsMessage = `La actividad con el código '${activityCodeNotExists}' no existe`
-export const activityNotAcceptable = `La actividad no está disponible en la máquina con el código '${machineCodeNotExists}'`
+// export const activityNotAcceptable = `La actividad no está disponible en la máquina con el código '${machineCodeNotExists}'`
 
 type CreateActivityDto = z.infer<typeof createActivityDto>
 type UpdateActivityDto = z.infer<typeof updateActivityDto>
@@ -49,17 +49,18 @@ export const updateActivity: UpdateActivityDto = {
   name: 'LIMPIEZA DE TABLERO ELÉCTRICO, INSPECCIÓN DE ELEMENTOS DE FUERZA Y MANDO',
   frequency: 24 * 30 * 4,
   activityType: 'PERIODIC_MAINTENANCE',
-  machineCode: createdMachine.code,
 }
 
 export const responseCreatedActivity: ActivityResponseDto = {
   ...createdActivity,
+  state: 'ACTIVE',
   createdAt: activityDate.toISOString(),
   updatedAt: activityDate.toISOString(),
 }
 
 export const responseNewActivity: ActivityResponseDto = {
   ...newActivity,
+  state: 'ACTIVE',
   createdAt: '',
   updatedAt: '',
 }

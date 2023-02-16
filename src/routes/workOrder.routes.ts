@@ -7,7 +7,8 @@ import {
   updateWorkOrder,
 } from '../controllers/workOrder.controllers'
 import { validateBody } from '../middlewares/validate'
-import { createWorkOrderDto, updateWorkOrderDto } from '../schemas/workOrder'
+import { validateUpdateWorkOrderDto } from '../middlewares/workOrder.middlewares'
+import { createWorkOrderDto } from '../schemas/workOrder'
 
 export const workOrderRoute = '/work-orders'
 
@@ -17,6 +18,6 @@ workOrderRouter.get('/', getWorkOrders)
 workOrderRouter.get('/count', getWorkOrdersCount)
 workOrderRouter.get('/:id', getWorkOrderById)
 workOrderRouter.post('/', validateBody(createWorkOrderDto), createWorkOrder)
-workOrderRouter.put('/:id', validateBody(updateWorkOrderDto), updateWorkOrder)
+workOrderRouter.put('/:id', validateUpdateWorkOrderDto, updateWorkOrder)
 
 export default workOrderRouter

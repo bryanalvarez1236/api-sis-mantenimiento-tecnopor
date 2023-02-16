@@ -6,7 +6,6 @@ import {
   activityAlreadyExists,
   activityCodeNotExists,
   activityDate,
-  activityNotAcceptable,
   activityNotExistsMessage,
   ACTIVITY_ENDPOINT,
   createdActivity,
@@ -75,18 +74,6 @@ describe('Activities EndPoint => GET', () => {
 
     const { message } = body
     expect(message).toBe(activityNotExistsMessage)
-  })
-
-  it('GET: get an activity on wrong machine', async () => {
-    const { body } = await api
-      .get(
-        `${ACTIVITY_ENDPOINT}/${createdActivity.code}?machineCode=${machineCodeNotExists}`
-      )
-      .expect('Content-Type', /json/)
-      .expect(406)
-
-    const { message } = body
-    expect(message).toBe(activityNotAcceptable)
   })
 })
 
@@ -164,18 +151,6 @@ describe('Activities EndPoint => PUT', () => {
     expect(message).toBe(activityNotExistsMessage)
   })
 
-  it('PUT: update an activity on wrong machine', async () => {
-    const { body } = await api
-      .put(`${ACTIVITY_ENDPOINT}/${createdActivity.code}`)
-      .set('Accept', 'application/json')
-      .send({ ...updateActivity, machineCode: machineCodeNotExists })
-      .expect('Content-Type', /json/)
-      .expect(406)
-
-    const { message } = body
-    expect(message).toBe(activityNotAcceptable)
-  })
-
   it('PUT: try to update an activity without its fields', async () => {
     const { body } = await api
       .put(`${ACTIVITY_ENDPOINT}/${createdActivity.code}`)
@@ -189,11 +164,14 @@ describe('Activities EndPoint => PUT', () => {
 
 describe('Activities EndPoint => DELETE', () => {
   it('DELETE: delete an activity by its code', async () => {
-    await api
+    const { body } = await api
       .delete(
         `${ACTIVITY_ENDPOINT}/${newActivity.code}?machineCode=${createdMachine.code}`
       )
-      .expect(204)
+      .expect('Content-Type', /json/)
+      .expect(200)
+
+    expect(body).toMatchObject({ code: newActivity.code })
   })
 
   it("DELETE: delete an activity that it doesn't exist", async () => {
@@ -201,21 +179,11 @@ describe('Activities EndPoint => DELETE', () => {
       .delete(
         `${ACTIVITY_ENDPOINT}/${activityCodeNotExists}?machineCode=${createdMachine.code}`
       )
+      .expect('Content-Type', /json/)
       .expect(404)
 
     const { message } = body
     expect(message).toBe(activityNotExistsMessage)
-  })
-
-  it('DELETE: delete an activity on wrong machine', async () => {
-    const { body } = await api
-      .delete(
-        `${ACTIVITY_ENDPOINT}/${createdActivity.code}?machineCode=${machineCodeNotExists}`
-      )
-      .expect(406)
-
-    const { message } = body
-    expect(message).toBe(activityNotAcceptable)
   })
 })
 

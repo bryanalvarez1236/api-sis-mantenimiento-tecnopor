@@ -24,6 +24,7 @@ model Machine {
   image                  MachineImage?
   engines                Engine[]
   activities             Activity[]
+  WorkOrder              WorkOrder[]
   createdAt              DateTime                 @default(now())
   updatedAt              DateTime                 @default(now()) @updatedAt
 }
@@ -66,23 +67,49 @@ model Activity {
   name         String
   frequency    Int?
   activityType ActivityType
+  pem          String?
+  state        State        @default(ACTIVE)
   workOrders   WorkOrder[]
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @default(now()) @updatedAt
 }
 
 model WorkOrder {
-  id           Int            @id @default(autoincrement())
-  engine       Engine         @relation(fields: [engineCode], references: [code])
-  engineCode   String
-  activity     Activity       @relation(fields: [activityCode], references: [code])
-  activityCode String
-  failureCause String?
-  startDate    DateTime?
-  endDate      DateTime?
-  state        WorkOrderState @default(PLANNED)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @default(now()) @updatedAt
+  code                  Int                             @id @default(autoincrement())
+  machine               Machine                         @relation(fields: [machineCode], references: [code])
+  machineCode           String
+  engine                Engine?                         @relation(fields: [engineCode], references: [code])
+  engineCode            String?
+  activity              Activity?                       @relation(fields: [activityCode], references: [code])
+  activityCode          String?
+  activityType          WorkOrderActivityType
+  priority              WorkOrderPriority
+  engineFunction        String?
+  activityName          String?
+  // from validated to doing
+  securityMeasureStarts WorkOrderSecurityMeasureStart[]
+  protectionEquipments  WorkOrderProtectionEquipment[]
+  // from doing to done
+  activityDescription   String?
+  storeDescription      String?
+  storeUnit             Int?
+  // show only if it's corrective
+  failureCause          String?
+  startDate             DateTime?
+  endDate               DateTime?
+  // startHour            DateTime
+  // endHour              DateTime
+  totalHours            Int?
+  securityMeasureEnds   WorkOrderSecurityMeasureEnd[]
+  state                 WorkOrderState                  @default(PLANNED)
+  createdAt             DateTime                        @default(now())
+  updatedAt             DateTime                        @default(now()) @updatedAt
+}
+
+enum State {
+  ACTIVE
+  INNACTIVE
+  DELETED
 }
 
 enum MachineArea {
@@ -127,4 +154,41 @@ enum WorkOrderState {
   VALIDATED
   DOING
   DONE
+}
+
+enum WorkOrderActivityType {
+  PLANNED_PREVENTIVE
+  CORRECTIVE
+  INSPECTION
+  CONDITION_CHECK
+  ROUTINE
+}
+
+enum WorkOrderPriority {
+  URGENT
+  IMPORTANT
+  NORMAL
+}
+
+enum WorkOrderSecurityMeasureStart {
+  BLOCKED
+  LABELED
+  BLOCKED_LABELED
+}
+
+enum WorkOrderSecurityMeasureEnd {
+  RETIRE
+  REPORT
+  KEEP
+  CHECK
+}
+
+enum WorkOrderProtectionEquipment {
+  HELMET
+  SECURITY_GLASSES
+  GLOVES
+  SECURITY_HARNESS
+  ACOUSTIC_PROTECTORS
+  SECURITY_BOOTS
+  OTHERS
 }
