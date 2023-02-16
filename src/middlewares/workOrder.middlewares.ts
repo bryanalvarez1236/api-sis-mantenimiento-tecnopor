@@ -11,7 +11,6 @@ export async function validateUpdateWorkOrderDto(
   next: NextFunction
 ) {
   const { body } = req
-  console.log({ body })
   try {
     const { state, ...rest } = await updateWorkOrderGeneralDto.parseAsync(body)
     if (state === 'PLANNED' || state === 'VALIDATED') {
@@ -22,11 +21,9 @@ export async function validateUpdateWorkOrderDto(
       state === 'DOING'
         ? await updateWorkOrderToDoingDto.parseAsync(rest)
         : await updateWorkOrderToDoneDto.parseAsync(rest)
-    console.log({ result })
     req.body = { state, ...result }
     return next()
   } catch (error) {
-    console.log({ error })
     return res.status(400).json(error)
   }
 }
