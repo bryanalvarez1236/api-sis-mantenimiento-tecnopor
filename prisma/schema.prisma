@@ -24,9 +24,21 @@ model Machine {
   image                  MachineImage?
   engines                Engine[]
   activities             Activity[]
-  WorkOrder              WorkOrder[]
+  workOrder              WorkOrder[]
+  checkList              CheckList[]
   createdAt              DateTime                 @default(now())
   updatedAt              DateTime                 @default(now()) @updatedAt
+  DraftWorkOrder         DraftWorkOrder[]
+}
+
+model CheckList {
+  id          Int      @id @default(autoincrement())
+  machine     Machine  @relation(fields: [machineCode], references: [code])
+  machineCode String
+  field       String
+  type        String
+  options     String[]
+  placeholder String?
 }
 
 model MachineImage {
@@ -61,17 +73,18 @@ model Engine {
 }
 
 model Activity {
-  code         String       @id @default(uuid())
-  machine      Machine      @relation(fields: [machineCode], references: [code])
-  machineCode  String
-  name         String
-  frequency    Int?
-  activityType ActivityType
-  pem          String?
-  state        State        @default(ACTIVE)
-  workOrders   WorkOrder[]
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @default(now()) @updatedAt
+  code           String           @id @default(uuid())
+  machine        Machine          @relation(fields: [machineCode], references: [code])
+  machineCode    String
+  name           String
+  frequency      Int?
+  activityType   ActivityType
+  pem            String?
+  state          State            @default(ACTIVE)
+  workOrders     WorkOrder[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @default(now()) @updatedAt
+  DraftWorkOrder DraftWorkOrder[]
 }
 
 model WorkOrder {
@@ -97,13 +110,35 @@ model WorkOrder {
   failureCause          String?
   startDate             DateTime?
   endDate               DateTime?
-  // startHour            DateTime
-  // endHour              DateTime
   totalHours            Int?
   securityMeasureEnds   WorkOrderSecurityMeasureEnd[]
+  observations          String?
   state                 WorkOrderState                  @default(PLANNED)
+  checkListVerified     CheckListVerified[]
+  draftWorkOrder        DraftWorkOrder?
   createdAt             DateTime                        @default(now())
   updatedAt             DateTime                        @default(now()) @updatedAt
+}
+
+model DraftWorkOrder {
+  code          Int       @id @default(autoincrement())
+  machine       Machine   @relation(fields: [machineCode], references: [code])
+  machineCode   String
+  activity      Activity  @relation(fields: [activityCode], references: [code])
+  activityCode  String
+  plannedDay    DateTime
+  workOrder     WorkOrder @relation(fields: [workOrderCode], references: [code])
+  workOrderCode Int       @unique
+  isCreated     Boolean   @default(false)
+}
+
+model CheckListVerified {
+  id            Int       @id @default(autoincrement())
+  workOrder     WorkOrder @relation(fields: [workOrderCode], references: [code])
+  workOrderCode Int
+  field         String
+  options       String[]
+  value         String?
 }
 
 enum State {

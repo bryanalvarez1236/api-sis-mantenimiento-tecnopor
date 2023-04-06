@@ -218,7 +218,6 @@ describe('Work Orders EndPoint => POST', () => {
     const { message } = body
     expect(message).toBe(WORK_ORDER_INVALID_ACTIVITY)
   })
-  // validate machine code is same between engine and activity, throw error
 })
 
 describe('Work Orders EndPoint => PUT', () => {

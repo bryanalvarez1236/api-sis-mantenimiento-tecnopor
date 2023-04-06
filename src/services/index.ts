@@ -22,7 +22,6 @@ export class ServiceError extends Error {
 
 export const PRISMA_NOT_FOUND_ERROR_CODE = 'P2025'
 export const PRISMA_UNIQUE_ERROR_CODE = 'P2002'
-// export const PRISMA_FOREING_KEY_FAILED_ERROR_CODE = 'P2003'
 
 export type CheckSelect<T, EntityClient, PayloadClient> = Prisma.CheckSelect<
   T,

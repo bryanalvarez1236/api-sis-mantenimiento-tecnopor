@@ -15,7 +15,7 @@ const ACTIVITY_TYPE_VALUES = [
   'CONDITION_CHECK',
   'ROUTINE',
 ]
-const PRIORITY_VALUES = ['URGENT', 'IMPORTANT', 'NORMAL']
+export const PRIORITY_VALUES = ['URGENT', 'IMPORTANT', 'NORMAL']
 const SECURITY_MEASURE_START_VALUES = ['BLOCKED', 'LABELED', 'BLOCKED_LABELED']
 const PROTECTION_EQUIPMENT_VALUES = [
   'HELMET',
@@ -191,6 +191,27 @@ const workOrderShapeUpdateToDoing = {
   startDate: dateSchema,
 }
 export const updateWorkOrderToDoingDto = z.object(workOrderShapeUpdateToDoing)
+const checkListVerifiedShape = {
+  field: z.string({
+    required_error: 'El campo del check list a validar es requerido',
+  }),
+  options: z
+    .array(
+      z.string().min(1, {
+        message: 'La opción del check list debe tener al menos 1 caracter',
+      })
+    )
+    .optional(),
+  value: z
+    .string()
+    .min(1, {
+      message: 'El valor del check list debe tener al menos 1 caracter',
+    })
+    .optional(),
+}
+export const checkListVerified = z.object({
+  checkListVerified: z.array(z.object(checkListVerifiedShape)),
+})
 const workOrderShapeUpdateToDone = {
   activityDescription: z.string({
     required_error:
@@ -223,10 +244,16 @@ const workOrderShapeUpdateToDone = {
         'Las medidas de seguridad fin de trabajo de la orden de trabajo debe tener máximo 4 valores',
     }),
   totalHours: z.number(),
+  observations: z
+    .string()
+    .min(3, {
+      message:
+        'Las observaciones de la orden de trabajo debe tener al menos 3 caracteres',
+    })
+    .optional(),
 }
 export const updateWorkOrderToDoneDto = z.object(workOrderShapeUpdateToDone)
 const workOrderShapeUpdateGeneral = {
-  // doing
   securityMeasureStarts: z
     .array(
       z.enum(['BLOCKED', 'LABELED', 'BLOCKED_LABELED'], {
@@ -272,7 +299,6 @@ const workOrderShapeUpdateGeneral = {
         'Los riesgos de trabajo de la orden de trabajo debe tener máximo 7 valores',
     })
     .optional(),
-  // done
   activityDescription: z.string().optional().nullable(),
   storeDescription: z.string().optional().nullable(),
   storeUnit: z.number().optional().nullable(),
@@ -297,7 +323,6 @@ const workOrderShapeUpdateGeneral = {
         'Las medidas de seguridad fin de trabajo de la orden de trabajo debe tener máximo 4 valores',
     })
     .optional(),
-  // ever
   state: z.enum(['PLANNED', 'VALIDATED', 'DOING', 'DONE'], {
     errorMap: () => {
       return {
@@ -307,6 +332,15 @@ const workOrderShapeUpdateGeneral = {
       }
     },
   }),
+  observations: z
+    .string()
+    .min(3, {
+      message:
+        'Las observaciones de la orden de trabajo debe tener al menos 3 caracteres',
+    })
+    .optional()
+    .nullable(),
+  checkListVerified: z.array(z.object(checkListVerifiedShape)).optional(),
 }
 export const updateWorkOrderGeneralDto = z.object(workOrderShapeUpdateGeneral)
 export type UpdateWorkOrderGeneralDto = z.infer<

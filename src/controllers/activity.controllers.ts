@@ -66,27 +66,6 @@ export async function deleteActivityByCode(req: Request, res: Response) {
     params: { code },
   } = req
 
-  // const machineCode = `${query.machineCode}`
-
-  // const foundActivity = await prisma.activity.findUnique({
-  //   where: { code },
-  //   select: { machineCode: true },
-  // })
-
-  // console.log({ machineCode, foundActivity })
-
-  // if (!foundActivity) {
-  //   return res
-  //     .status(404)
-  //     .json({ message: `La actividad con el código '${code}' no existe` })
-  // }
-
-  // if (machineCode !== foundActivity.machineCode) {
-  //   return res.status(406).json({
-  //     message: `La actividad no está disponible en la máquina con el código '${machineCode}'`,
-  //   })
-  // }
-
   try {
     const deletedActivity = await activityService.deleteActivityByCode(code)
     return res.json(deletedActivity)
