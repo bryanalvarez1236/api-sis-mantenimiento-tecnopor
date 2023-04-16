@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import {
   createWorkOrder,
+  deleteWorkOrderByCode,
   getWorkOrderById,
   getWorkOrders,
   getWorkOrdersCount,
@@ -19,5 +20,6 @@ workOrderRouter.get('/count', getWorkOrdersCount)
 workOrderRouter.get('/:id', getWorkOrderById)
 workOrderRouter.post('/', validateBody(createWorkOrderDto), createWorkOrder)
 workOrderRouter.put('/:id', validateUpdateWorkOrderDto, updateWorkOrder)
+workOrderRouter.delete('/:id', deleteWorkOrderByCode)
 
 export default workOrderRouter

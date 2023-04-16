@@ -246,8 +246,15 @@ export async function updateWorkOrderById<
     activityType,
     code,
     machineCode,
+    activityName,
   } = await getWorkOrderById(workOrderId, {
-    select: { state: true, activityType: true, code: true, machineCode: true },
+    select: {
+      state: true,
+      activityType: true,
+      activityName: true,
+      code: true,
+      machineCode: true,
+    },
   })
   const { state: nextState, failureCause } = updateWorkOrderDto
   if (!allow) {
@@ -285,7 +292,16 @@ export async function updateWorkOrderById<
     ...defaultConfig,
     include: {
       ...config?.include,
-      ...WORK_ORDER_INCLUDE,
+      machine: {
+        select: {
+          name: true,
+          area: true,
+          checkList:
+            activityType === 'INSPECTION' &&
+            activityName?.replace('Ó', 'O') === 'INSPECCION' &&
+            nextState === 'DOING',
+        },
+      },
       activity:
         updateWorkOrderDto.state === 'DONE' &&
         activityType === 'PLANNED_PREVENTIVE',
@@ -301,13 +317,18 @@ export async function updateWorkOrderById<
   }
 
   const {
-    machine: { name: machineName, area: machineArea },
+    machine: {
+      name: machineName,
+      area: machineArea,
+      checkList: machineCheckList,
+    },
     ...workOrder
   } = updatedWorkOrder
   return {
     ...workOrder,
     machineName,
     machineArea,
+    machineCheckList,
   } as never as CheckSelect<T, S, U>
 }
 
@@ -343,5 +364,24 @@ function validateNextState(
       status: 400,
       message: `No está permitido actualizar el estado ${currentState} a ${nextState}`,
     })
+  }
+}
+
+export async function deleteWorkOrderByCode(workOrderId: number) {
+  const { state } = await getWorkOrderById(`${workOrderId}`)
+  if (state === 'DONE') {
+    throw new ServiceError({
+      status: 405,
+      message: `No se puede eliminar la órden de trabajo '${workOrderId}'`,
+    })
+  }
+
+  try {
+    const { code } = await prisma.workOrder.delete({
+      where: { code: workOrderId },
+    })
+    return { code }
+  } catch (error) {
+    throw new ServiceError({ status: 500 })
   }
 }

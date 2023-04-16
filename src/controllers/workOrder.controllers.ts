@@ -90,3 +90,17 @@ export async function getWorkOrdersCount(_req: Request, res: Response) {
   const countAndMachines = await workOrderService.getWorkOrdersCount()
   return res.json(countAndMachines)
 }
+
+export async function deleteWorkOrderByCode(
+  req: Request<{ id: string }, never, never, never>,
+  res: Response
+) {
+  const { id } = req.params
+  try {
+    const data = await workOrderService.deleteWorkOrderByCode(+id)
+    return res.json(data)
+  } catch (error) {
+    const { status, message } = error as ThrowError
+    return res.status(status).json({ message })
+  }
+}
