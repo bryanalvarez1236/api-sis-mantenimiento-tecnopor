@@ -6,6 +6,9 @@ import testRouter from './routes/test.routes'
 import machineRouter, { machineRoute } from './routes/machine.routes'
 import activityRouter, { activityRoute } from './routes/activity.route'
 import workOrderRouter, { workOrderRoute } from './routes/workOrder.routes'
+import draftWorkOrderRouter, {
+  draftWorkOrderRoute,
+} from './routes/draftWorkOrder.route'
 
 export class Server {
   private app: Application
@@ -33,6 +36,7 @@ export class Server {
     this.app.use(testRouter)
     this.app.use(this.createRoute(machineRoute), machineRouter)
     this.app.use(this.createRoute(activityRoute), activityRouter)
+    this.app.use(this.createRoute(draftWorkOrderRoute), draftWorkOrderRouter)
     this.app.use(this.createRoute(workOrderRoute), workOrderRouter)
   }
 

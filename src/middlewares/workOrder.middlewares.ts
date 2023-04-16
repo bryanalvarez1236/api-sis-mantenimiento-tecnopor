@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import {
+  checkListVerified,
   updateWorkOrderGeneralDto,
   updateWorkOrderToDoingDto,
   updateWorkOrderToDoneDto,
@@ -17,11 +18,16 @@ export async function validateUpdateWorkOrderDto(
       req.body = { state }
       return next()
     }
-    const result =
-      state === 'DOING'
-        ? await updateWorkOrderToDoingDto.parseAsync(rest)
-        : await updateWorkOrderToDoneDto.parseAsync(rest)
-    req.body = { state, ...result }
+    let result
+    if (state === 'DOING') {
+      result = await updateWorkOrderToDoingDto.parseAsync(rest)
+    } else {
+      result = !!body.activityDescription
+        ? await updateWorkOrderToDoneDto.parseAsync(rest)
+        : await checkListVerified.parseAsync(rest)
+    }
+    const { allow } = body
+    req.body = { state, allow, ...result }
     return next()
   } catch (error) {
     return res.status(400).json(error)

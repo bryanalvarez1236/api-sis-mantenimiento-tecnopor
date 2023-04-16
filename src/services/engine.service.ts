@@ -20,8 +20,6 @@ import prisma from '../libs/db'
 import { CreateEngineDto, UpdateEngineDto } from '../schemas/engine'
 import * as machineService from './machine.service'
 
-// missing refactoring
-
 type EngineCreateArgs = Prisma.EngineCreateArgs
 type EngineFindUniqueArgs = Prisma.EngineFindUniqueArgs
 type EngineFindManyArgs = Prisma.EngineFindManyArgs
@@ -133,12 +131,3 @@ export async function updateEngineByCode<
     throw new ServiceError(throwError)
   }
 }
-
-// export function validateMachineCode(engine: Engine, machineCode: string) {
-//   if (engine.machineCode !== machineCode) {
-//     // throw new ServiceError(
-//     //   406,
-//     //   `El motor no está disponible en la máquina con el código '${machineCode}'`
-//     // )
-//   }
-// }
