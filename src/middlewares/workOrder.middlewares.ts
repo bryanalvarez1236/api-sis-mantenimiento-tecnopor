@@ -5,6 +5,8 @@ import {
   updateWorkOrderToDoingDto,
   updateWorkOrderToDoneDto,
 } from '../schemas/workOrder'
+import { ZodError } from 'zod'
+import { ServiceError } from '../services'
 
 export async function validateUpdateWorkOrderDto(
   req: Request,
@@ -26,10 +28,15 @@ export async function validateUpdateWorkOrderDto(
         ? await updateWorkOrderToDoneDto.parseAsync(rest)
         : await checkListVerified.parseAsync(rest)
     }
-    const { allow } = body
-    req.body = { state, allow, ...result }
+    req.body = { state, ...result }
     return next()
   } catch (error) {
-    return res.status(400).json(error)
+    if (error instanceof ZodError) {
+      const { issues } = error
+      const message = issues.map(({ message }) => message).join('\n')
+      return res.status(400).json({ message })
+    }
+    const { status, message } = new ServiceError({ status: 400 })
+    return res.status(status).json({ message })
   }
 }

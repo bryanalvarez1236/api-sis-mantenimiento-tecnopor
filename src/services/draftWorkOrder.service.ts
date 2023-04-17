@@ -152,11 +152,13 @@ export async function createWorkOrderFromDraftWorkOrder(
 
   const { workOrder } = draftWorkOrder
   const newWorkOrder = await workOrderService.createWorkOrder({
-    activityType: workOrder.activityType,
-    machineCode: workOrder.machineCode,
-    priority: createWorkOrderFromDraftWorkOrder.priority,
-    activityCode: workOrder.activityCode ?? undefined,
-    engineCode: workOrder.engineCode ?? undefined,
+    createWorkOrderDto: {
+      activityType: workOrder.activityType,
+      machineCode: workOrder.machineCode,
+      priority: createWorkOrderFromDraftWorkOrder.priority,
+      activityCode: workOrder.activityCode ?? undefined,
+      engineCode: workOrder.engineCode ?? undefined,
+    },
   })
 
   await prisma.draftWorkOrder.delete({ where: { code: draftWorkOrderCode } })

@@ -121,6 +121,8 @@ const workOrderShapeCreate = {
       message: 'El nombre de actividad debe tener al menos un caracter',
     })
     .optional(),
+  createdAt: dateSchema.optional(),
+  updatedAt: dateSchema.optional(),
 }
 
 const workOrderShapeUpdate = {
@@ -211,6 +213,7 @@ const checkListVerifiedShape = {
 }
 export const checkListVerified = z.object({
   checkListVerified: z.array(z.object(checkListVerifiedShape)),
+  endDate: dateSchema,
 })
 const workOrderShapeUpdateToDone = {
   activityDescription: z.string({

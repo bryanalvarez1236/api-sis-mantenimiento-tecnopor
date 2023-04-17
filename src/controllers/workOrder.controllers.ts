@@ -1,94 +1,90 @@
 import { Request, Response } from 'express'
 import * as workOrderService from '../services/workOrder.service'
 import { ThrowError } from '../services'
-import { WORK_ORDER_CHANGE_STATE } from '../schemas/workOrder'
+import {
+  CreateWorkOrderDto,
+  UpdateWorkOrderGeneralDto,
+} from '../schemas/workOrder'
 
-export async function getWorkOrders(req: Request, res: Response) {
+export async function getWorkOrders(
+  req: Request<never, never, never, { date: string | undefined }>,
+  res: Response
+) {
   const {
-    query: { dateRange },
+    query: { date },
   } = req
 
   try {
-    const workOrders = await workOrderService.getWorkOrders(dateRange as string)
-    return res.json(
-      workOrders.map(({ state, ...rest }) => ({
-        ...rest,
-        state,
-        ...WORK_ORDER_CHANGE_STATE[state],
-      }))
-    )
+    const workOrders = await workOrderService.getWorkOrders({ date })
+    return res.json(workOrders)
   } catch (error) {
-    const { message, status } = error as ThrowError
-    return res
-      .status(status ?? 500)
-      .json({ message: message ?? 'Ocurrió algún error' })
+    const { status, message } = error as ThrowError
+    return res.status(status).json({ message })
   }
 }
 
-export async function getWorkOrderById(req: Request, res: Response) {
+export async function getWorkOrderById(
+  req: Request<{ id: string }>,
+  res: Response
+) {
   const {
     params: { id },
   } = req
 
   try {
-    const foundWorkOrder = await workOrderService.getWorkOrderById(id)
-    const state = 'DOING'
-    return res.json({
-      ...foundWorkOrder,
-      state,
-      ...WORK_ORDER_CHANGE_STATE[state],
-    })
+    const foundWorkOrder = await workOrderService.getWorkOrderById({ id: +id })
+    return res.json(foundWorkOrder)
   } catch (error) {
     const { message, status } = error as ThrowError
-    return res
-      .status(status ?? 500)
-      .json({ message: message ?? 'Ocurrió algún error' })
+    return res.status(status).json({ message })
   }
 }
 
-export async function createWorkOrder(req: Request, res: Response) {
+export async function createWorkOrder(
+  req: Request<never, never, CreateWorkOrderDto>,
+  res: Response
+) {
   const { body } = req
 
   try {
-    const { state, ...createdWorkOrder } =
-      await workOrderService.createWorkOrder(body)
-    return res.status(201).json({
-      ...createdWorkOrder,
-      state,
-      ...WORK_ORDER_CHANGE_STATE[state],
+    const createdWorkOrder = await workOrderService.createWorkOrder({
+      createWorkOrderDto: body,
     })
+    return res.status(201).json(createdWorkOrder)
   } catch (error) {
     const { message, status } = error as ThrowError
-    return res
-      .status(status ?? 500)
-      .json({ message: message ?? 'Ocurrió algún error' })
+    return res.status(status).json({ message })
   }
 }
 
-export async function updateWorkOrder(req: Request, res: Response) {
+export async function updateWorkOrder(
+  req: Request<{ id: string }, never, UpdateWorkOrderGeneralDto>,
+  res: Response
+) {
   const {
     params: { id },
     body,
   } = req
   try {
-    const { state, ...updatedWorkOrder } =
-      await workOrderService.updateWorkOrderById(id, body)
-    return res.json({
-      ...updatedWorkOrder,
-      state,
-      ...WORK_ORDER_CHANGE_STATE[state],
+    const updatedWorkOrder = await workOrderService.updateWorkOrderById({
+      id: +id,
+      updateWorkOrderDto: body,
     })
+    return res.json(updatedWorkOrder)
   } catch (error) {
     const { message, status } = error as ThrowError
-    return res
-      .status(status ?? 500)
-      .json({ message: message ?? 'Ocurrió algún error' })
+    return res.status(status).json({ message })
   }
 }
 
 export async function getWorkOrdersCount(_req: Request, res: Response) {
-  const countAndMachines = await workOrderService.getWorkOrdersCount()
-  return res.json(countAndMachines)
+  try {
+    const countAndMachines = await workOrderService.getWorkOrdersCount()
+    return res.json(countAndMachines)
+  } catch (error) {
+    const { status, message } = error as ThrowError
+    return res.status(status).json({ message })
+  }
 }
 
 export async function deleteWorkOrderByCode(
@@ -97,7 +93,7 @@ export async function deleteWorkOrderByCode(
 ) {
   const { id } = req.params
   try {
-    const data = await workOrderService.deleteWorkOrderByCode(+id)
+    const data = await workOrderService.deleteWorkOrderById({ id: +id })
     return res.json(data)
   } catch (error) {
     const { status, message } = error as ThrowError
