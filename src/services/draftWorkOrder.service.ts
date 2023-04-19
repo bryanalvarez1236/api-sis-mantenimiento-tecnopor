@@ -1,171 +1,171 @@
-import { Activity, Prisma } from '@prisma/client'
-import {
-  CheckSelect,
-  CreateArgsType,
-  FindUniqueType,
-  getCreateArgsConfig,
-  getFindManyArgsConfig,
-  PromiseArray,
-  ReturnCheck,
-  ServiceError,
-} from '.'
-import { getDateBoliviaTimeZone } from '../libs/date'
+import { ServiceError } from '.'
+import { validateDate } from '../libs/date'
 import prisma from '../libs/db'
-import {
-  CreateWorkOrderFromDraftWorkOrderDto,
-  DraftWorkOrderResponseDto,
-} from '../schemas/draftWorkOrder'
+import { CreateWorkOrderFromDraftWorkOrderDto } from '../schemas/draftWorkOrder'
 import { RANGES } from './workOrder.service'
 import * as workOrderService from './workOrder.service'
-
-type DraftWorkOrderFindManyArgs = Prisma.DraftWorkOrderFindManyArgs
-type DraftWorkOrderCreateArgs = Prisma.DraftWorkOrderCreateArgs
-type DraftWorkOrderFindUniqueArgs = Prisma.DraftWorkOrderFindUniqueArgs
-
-type DraftWorkOrderGetPayload<
-  T extends FindUniqueType<DraftWorkOrderFindUniqueArgs>
-> = Prisma.DraftWorkOrderGetPayload<T>
-type DraftWorkOrderClient<T> = Prisma.Prisma__DraftWorkOrderClient<T>
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime'
 
 interface GetDraftWorkOrdersProps {
-  year: number
-  month: number
-  day: number
+  date?: string
 }
+export async function getDraftWorkOrders({ date }: GetDraftWorkOrdersProps) {
+  const validDate = validateDate(date)
+  if (!validDate) {
+    throw new ServiceError({
+      status: 400,
+      message:
+        'La fecha indicada es inválida el formato para la fecha es "MM/DD/YYYY" o "MM/DD/YYYY HH:mm:ss"',
+    })
+  }
 
-export async function getDraftWorkOrders<
-  T extends DraftWorkOrderFindManyArgs,
-  S extends PromiseArray<DraftWorkOrderResponseDto>,
-  U extends PromiseArray<DraftWorkOrderGetPayload<T>>
->(
-  { year, month, day }: GetDraftWorkOrdersProps,
-  config?: T
-): ReturnCheck<T, S, U> {
-  const { gte, lte } = RANGES['WEEKLY'](year, month, day)
-
-  const defaultConfig = getFindManyArgsConfig<DraftWorkOrderFindManyArgs>(
-    {
-      where: { plannedDay: { gte, lte }, isCreated: false },
-      orderBy: { plannedDay: 'asc' },
-    },
-    config
+  const { gte, lte } = RANGES['WEEKLY'](
+    validDate.getFullYear(),
+    validDate.getMonth(),
+    validDate.getDate()
   )
 
   const draftWorkOrders = await prisma.draftWorkOrder.findMany({
-    ...defaultConfig,
-    include: {
-      ...config?.include,
-      machine: { select: { name: true } },
-      activity: { select: { name: true } },
-      workOrder: { select: { priority: true } },
-    },
-  })
-
-  return draftWorkOrders.map(
-    ({
-      machine: { name: machineName },
-      activity: { name: activityName },
-      workOrder: { priority },
-      ...rest
-    }) => ({ machineName, activityName, priority, ...rest })
-  ) as never as CheckSelect<T, S, U>
-}
-
-interface CreateDraftWorkOrderProps {
-  machineCode: string
-  activity: Activity
-  workOrderCode: number
-}
-
-export async function createDraftWorkOrder<
-  T extends CreateArgsType<DraftWorkOrderCreateArgs>,
-  S extends DraftWorkOrderClient<DraftWorkOrderResponseDto>,
-  P extends DraftWorkOrderGetPayload<T>,
-  U extends DraftWorkOrderClient<P>
->(
-  { activity, machineCode, workOrderCode }: CreateDraftWorkOrderProps,
-  config?: T
-): ReturnCheck<T, S, U> {
-  const { code: activityCode, frequency } = activity
-  if (!frequency) {
-    return null as never
-  }
-  const plannedDay = getDateBoliviaTimeZone()
-  plannedDay.setHours(plannedDay.getHours() + frequency)
-
-  const defaultConfig = getCreateArgsConfig<DraftWorkOrderCreateArgs>(
-    {
-      data: { plannedDay, activityCode, machineCode, workOrderCode },
-    },
-    config
-  )
-
-  const createdDraftWorkOrder = await prisma.draftWorkOrder.create({
-    ...defaultConfig,
-    include: {
-      ...config?.include,
-      machine: { select: { name: true } },
-      activity: { select: { name: true } },
-      workOrder: { select: { priority: true } },
-    },
-  })
-
-  const {
-    machine: { name: machineName },
-    activity: { name: activityName },
-    workOrder: { priority },
-    ...draftWorkOrder
-  } = createdDraftWorkOrder
-
-  return {
-    ...draftWorkOrder,
-    machineName,
-    activityName,
-    priority,
-  } as never as CheckSelect<T, S, U>
-}
-
-export async function createWorkOrderFromDraftWorkOrder(
-  draftWorkOrderCode: number,
-  createWorkOrderFromDraftWorkOrder: CreateWorkOrderFromDraftWorkOrderDto
-) {
-  const draftWorkOrder = await prisma.draftWorkOrder.findUnique({
-    where: { code: draftWorkOrderCode },
-    include: {
+    where: { plannedDay: { gte, lte } },
+    orderBy: { plannedDay: 'asc' },
+    select: {
+      code: true,
+      plannedDay: true,
       workOrder: {
         select: {
-          machineCode: true,
-          engineCode: true,
-          activityCode: true,
-          activityType: true,
+          priority: true,
+          activity: { select: { name: true } },
+          machine: { select: { name: true } },
         },
       },
     },
   })
 
-  if (!draftWorkOrder) {
-    throw new ServiceError({
-      status: 404,
-      message: `La órden de trabajo en borrador con el código ${draftWorkOrderCode} no existe`,
+  return draftWorkOrders.map(
+    ({ workOrder: { priority, activity, machine }, ...draftWorkOrder }) => ({
+      ...draftWorkOrder,
+      priority,
+      activity,
+      machine,
     })
+  )
+}
+
+interface CreateDraftWorkOrderProps {
+  createDraftWorkOrderDto: {
+    currentDate: Date
+    frequency: number | null
+    workOrderCode: number
+  }
+}
+export async function createDraftWorkOrder({
+  createDraftWorkOrderDto,
+}: CreateDraftWorkOrderProps) {
+  const { currentDate, frequency, workOrderCode } = createDraftWorkOrderDto
+  if (!frequency) {
+    return
   }
 
-  const { workOrder } = draftWorkOrder
-  const newWorkOrder = await workOrderService.createWorkOrder({
-    createWorkOrderDto: {
-      activityType: workOrder.activityType,
-      machineCode: workOrder.machineCode,
-      priority: createWorkOrderFromDraftWorkOrder.priority,
-      activityCode: workOrder.activityCode ?? undefined,
-      engineCode: workOrder.engineCode ?? undefined,
+  const plannedDay = new Date(currentDate)
+  plannedDay.setHours(currentDate.getHours() + frequency)
+
+  const createdDraftWorkOrder = await prisma.draftWorkOrder.create({
+    data: { plannedDay, workOrderCode },
+    select: {
+      code: true,
+      plannedDay: true,
+      workOrder: {
+        select: {
+          priority: true,
+          activity: { select: { name: true } },
+          machine: { select: { name: true } },
+        },
+      },
     },
   })
 
-  await prisma.draftWorkOrder.delete({ where: { code: draftWorkOrderCode } })
+  const {
+    workOrder: { priority, activity, machine },
+    ...draftWorkOrder
+  } = createdDraftWorkOrder
 
-  return newWorkOrder
+  return {
+    ...draftWorkOrder,
+    priority,
+    activity,
+    machine,
+  }
 }
 
-export async function deleteDraftWorkOrderByCode(draftWorkOrderCode: number) {
-  await prisma.draftWorkOrder.delete({ where: { code: draftWorkOrderCode } })
+interface CreateWorkOrderFromDraftWorkOrderProps {
+  id: number
+  createWorkOrderFromDraftWorkOrder: CreateWorkOrderFromDraftWorkOrderDto
+}
+export async function createWorkOrderFromDraftWorkOrder({
+  id,
+  createWorkOrderFromDraftWorkOrder,
+}: CreateWorkOrderFromDraftWorkOrderProps) {
+  try {
+    const draftWorkOrder = await prisma.draftWorkOrder.findUnique({
+      where: { code: id },
+      select: {
+        workOrder: {
+          select: {
+            machineCode: true,
+            engineCode: true,
+            activityCode: true,
+            activityType: true,
+          },
+        },
+      },
+    })
+    if (!draftWorkOrder) {
+      throw new ServiceError({
+        status: 404,
+        message: `La órden de trabajo en borrador con el código ${id} no existe`,
+      })
+    }
+    const { workOrder } = draftWorkOrder
+    const newWorkOrder = await workOrderService.createWorkOrder({
+      createWorkOrderDto: {
+        activityType: workOrder.activityType,
+        machineCode: workOrder.machineCode,
+        priority: createWorkOrderFromDraftWorkOrder.priority,
+        activityCode: workOrder.activityCode ?? undefined,
+        engineCode: workOrder.engineCode ?? undefined,
+      },
+    })
+    await prisma.draftWorkOrder.delete({ where: { code: id } })
+    return newWorkOrder
+  } catch (error) {
+    if (error instanceof ServiceError) {
+      throw error
+    }
+    throw new ServiceError({ status: 500 })
+  }
+}
+
+interface DeleteDraftWorkOrderByIdProps {
+  id: number
+}
+export async function deleteDraftWorkOrderByCode({
+  id,
+}: DeleteDraftWorkOrderByIdProps) {
+  try {
+    const { code } = await prisma.draftWorkOrder.delete({
+      where: { code: id },
+    })
+    return { code }
+  } catch (error) {
+    if (
+      error instanceof PrismaClientKnownRequestError &&
+      error.code === 'P2025'
+    ) {
+      throw new ServiceError({
+        status: 404,
+        message: `La órden de trabjo en borrador #${id} no existe`,
+      })
+    }
+    throw new ServiceError({ status: 500 })
+  }
 }
