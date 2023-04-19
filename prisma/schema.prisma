@@ -28,7 +28,6 @@ model Machine {
   checkList              CheckList[]
   createdAt              DateTime                 @default(now())
   updatedAt              DateTime                 @default(now()) @updatedAt
-  DraftWorkOrder         DraftWorkOrder[]
 }
 
 model CheckList {
@@ -73,18 +72,17 @@ model Engine {
 }
 
 model Activity {
-  code           String           @id @default(uuid())
-  machine        Machine          @relation(fields: [machineCode], references: [code])
-  machineCode    String
-  name           String
-  frequency      Int?
-  activityType   ActivityType
-  pem            String?
-  state          State            @default(ACTIVE)
-  workOrders     WorkOrder[]
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @default(now()) @updatedAt
-  DraftWorkOrder DraftWorkOrder[]
+  code         String       @id @default(uuid())
+  machine      Machine      @relation(fields: [machineCode], references: [code])
+  machineCode  String
+  name         String
+  frequency    Int?
+  activityType ActivityType
+  pem          String?
+  state        State        @default(ACTIVE)
+  workOrders   WorkOrder[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @default(now()) @updatedAt
 }
 
 model WorkOrder {
@@ -122,14 +120,9 @@ model WorkOrder {
 
 model DraftWorkOrder {
   code          Int       @id @default(autoincrement())
-  machine       Machine   @relation(fields: [machineCode], references: [code])
-  machineCode   String
-  activity      Activity  @relation(fields: [activityCode], references: [code])
-  activityCode  String
-  plannedDay    DateTime
   workOrder     WorkOrder @relation(fields: [workOrderCode], references: [code])
   workOrderCode Int       @unique
-  isCreated     Boolean   @default(false)
+  plannedDay    DateTime
 }
 
 model CheckListVerified {

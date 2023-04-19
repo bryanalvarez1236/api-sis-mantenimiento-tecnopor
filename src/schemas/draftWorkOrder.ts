@@ -14,7 +14,7 @@ const workOrderFromDraftWorkOrderShapeCreate = {
   }),
 }
 
-const createWorkOrderFromDraftWorkOrderDto = z.object(
+export const createWorkOrderFromDraftWorkOrderDto = z.object(
   workOrderFromDraftWorkOrderShapeCreate
 )
 

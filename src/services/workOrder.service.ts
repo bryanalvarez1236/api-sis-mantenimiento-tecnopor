@@ -13,14 +13,15 @@ import * as engineService from './engine.service'
 import * as activityService from './activity.service'
 import * as draftWorkOrderService from './draftWorkOrder.service'
 import { PrismaClientValidationError } from '@prisma/client/runtime'
+import { validateDate } from '../libs/date'
 
 export const RANGES = {
   WEEKLY: (year: number, month: number, day: number) => {
     const weekDay = new Date(year, month, day).getDay()
-    const monday = day - weekDay + 1
-    const sunday = monday + 6
-    const gte = new Date(year, month, monday)
-    const lte = new Date(year, month, sunday, 23, 59, 59)
+    const firstWeekDay = day - weekDay
+    const lastWeekDay = firstWeekDay + 6
+    const gte = new Date(year, month, firstWeekDay)
+    const lte = new Date(year, month, lastWeekDay, 23, 59, 59)
     return { gte, lte }
   },
   MONTHLY: (year: number, month: number) => {
@@ -81,17 +82,18 @@ interface GetWorkOrdersProps {
   date?: string
 }
 export async function getWorkOrders({ date }: GetWorkOrdersProps) {
-  if (date == null || !/^(\d{1,2}\/){2}\d{4}$/.test(date)) {
+  const validDate = validateDate(date)
+  if (!validDate) {
     throw new ServiceError({
       status: 400,
-      message: 'La fecha indicada es inválida',
+      message:
+        'La fecha indicada es inválida el formato para la fecha es "MM/DD/YYYY" o "MM/DD/YYYY HH:mm:ss"',
     })
   }
 
-  const userDate = new Date(date)
   const { gte, lte } = RANGES.MONTHLY(
-    userDate.getFullYear(),
-    userDate.getMonth()
+    validDate.getFullYear(),
+    validDate.getMonth()
   )
 
   const workOrders = await prisma.workOrder.findMany({
@@ -227,7 +229,6 @@ export async function updateWorkOrderById({
   const {
     activityType,
     code,
-    machineCode,
     nextState: nextState,
   } = await getWorkOrderById({ id })
 
@@ -268,11 +269,11 @@ export async function updateWorkOrderById({
           activityType === 'PLANNED_PREVENTIVE',
       },
     })
-    if (activity != null) {
+    if (activity != null && updateWorkOrderDto.endDate != null) {
+      const { frequency } = activity
+      const { endDate: currentDate } = updateWorkOrderDto
       await draftWorkOrderService.createDraftWorkOrder({
-        activity,
-        machineCode,
-        workOrderCode: code,
+        createDraftWorkOrderDto: { currentDate, frequency, workOrderCode: id },
       })
     }
     const {

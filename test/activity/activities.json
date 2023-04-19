@@ -1,0 +1,35 @@
+[
+  {
+    "code": "1",
+    "machineCode": "CB-01-PRX-01",
+    "name": "ORDEN DE TRABAJO PASADA COMPLETADA",
+    "frequency": 8640,
+    "activityType": "PERIODIC_MAINTENANCE",
+    "pem": null,
+    "state": "ACTIVE",
+    "createdAt": "2023-04-16T04:00:00.000Z",
+    "updatedAt": "2023-04-16T04:00:00.000Z"
+  },
+  {
+    "code": "2",
+    "machineCode": "CB-01-PRX-01",
+    "name": "ORDEN DE TRABAJO PENDIENTE",
+    "frequency": 8640,
+    "activityType": "PERIODIC_MAINTENANCE",
+    "pem": null,
+    "state": "ACTIVE",
+    "createdAt": "2023-04-16T04:00:00.000Z",
+    "updatedAt": "2023-04-16T04:00:00.000Z"
+  },
+  {
+    "code": "3",
+    "machineCode": "CB-01-PRX-01",
+    "name": "ACTIVIDAD DE MANTENIMIENTO PERIODICO",
+    "frequency": 8640,
+    "activityType": "PERIODIC_MAINTENANCE",
+    "pem": null,
+    "state": "ACTIVE",
+    "createdAt": "2023-04-16T04:00:00.000Z",
+    "updatedAt": "2023-04-16T04:00:00.000Z"
+  }
+]
