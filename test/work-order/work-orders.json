@@ -20,8 +20,9 @@
     "securityMeasureEnds": [],
     "observations": null,
     "state": "DONE",
+    "daySchedule": "2023-01-02T12:00:00.000Z",
     "createdAt": "2023-01-01T04:00:00.000Z",
-    "updatedAt": "2023-01-01T04:00:00.000Z"
+    "updatedAt": "2023-01-02T14:00:00.000Z"
   },
   {
     "code": 2,
@@ -44,6 +45,7 @@
     "securityMeasureEnds": [],
     "observations": null,
     "state": "PLANNED",
+    "onSchedule": true,
     "createdAt": "2023-01-01T04:00:00.000Z",
     "updatedAt": "2023-01-01T04:00:00.000Z"
   },
@@ -70,5 +72,24 @@
     "state": "PLANNED",
     "createdAt": "2023-04-16T04:00:00.000Z",
     "updatedAt": "2023-04-16T04:00:00.000Z"
+  },
+  {
+    "code": 4,
+    "machineCode": "CB-01-PRX-01",
+    "activityType": "INSPECTION",
+    "priority": "NORMAL",
+    "activityName": "INSPECCION",
+    "daySchedule": "2023-04-19T14:00:00.000Z",
+    "createdAt": "2023-04-18T03:59:59.000Z",
+    "updatedAt": "2023-04-18T03:59:59.000Z"
+  },
+  {
+    "code": 5,
+    "machineCode": "CB-01-PRX-01",
+    "activityType": "CONDITION_CHECK",
+    "priority": "IMPORTANT",
+    "activityName": "ACTIVIDAD DE MANTENIMIENTO PERIODICO",
+    "createdAt": "2023-04-22T03:59:59.000Z",
+    "updatedAt": "2023-04-22T03:59:59.000Z"
   }
 ]

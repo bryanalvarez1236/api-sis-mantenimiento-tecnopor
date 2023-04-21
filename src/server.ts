@@ -9,6 +9,7 @@ import workOrderRouter, { workOrderRoute } from './routes/workOrder.routes'
 import draftWorkOrderRouter, {
   draftWorkOrderRoute,
 } from './routes/draftWorkOrder.route'
+import scheduleRouter, { scheduleRoute } from './routes/schedule.routes'
 
 export class Server {
   private app: Application
@@ -38,6 +39,7 @@ export class Server {
     this.app.use(this.createRoute(activityRoute), activityRouter)
     this.app.use(this.createRoute(draftWorkOrderRoute), draftWorkOrderRouter)
     this.app.use(this.createRoute(workOrderRoute), workOrderRouter)
+    this.app.use(this.createRoute(scheduleRoute), scheduleRouter)
   }
 
   private createRoute(route: string) {

@@ -112,6 +112,9 @@ model WorkOrder {
   securityMeasureEnds   WorkOrderSecurityMeasureEnd[]
   observations          String?
   state                 WorkOrderState                  @default(PLANNED)
+  // schedule
+  daySchedule           DateTime?
+  onSchedule            Boolean?
   checkListVerified     CheckListVerified[]
   draftWorkOrder        DraftWorkOrder?
   createdAt             DateTime                        @default(now())
