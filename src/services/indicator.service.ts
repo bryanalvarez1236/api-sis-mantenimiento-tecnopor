@@ -61,14 +61,13 @@ export async function getIndicators({ date, strict }: GetIndicatorsProps) {
           hours: 0,
           workOrders: [],
         }
-        if (totalHours != null) {
-          groupByMachine.hours += totalHours
-          const { workOrders } = groupByMachine
-          groupByMachine.workOrders = [
-            ...workOrders,
-            { ...workOrder, totalHours: totalHours ?? undefined },
-          ]
-        }
+
+        groupByMachine.hours += totalHours ?? 0
+        const { workOrders } = groupByMachine
+        groupByMachine.workOrders = [
+          ...workOrders,
+          { ...workOrder, totalHours: totalHours ?? undefined },
+        ]
         acc[machineCode] = groupByMachine
         return acc
       },
@@ -79,7 +78,7 @@ export async function getIndicators({ date, strict }: GetIndicatorsProps) {
       totalHours: groups
         .map(({ hours }) => hours)
         .reduce<number>((acc, value) => acc + value, 0),
-      groups,
+      groups: groups.sort((group1, group2) => group2.hours - group1.hours),
     }
     return result
   } catch (error) {

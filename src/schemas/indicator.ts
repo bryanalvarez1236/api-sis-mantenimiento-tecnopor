@@ -8,8 +8,10 @@ export interface ResponseWorkOrderGroupByMachineDto {
 }
 export interface MachineGroupDto extends Pick<Machine, 'code' | 'name'> {
   hours: number
-  workOrders: Pick<
-    WorkOrder,
-    'code' | 'state' | 'activityType' | 'totalHours' | 'activityName'
-  >[]
+  workOrders: WorkOrderGroupDto[]
+}
+
+interface WorkOrderGroupDto
+  extends Pick<WorkOrder, 'code' | 'state' | 'activityType' | 'activityName'> {
+  totalHours?: number | null
 }
