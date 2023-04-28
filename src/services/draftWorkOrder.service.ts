@@ -11,13 +11,6 @@ interface GetDraftWorkOrdersProps {
 }
 export async function getDraftWorkOrders({ date }: GetDraftWorkOrdersProps) {
   const validDate = validateDate(date)
-  if (!validDate) {
-    throw new ServiceError({
-      status: 400,
-      message:
-        'La fecha indicada es inválida el formato para la fecha es "MM/DD/YYYY" o "MM/DD/YYYY HH:mm:ss"',
-    })
-  }
 
   const { gte, lte } = RANGES['WEEKLY'](
     validDate.getFullYear(),
