@@ -10,6 +10,7 @@ import draftWorkOrderRouter, {
   draftWorkOrderRoute,
 } from './routes/draftWorkOrder.route'
 import scheduleRouter, { scheduleRoute } from './routes/schedule.routes'
+import indicatorRouter, { INDICATOR_ROUTE } from './routes/indicator.routes'
 
 export class Server {
   private app: Application
@@ -40,6 +41,7 @@ export class Server {
     this.app.use(this.createRoute(draftWorkOrderRoute), draftWorkOrderRouter)
     this.app.use(this.createRoute(workOrderRoute), workOrderRouter)
     this.app.use(this.createRoute(scheduleRoute), scheduleRouter)
+    this.app.use(this.createRoute(INDICATOR_ROUTE), indicatorRouter)
   }
 
   private createRoute(route: string) {
