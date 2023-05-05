@@ -22,6 +22,8 @@ export const MAINTENANCE_REQUEST_ROUTES = {
       machineCode
     )}`,
   base: `${serverRoute}${MAINTENANCE_REQUEST_ROUTE}`,
+  baseWithId: (id: string) =>
+    `${serverRoute}${MAINTENANCE_REQUEST_ROUTE}/${id}`,
 }
 
 export const MACHINE_CODE = FIRST_MACHINE.code

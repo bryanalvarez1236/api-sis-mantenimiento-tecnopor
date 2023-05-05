@@ -1,3 +1,4 @@
+import { PrismaClientValidationError } from '@prisma/client/runtime'
 import { ServiceError } from '.'
 import prisma from '../libs/db'
 import { CreateMaintenanceRequestDto } from '../schemas/maintenanceRequest'
@@ -45,6 +46,37 @@ export async function getMaintenanceRequest() {
       orderBy: { createdAt: 'desc' },
     })
   } catch (error) {
+    throw new ServiceError({ status: 500 })
+  }
+}
+
+export async function verifyMaintenanceRequest(id: number) {
+  try {
+    const foundMaintenaceRequest = await prisma.maintenanceRequest.findUnique({
+      where: { id },
+    })
+    if (foundMaintenaceRequest == null) {
+      throw new ServiceError({
+        status: 404,
+        message: `La solicitud de mantenimiento con el id '${id}' no existe`,
+      })
+    }
+    const updated = await prisma.maintenanceRequest.update({
+      data: { verified: true },
+      where: { id },
+      select: { id: true },
+    })
+    return updated
+  } catch (error) {
+    if (error instanceof ServiceError) {
+      throw error
+    }
+    if (error instanceof PrismaClientValidationError) {
+      throw new ServiceError({
+        status: 400,
+        message: 'El id de la solicitud de mantenimiento debe ser un número',
+      })
+    }
     throw new ServiceError({ status: 500 })
   }
 }
