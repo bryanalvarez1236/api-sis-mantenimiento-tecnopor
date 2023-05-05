@@ -1,18 +1,27 @@
+import { MaintenanceRequest } from '@prisma/client'
 import { machineRoute } from '../../src/routes/machine.routes'
-import { MAINTENANCE_REQUEST_ROUTE } from '../../src/routes/maintenanceRequest.route'
+import {
+  MAINTENANCE_REQUEST_ROUTE,
+  MAINTENANCE_REQUEST_WITH_MACHINE_ROUTE,
+} from '../../src/routes/maintenanceRequest.route'
 import {
   CreateMaintenanceRequestDto,
   MaintenanceRequestResponseDto,
 } from '../../src/schemas/maintenanceRequest'
 import { serverRoute } from '../helpers/api'
 import { FIRST_MACHINE } from '../machine/helpers'
+import maintenanceRequestData from './maintenanceRequests.json'
+
+export const maintenanceRequests: MaintenanceRequest[] =
+  maintenanceRequestData as never as MaintenanceRequest[]
 
 export const MAINTENANCE_REQUEST_ROUTES = {
-  base: (machineCode: string) =>
-    `${serverRoute}${machineRoute}${MAINTENANCE_REQUEST_ROUTE.replace(
+  baseWithMachine: (machineCode: string) =>
+    `${serverRoute}${machineRoute}${MAINTENANCE_REQUEST_WITH_MACHINE_ROUTE.replace(
       ':machineCode',
       machineCode
     )}`,
+  base: `${serverRoute}${MAINTENANCE_REQUEST_ROUTE}`,
 }
 
 export const MACHINE_CODE = FIRST_MACHINE.code
@@ -26,3 +35,13 @@ export const CREATED_MAINTENANCE_REQUEST_RESPONSE_DTO: MaintenanceRequestRespons
     machine: { name: FIRST_MACHINE.name },
     createdAt: new Date(),
   }
+
+export const ALL_MAINTENANCE_REQUESTS: MaintenanceRequestResponseDto[] =
+  maintenanceRequests
+    .filter(({ verified }) => !verified)
+    .map(({ id, description, createdAt }) => ({
+      id,
+      description,
+      createdAt,
+      machine: { name: FIRST_MACHINE.name },
+    }))

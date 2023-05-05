@@ -31,3 +31,20 @@ export async function createMaintenanceRequest({
     throw new ServiceError({ status: 500 })
   }
 }
+
+export async function getMaintenanceRequest() {
+  try {
+    return await prisma.maintenanceRequest.findMany({
+      where: { verified: false },
+      select: {
+        id: true,
+        description: true,
+        createdAt: true,
+        machine: { select: { name: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    })
+  } catch (error) {
+    throw new ServiceError({ status: 500 })
+  }
+}

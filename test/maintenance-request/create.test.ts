@@ -20,7 +20,7 @@ beforeEach(async () => {
 describe('Maintenance Request EndPoint => POST', () => {
   test('POST: invalid body', async () => {
     await api
-      .post(MAINTENANCE_REQUEST_ROUTES.base(MACHINE_CODE))
+      .post(MAINTENANCE_REQUEST_ROUTES.baseWithMachine(MACHINE_CODE))
       .set('Accept', 'application/json')
       .send({})
       .expect('Content-Type', /json/)
@@ -29,7 +29,7 @@ describe('Maintenance Request EndPoint => POST', () => {
   test('POST: machine does not exist', async () => {
     const machineCode = 'CB-00-PRX-00'
     const { body } = await api
-      .post(MAINTENANCE_REQUEST_ROUTES.base(machineCode))
+      .post(MAINTENANCE_REQUEST_ROUTES.baseWithMachine(machineCode))
       .set('Accept', 'application/json')
       .send(CREATE_MAINTENANCE_REQUEST_DTO)
       .expect('Content-Type', /json/)
@@ -40,7 +40,7 @@ describe('Maintenance Request EndPoint => POST', () => {
   })
   test('POST: create a new maintenance request', async () => {
     const { body } = await api
-      .post(MAINTENANCE_REQUEST_ROUTES.base(MACHINE_CODE))
+      .post(MAINTENANCE_REQUEST_ROUTES.baseWithMachine(MACHINE_CODE))
       .set('Accept', 'application/json')
       .send(CREATE_MAINTENANCE_REQUEST_DTO)
       .expect('Content-Type', /json/)
