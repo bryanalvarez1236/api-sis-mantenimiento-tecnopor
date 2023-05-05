@@ -24,4 +24,5 @@ export const CREATED_MAINTENANCE_REQUEST_RESPONSE_DTO: MaintenanceRequestRespons
     ...CREATE_MAINTENANCE_REQUEST_DTO,
     id: 1,
     machine: { name: FIRST_MACHINE.name },
+    createdAt: new Date(),
   }

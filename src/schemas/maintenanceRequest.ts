@@ -21,6 +21,6 @@ export type CreateMaintenanceRequestDto = z.infer<
 >
 
 export interface MaintenanceRequestResponseDto
-  extends Pick<MaintenanceRequest, 'id' | 'description'> {
+  extends Pick<MaintenanceRequest, 'id' | 'description' | 'createdAt'> {
   machine: Pick<Machine, 'name'>
 }

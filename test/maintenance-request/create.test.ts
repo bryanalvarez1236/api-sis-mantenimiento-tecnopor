@@ -48,6 +48,7 @@ describe('Maintenance Request EndPoint => POST', () => {
     expect(body).toEqual({
       ...CREATED_MAINTENANCE_REQUEST_RESPONSE_DTO,
       id: body.id,
+      createdAt: body.createdAt,
     })
   })
 })

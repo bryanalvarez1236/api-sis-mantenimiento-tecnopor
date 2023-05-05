@@ -24,7 +24,7 @@ export async function createMaintenanceRequest({
   try {
     const created = await prisma.maintenanceRequest.create({
       data: { ...createDto, machineCode },
-      select: { id: true, description: true },
+      select: { id: true, description: true, createdAt: true },
     })
     return { ...created, machine }
   } catch (error) {

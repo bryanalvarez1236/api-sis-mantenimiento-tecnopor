@@ -139,11 +139,12 @@ model CheckListVerified {
 }
 
 model MaintenanceRequest {
-  id          Int     @id @default(autoincrement())
-  machine     Machine @relation(fields: [machineCode], references: [code])
+  id          Int      @id @default(autoincrement())
+  machine     Machine  @relation(fields: [machineCode], references: [code])
   machineCode String
   description String
-  verified    Boolean @default(false)
+  verified    Boolean  @default(false)
+  createdAt   DateTime @default(now())
 }
 
 enum State {
