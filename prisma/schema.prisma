@@ -26,6 +26,7 @@ model Machine {
   activities             Activity[]
   workOrder              WorkOrder[]
   checkList              CheckList[]
+  MaintenanceRequest     MaintenanceRequest[]
   createdAt              DateTime                 @default(now())
   updatedAt              DateTime                 @default(now()) @updatedAt
 }
@@ -135,6 +136,14 @@ model CheckListVerified {
   field         String
   options       String[]
   value         String?
+}
+
+model MaintenanceRequest {
+  id          Int     @id @default(autoincrement())
+  machine     Machine @relation(fields: [machineCode], references: [code])
+  machineCode String
+  description String
+  verified    Boolean @default(false)
 }
 
 enum State {

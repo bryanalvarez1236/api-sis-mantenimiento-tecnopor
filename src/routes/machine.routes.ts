@@ -15,6 +15,7 @@ import { transformBody } from '../middlewares/machine.middlewares'
 import { validateBody } from '../middlewares/validate'
 import { createEngineDto, updateEngineDto } from '../schemas/engine'
 import { createMachineDto, updateMachineDto } from '../schemas/machine'
+import { mergeMaintenanceRequestRouter } from './maintenanceRequest.route'
 
 export const machineRoute = '/machines'
 export const engineRoute = (machineCode?: string) =>
@@ -45,5 +46,7 @@ machineRouter.put(
   validateBody(updateEngineDto),
   updateEngineByCode
 )
+
+mergeMaintenanceRequestRouter(machineRouter)
 
 export default machineRouter
