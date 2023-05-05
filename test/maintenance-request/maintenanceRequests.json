@@ -1,0 +1,21 @@
+[
+  {
+    "id": 1,
+    "machineCode": "CB-01-PRX-01",
+    "description": "Solicitud de mantenimiento de la PRE EXPANSORA",
+    "createdAt": "2023-05-05T18:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "machineCode": "CB-01-PRX-01",
+    "description": "Se requiere hacer el mantenimiento correctivo",
+    "createdAt": "2023-05-05T04:00:00.000Z"
+  },
+  {
+    "id": 3,
+    "machineCode": "CB-01-PRX-01",
+    "description": "Ya realizado",
+    "verified": true,
+    "createdAt": "2023-04-05T04:00:00.000Z"
+  }
+]
