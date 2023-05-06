@@ -4,6 +4,7 @@ import { createFailureReportDto } from '../schemas/failureReport'
 import {
   createFailureReport,
   getFailureReports,
+  verifyFailureReport,
 } from '../controllers/failureReport.controllers'
 import { failureReportTransformBody } from '../middlewares/failureReport.middlewares'
 
@@ -22,5 +23,6 @@ export const FAILURE_REPORT_ROUTE = '/failure-report'
 const failureReportRouter = Router()
 
 failureReportRouter.get('/', getFailureReports)
+failureReportRouter.patch('/:id', verifyFailureReport)
 
 export default failureReportRouter

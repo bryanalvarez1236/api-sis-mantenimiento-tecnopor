@@ -31,3 +31,17 @@ export async function getFailureReports(_req: Request, res: Response) {
     return res.status(status).json({ message })
   }
 }
+
+export async function verifyFailureReport(
+  req: Request<{ id: string }>,
+  res: Response
+) {
+  const { id } = req.params
+  try {
+    const response = await failureReportService.verifyFailureReport(+id)
+    return res.json(response)
+  } catch (error) {
+    const { status, message } = error as ThrowError
+    return res.status(status).json({ message })
+  }
+}

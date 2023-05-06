@@ -24,6 +24,7 @@ export const FAILURE_REPORT_ROUTES = {
       machineCode
     )}`,
   base: `${serverRoute}${FAILURE_REPORT_ROUTE}`,
+  baseWithId: (id: string) => `${serverRoute}${FAILURE_REPORT_ROUTE}/${id}`,
 }
 
 export const MACHINE_CODE = FIRST_MACHINE.code

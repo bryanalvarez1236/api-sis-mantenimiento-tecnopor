@@ -7,6 +7,7 @@ import {
   FailureReportResponseDto,
 } from '../schemas/failureReport'
 import { deleteFile, uploadFailureReportImage } from '../libs/cloudinary'
+import { PrismaClientValidationError } from '@prisma/client/runtime'
 
 interface CreateFailureReportData extends CreateFailureReportDto {
   machineCode: string
@@ -85,6 +86,36 @@ export async function getFailureReports() {
       orderBy: { createdAt: 'desc' },
     })
   } catch (error) {
+    throw new ServiceError({ status: 500 })
+  }
+}
+
+export async function verifyFailureReport(id: number) {
+  try {
+    const foundFailureReport = await prisma.failureReport.findUnique({
+      where: { id },
+    })
+    if (foundFailureReport == null) {
+      throw new ServiceError({
+        status: 404,
+        message: `El reporte de falla con el id '${id}' no existe`,
+      })
+    }
+    return await prisma.failureReport.update({
+      data: { verified: true },
+      where: { id },
+      select: { id: true },
+    })
+  } catch (error) {
+    if (error instanceof ServiceError) {
+      throw error
+    }
+    if (error instanceof PrismaClientValidationError) {
+      throw new ServiceError({
+        status: 400,
+        message: 'El id del reporte de falla debe ser un número',
+      })
+    }
     throw new ServiceError({ status: 500 })
   }
 }
