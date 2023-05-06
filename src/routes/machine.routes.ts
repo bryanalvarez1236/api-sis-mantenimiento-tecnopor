@@ -16,6 +16,7 @@ import { validateBody } from '../middlewares/validate'
 import { createEngineDto, updateEngineDto } from '../schemas/engine'
 import { createMachineDto, updateMachineDto } from '../schemas/machine'
 import { mergeMaintenanceRequestRouter } from './maintenanceRequest.route'
+import { mergeFailureReportRouter } from './failureReport.route'
 
 export const machineRoute = '/machines'
 export const engineRoute = (machineCode?: string) =>
@@ -48,5 +49,6 @@ machineRouter.put(
 )
 
 mergeMaintenanceRequestRouter(machineRouter)
+mergeFailureReportRouter(machineRouter)
 
 export default machineRouter
