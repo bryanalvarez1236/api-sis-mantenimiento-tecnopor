@@ -26,7 +26,8 @@ model Machine {
   activities             Activity[]
   workOrder              WorkOrder[]
   checkList              CheckList[]
-  MaintenanceRequest     MaintenanceRequest[]
+  maintenanceRequests    MaintenanceRequest[]
+  failureReports         FailureReport[]
   createdAt              DateTime                 @default(now())
   updatedAt              DateTime                 @default(now()) @updatedAt
 }
@@ -147,6 +148,27 @@ model MaintenanceRequest {
   createdAt   DateTime @default(now())
 }
 
+model FailureReport {
+  id                Int                 @id @default(autoincrement())
+  machine           Machine             @relation(fields: [machineCode], references: [code])
+  machineCode       String
+  systemFailedState SystemFailedState
+  description       String
+  operatorName      String
+  stopHours         Int
+  image             FailureReportImage?
+  verified          Boolean             @default(false)
+  createdAt         DateTime            @default(now())
+}
+
+model FailureReportImage {
+  id              Int           @id @default(autoincrement())
+  failureReport   FailureReport @relation(fields: [failureReportId], references: [id])
+  failureReportId Int           @unique
+  publicId        String
+  url             String
+}
+
 enum State {
   ACTIVE
   INNACTIVE
@@ -232,4 +254,13 @@ enum WorkOrderProtectionEquipment {
   ACOUSTIC_PROTECTORS
   SECURITY_BOOTS
   OTHERS
+}
+
+enum SystemFailedState {
+  ELECTRIC
+  MECHANIC
+  HYDRAULIC
+  STEAM
+  TIRE
+  OTHER
 }

@@ -20,3 +20,11 @@ export async function uploadMachineImage(filePath: string) {
 export async function deleteMachineImage(publicId: string) {
   return await uploader.destroy(publicId)
 }
+
+export async function uploadFailureReportImage(filePath: string) {
+  return await uploader.upload(filePath, { folder: 'failure-reports' })
+}
+
+export async function deleteFile(publicId: string) {
+  return await uploader.destroy(publicId)
+}
