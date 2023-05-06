@@ -14,6 +14,9 @@ import indicatorRouter, { INDICATOR_ROUTE } from './routes/indicator.routes'
 import maintenanceRequestRouter, {
   MAINTENANCE_REQUEST_ROUTE,
 } from './routes/maintenanceRequest.route'
+import failureReportRouter, {
+  FAILURE_REPORT_ROUTE,
+} from './routes/failureReport.route'
 
 export class Server {
   private app: Application
@@ -49,6 +52,7 @@ export class Server {
       this.createRoute(MAINTENANCE_REQUEST_ROUTE),
       maintenanceRequestRouter
     )
+    this.app.use(this.createRoute(FAILURE_REPORT_ROUTE), failureReportRouter)
   }
 
   private createRoute(route: string) {

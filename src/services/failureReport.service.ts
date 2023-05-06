@@ -67,3 +67,24 @@ export async function createFailureReport({
     throw new ServiceError({ status: 500 })
   }
 }
+
+export async function getFailureReports() {
+  try {
+    return await prisma.failureReport.findMany({
+      where: { verified: false },
+      select: {
+        id: true,
+        systemFailedState: true,
+        description: true,
+        operatorName: true,
+        stopHours: true,
+        createdAt: true,
+        image: { select: { url: true } },
+        machine: { select: { name: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+    })
+  } catch (error) {
+    throw new ServiceError({ status: 500 })
+  }
+}

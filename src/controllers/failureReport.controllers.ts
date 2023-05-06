@@ -21,3 +21,13 @@ export async function createFailureReport(
     return res.status(status).json({ message })
   }
 }
+
+export async function getFailureReports(_req: Request, res: Response) {
+  try {
+    const response = await failureReportService.getFailureReports()
+    return res.json(response)
+  } catch (error) {
+    const { status, message } = error as ThrowError
+    return res.status(status).json({ message })
+  }
+}
