@@ -6,8 +6,12 @@ import {
   CreateFailureReportDto,
   FailureReportResponseDto,
 } from '../schemas/failureReport'
-import { deleteFile, uploadFailureReportImage } from '../libs/cloudinary'
-import { PrismaClientValidationError } from '@prisma/client/runtime'
+import { deleteFile, uploadFile } from '../libs/cloudinary'
+import {
+  PrismaClientKnownRequestError,
+  PrismaClientValidationError,
+} from '@prisma/client/runtime'
+import { machineNotFoundMessage } from './machine.service'
 
 interface CreateFailureReportData extends CreateFailureReportDto {
   machineCode: string
@@ -23,30 +27,18 @@ export async function createFailureReport({
   createDto,
   files,
 }: CreateFailureReportProps): Promise<FailureReportResponseDto> {
-  const machine = await prisma.machine.findUnique({
-    where: { code: machineCode },
-    select: { name: true },
-  })
-  if (machine == null) {
-    throw new ServiceError({
-      status: 404,
-      message: `La máquina con el código '${machineCode}' no existe`,
-    })
-  }
   let data: CreateFailureReportData = { ...createDto, machineCode }
+  const { tempFilePath } = (files?.image as UploadedFile) || {}
   try {
     if (files && files.image) {
-      const { tempFilePath } = files.image as UploadedFile
-      const { public_id, secure_url } = await uploadFailureReportImage(
-        tempFilePath
-      )
+      const image = await uploadFile(tempFilePath, 'failure-reports')
       await fs.unlink(tempFilePath)
       data = {
         ...data,
-        image: { create: { publicId: public_id, url: secure_url } },
+        image: { create: image },
       }
     }
-    const created = await prisma.failureReport.create({
+    return await prisma.failureReport.create({
       data,
       select: {
         id: true,
@@ -56,14 +48,29 @@ export async function createFailureReport({
         stopHours: true,
         createdAt: true,
         image: { select: { url: true } },
+        machine: { select: { name: true } },
       },
     })
-    return { ...created, machine }
   } catch (error) {
+    if (tempFilePath != null && fs.existsSync(tempFilePath)) {
+      await fs.unlink(tempFilePath)
+    }
     const { image } = data
     if (image != null) {
       const { publicId } = image.create
       await deleteFile(publicId)
+    }
+    if (error instanceof ServiceError) {
+      throw error
+    }
+    if (
+      error instanceof PrismaClientKnownRequestError &&
+      error.code === 'P2003'
+    ) {
+      throw new ServiceError({
+        status: 404,
+        message: machineNotFoundMessage(machineCode),
+      })
     }
     throw new ServiceError({ status: 500 })
   }

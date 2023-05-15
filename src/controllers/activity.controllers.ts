@@ -1,17 +1,17 @@
 import { Request, Response } from 'express'
 import { ThrowError } from '../services'
 import * as activityService from '../services/activity.service'
+import { CreateActivityDto, UpdateActivityDto } from '../schemas/activity'
 
-export async function getMachineActivitiesByMachineCode(
-  req: Request,
+export async function getMachineActivities(
+  req: Request<never, never, never, { machineCode: string }>,
   res: Response
 ) {
-  const {
-    query: { machineCode },
-  } = req
+  const { machineCode } = req.query
   try {
-    const machineActivities =
-      await activityService.getMachineActivitiesByMachineCode(`${machineCode}`)
+    const machineActivities = await activityService.getMachineActivities({
+      machineCode,
+    })
     return res.json(machineActivities)
   } catch (error) {
     const { message, status } = error as ThrowError
@@ -19,12 +19,13 @@ export async function getMachineActivitiesByMachineCode(
   }
 }
 
-export async function getActivityByCode(req: Request, res: Response) {
-  const {
-    params: { code },
-  } = req
+export async function getActivityByCode(
+  req: Request<{ code: string }>,
+  res: Response
+) {
+  const { code } = req.params
   try {
-    const foundActivity = await activityService.getActivityByCode(code)
+    const foundActivity = await activityService.getActivityByCode({ code })
     return res.json(foundActivity)
   } catch (error) {
     const { message, status } = error as ThrowError
@@ -32,10 +33,15 @@ export async function getActivityByCode(req: Request, res: Response) {
   }
 }
 
-export async function createActivity(req: Request, res: Response) {
+export async function createActivity(
+  req: Request<never, never, CreateActivityDto>,
+  res: Response
+) {
   const { body } = req
   try {
-    const createdActivity = await activityService.createActivity(body)
+    const createdActivity = await activityService.createActivity({
+      createDto: body,
+    })
     return res.status(201).json(createdActivity)
   } catch (error) {
     const { message, status } = error as ThrowError
@@ -43,17 +49,20 @@ export async function createActivity(req: Request, res: Response) {
   }
 }
 
-export async function updateActivityByCode(req: Request, res: Response) {
+export async function updateActivityByCode(
+  req: Request<{ code: string }, never, UpdateActivityDto>,
+  res: Response
+) {
   const {
     body,
     params: { code },
   } = req
 
   try {
-    const updatedActivity = await activityService.updateActivityByCode(
+    const updatedActivity = await activityService.updateActivityByCode({
       code,
-      body
-    )
+      updateDto: body,
+    })
     return res.json(updatedActivity)
   } catch (error) {
     const { message, status } = error as ThrowError
@@ -61,13 +70,14 @@ export async function updateActivityByCode(req: Request, res: Response) {
   }
 }
 
-export async function deleteActivityByCode(req: Request, res: Response) {
-  const {
-    params: { code },
-  } = req
+export async function deleteActivityByCode(
+  req: Request<{ code: string }>,
+  res: Response
+) {
+  const { code } = req.params
 
   try {
-    const deletedActivity = await activityService.deleteActivityByCode(code)
+    const deletedActivity = await activityService.deleteActivityByCode({ code })
     return res.json(deletedActivity)
   } catch (error) {
     const { message, status } = error as ThrowError

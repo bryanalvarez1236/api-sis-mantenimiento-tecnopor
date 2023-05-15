@@ -2,11 +2,17 @@ import { workOrderRoute } from '../../src/routes/workOrder.routes'
 import {
   CreateWorkOrderDto,
   UpdateWorkOrderGeneralDto,
+  getNextState,
 } from '../../src/schemas/workOrder'
 import { serverRoute } from '../helpers/api'
-import { Machine, WorkOrder } from '@prisma/client'
+import type {
+  Area,
+  CheckListVerified,
+  Machine,
+  WorkOrder,
+} from '@prisma/client'
 import workOrderData from './work-orders.json'
-import { FIRST_MACHINE } from '../machine/helpers'
+import { FIRST_MACHINE, areas, machines } from '../machine/helpers'
 
 export const workOrders: WorkOrder[] = workOrderData as unknown as WorkOrder[]
 export const CURRENT_DATE = new Date('2023-04-16')
@@ -15,23 +21,12 @@ const firstDay = FIRST_DATE_MONTH.getTime()
 const LAST_DATE_MONTH = new Date('2023-04-30')
 const lastDay = LAST_DATE_MONTH.getTime()
 
-export const allWorkOrders = workOrders
-  .filter(({ createdAt, state }) => {
-    const date = new Date(createdAt).getTime()
-    const insideRange = date >= firstDay && date <= lastDay
-    const isPending = date < firstDay && state !== 'DONE'
-    return insideRange || isPending
-  })
-  .sort(
-    (w1, w2) =>
-      new Date(w1.createdAt).getTime() - new Date(w2.createdAt).getTime()
-  )
-
 interface WorkOrderResponseDto
   extends Omit<WorkOrder, 'startDate' | 'endDate' | 'createdAt' | 'updatedAt'> {
   startDate: string | null
   endDate: string | null
-  machine?: Pick<Machine, 'code' | 'name' | 'area'>
+  machine?: Pick<Machine, 'name'> & { area: Pick<Area, 'name'> }
+  checkListVerified?: CheckListVerified[]
   createdAt?: string
   updatedAt?: string
 }
@@ -66,6 +61,8 @@ export const PENDING_WORK_ORDER: CreateWorkOrderDto = {
   updatedAt: FIRST_DATE_YEAR,
 }
 export const FIRST_WORK_ORDER = workOrders[0]
+export const FIRST_WORK_ORDER_ID = FIRST_WORK_ORDER.code
+export const SECOND_WORK_ORDER_ID = workOrders[1].code
 export const FIRST_WORK_ORDER_RESPONSE: WorkOrderResponseDto = {
   ...FIRST_WORK_ORDER,
   startDate: FIRST_WORK_ORDER.startDate?.toISOString() ?? null,
@@ -73,46 +70,27 @@ export const FIRST_WORK_ORDER_RESPONSE: WorkOrderResponseDto = {
   createdAt: new Date(FIRST_WORK_ORDER.createdAt).toISOString(),
   updatedAt: new Date(FIRST_WORK_ORDER.updatedAt).toISOString(),
   machine: {
-    code: FIRST_MACHINE.code,
     name: FIRST_MACHINE.name,
-    area: FIRST_MACHINE.area,
+    area: {
+      name: areas.find(({ id }) => id === FIRST_MACHINE.areaId)?.name ?? '',
+    },
   },
+  onSchedule: null,
+  checkListVerified: [],
 }
 
-export const CURRENT_WORK_ORDER = workOrders[2]
+export const CURRENT_WORK_ORDER = workOrders[1]
 export const UPDATE_WORK_ORDER: UpdateWorkOrderGeneralDto = {
   state: 'VALIDATED',
 }
-export const UPDATED_WORK_ORDER_RESPONSE: WorkOrderResponseDto = {
-  ...CURRENT_WORK_ORDER,
-  ...UPDATE_WORK_ORDER,
-  startDate: UPDATE_WORK_ORDER.startDate?.toISOString() ?? null,
-  endDate: UPDATE_WORK_ORDER.endDate?.toISOString() ?? null,
+export const UPDATED_WORK_ORDER_RESPONSE = {
+  code: CURRENT_WORK_ORDER.code,
+  priority: CURRENT_WORK_ORDER.priority,
   createdAt: new Date(CURRENT_WORK_ORDER.createdAt).toISOString(),
-  updatedAt: new Date(CURRENT_WORK_ORDER.updatedAt).toISOString(),
-}
-
-export const PENDING_WORK_ORDER_RESPONSE: WorkOrderResponseDto = {
-  code: 2,
-  ...PENDING_WORK_ORDER,
-  activityName: PENDING_WORK_ORDER.activityName ?? null,
-  activityCode: null,
-  activityDescription: null,
-  engineCode: null,
-  engineFunction: null,
-  failureCause: null,
-  observations: null,
-  protectionEquipments: [],
-  securityMeasureEnds: [],
-  securityMeasureStarts: [],
-  state: 'PLANNED',
-  storeDescription: null,
-  storeUnit: null,
-  startDate: null,
-  endDate: null,
-  totalHours: null,
-  createdAt: FIRST_DATE_YEAR.toISOString(),
-  updatedAt: FIRST_DATE_YEAR.toISOString(),
+  activityName: CURRENT_WORK_ORDER.activityName,
+  machine: { name: FIRST_MACHINE.name },
+  nextState: 'DOING',
+  ...UPDATE_WORK_ORDER,
 }
 
 export const CREATED_WORK_ORDER: CreateWorkOrderDto = {
@@ -150,6 +128,49 @@ export const CREATED_WORK_ORDER_RESPONSE: WorkOrderResponseDto = {
   startDate: null,
   endDate: null,
   totalHours: null,
+  daySchedule: null,
+  onSchedule: null,
   createdAt: CREATE_WORK_ORDER.createdAt?.toISOString(),
   updatedAt: CREATE_WORK_ORDER.updatedAt?.toISOString(),
 }
+
+export const ALL_WORK_ORDERS = workOrders
+  .filter(({ createdAt, state }) => {
+    const date = new Date(createdAt).getTime()
+    const insideRange = date >= firstDay && date <= lastDay
+    const isPending = date < firstDay && state !== 'DONE'
+    return insideRange || isPending
+  })
+  .sort(
+    (w1, w2) =>
+      new Date(w1.createdAt).getTime() - new Date(w2.createdAt).getTime()
+  )
+  .map(
+    ({
+      code,
+      activityName,
+      activityType,
+      priority,
+      createdAt,
+      state,
+      machineCode,
+    }) => {
+      const machineName = machines.find(
+        ({ code }) => code === machineCode
+      )?.name
+      return {
+        code,
+        activityName,
+        priority,
+        createdAt,
+        state: state ?? 'PLANNED',
+        machine: { name: machineName },
+        nextState: getNextState({
+          activityName,
+          activityType,
+          checkList: [],
+          state: state ?? 'PLANNED',
+        }),
+      }
+    }
+  )

@@ -1,15 +1,11 @@
-import { Machine } from '@prisma/client'
+import {
+  Area,
+  Engine,
+  Machine,
+  MachineImage,
+  TechnicalDocumentation,
+} from '@prisma/client'
 import { z } from 'zod'
-
-const areaValues = [
-  'PRE_EXPANDED',
-  'RECYCLED',
-  'LOCKED',
-  'CUTTING',
-  'JOISTS',
-  'SERVICES',
-  'GENERAL',
-]
 
 const technicalDocumentationValues = [
   'OPERATIONS_MANUAL',
@@ -20,22 +16,37 @@ const technicalDocumentationValues = [
 
 const criticalityValues = ['HIGH', 'MEDIUM', 'LOW']
 
-const machineShapeUpdate = {
+const MACHINE_CODE_ZOD = z
+  .string({
+    required_error: 'El código de la máquina es requerido',
+    invalid_type_error: 'El código de la máquina de ser un texto',
+  })
+  .regex(/^[A-Z]{2}-[0-9]{2}-[A-Z]{3}-[0-9]{2}$/, {
+    message:
+      "El código de la máquina debe tener el formato: LL-NN-LLL-NN (donde 'L' es letra mayúscula y 'N' es número)",
+  })
+
+const MACHINE_SHAPE_UPDATE = {
   name: z
-    .string({ required_error: 'El nombre de la máquina es requerido' })
-    .min(1, {
-      message: 'El nombre de la máquina debe tener al menos 1 caracter',
+    .string({
+      required_error: 'El nombre de la máquina es requerido',
+      invalid_type_error: 'El nombre de la máquina debe ser un texto',
+    })
+    .min(5, {
+      message: 'El nombre de la máquina debe tener al menos 5 caracteres',
     }),
   maker: z
     .string({
-      required_error: 'El fabricante de la máquina es requerido',
+      invalid_type_error: 'El fabricante de la máquina debe ser un texto',
     })
     .min(1, {
-      message: 'El fabricante de la máquina debe tener al menos 1 caracter',
-    }),
+      message: 'El fabricante de la máquina debe tener al menos 1 carácter',
+    })
+    .optional(),
   location: z
     .string({
-      required_error: 'La ubicación de la máquina es requerido',
+      required_error: 'La ubicación de la máquina es requerida',
+      invalid_type_error: 'La ubicación de la máquina debe ser un texto',
     })
     .min(3, {
       message: 'La ubicación de la máquina debe tener al menos 3 caracteres',
@@ -43,46 +54,38 @@ const machineShapeUpdate = {
     .max(11, {
       message: 'La ubicación de la máquina debe tener máximo 11 caracteres',
     }),
-  area: z.enum(
-    [
-      'PRE_EXPANDED',
-      'RECYCLED',
-      'LOCKED',
-      'CUTTING',
-      'JOISTS',
-      'SERVICES',
-      'GENERAL',
-    ],
-    {
-      errorMap: () => {
-        return {
-          message: `El área de la máquina solo puede tener los valores: ${areaValues
-            .map((t) => `'${t}'`)
-            .join(' | ')}`,
-        }
-      },
-    }
-  ),
+  areaId: z
+    .number({
+      required_error: 'El id del área de la máquina es requerido',
+      invalid_type_error: 'El id del área de la máquina debe ser un número',
+    })
+    .min(1, 'El id del área de la máquina debe ser mínimo 1'),
   model: z
-    .string({ required_error: 'El modelo de la máquina es requerido' })
+    .string({
+      invalid_type_error: 'El modelo de la máquina debe ser un texto',
+    })
     .min(1, {
       message: 'El modelo de la máquina debe tener al menos 1 caracter',
-    }),
+    })
+    .optional(),
   specificData: z
     .string({
-      required_error: 'Los datos específicos de la máquina son requeridos',
+      invalid_type_error:
+        'Los datos específicos de la máquina debe ser un texto',
     })
     .min(1, {
       message:
         'Los datos específicos de la máquina debe tener al menos 1 caracter',
-    }),
+    })
+    .optional(),
   function: z
     .string({
-      required_error: 'La función de la máquina es requerido',
+      invalid_type_error: 'La función de la máquina debe ser un texto',
     })
     .min(1, {
       message: 'La función de la máquina debe tener al menos 1 caracter',
-    }),
+    })
+    .optional(),
   technicalDocumentation: z
     .array(
       z.enum(
@@ -118,42 +121,36 @@ const machineShapeUpdate = {
   }),
 }
 
-const machineShapeCreate = {
-  ...machineShapeUpdate,
-  code: z
-    .string({ required_error: 'El código de la máquina es requerido' })
-    .regex(/^[A-Z]{2}-[0-9]{2}-[A-Z]{3}-[0-9]{2}$/, {
-      message:
-        "El código de la máquina debe tener el formato: LL-NN-LLL-NN (donde 'L' es letra mayúscula y 'N' es número)",
-    }),
+const MACHINE_SHAPE_CREATE = {
+  code: MACHINE_CODE_ZOD,
+  ...MACHINE_SHAPE_UPDATE,
 }
+export const CREATE_MACHINE_ZOD = z.object(MACHINE_SHAPE_CREATE)
+export const UPDATE_MACHINE_ZOD = z.object(MACHINE_SHAPE_UPDATE)
 
-export const createMachineDto = z.object(machineShapeCreate)
-
-export const updateMachineDto = z.object(machineShapeUpdate)
-
-interface MachineImageResponseDto {
+interface ImageData {
+  publicId: string
   url: string
 }
 
-export interface MachineImageDto extends MachineImageResponseDto {
-  publicId: string
+export type CreateMachineDto = z.infer<typeof CREATE_MACHINE_ZOD>
+export interface CreateMachineData extends CreateMachineDto {
+  image?: { create: ImageData }
 }
 
-export type CreateMachineDto = z.infer<typeof createMachineDto> & {
-  image?: { create: MachineImageDto }
-}
-
-export type UpdateMachineDto = z.infer<typeof updateMachineDto> & {
-  image?: {
-    create?: MachineImageDto
-    update?: MachineImageDto
-  }
+export type UpdateMachineDto = z.infer<typeof UPDATE_MACHINE_ZOD>
+export interface UpdateMachineData extends UpdateMachineDto {
+  image?: { create?: ImageData; update?: ImageData }
 }
 
 export interface MachineResponseDto
-  extends Omit<Machine, 'createdAt' | 'updatedAt'> {
-  createdAt: string
-  updatedAt: string
-  image?: MachineImageResponseDto
+  extends Pick<Machine, 'code' | 'name' | 'location' | 'criticality'> {
+  area: Pick<Area, 'name'>
+  image: Pick<MachineImage, 'url'> | null
+  maker?: string | null
+  model?: string | null
+  specificData?: string | null
+  function?: string | null
+  technicalDocumentation?: TechnicalDocumentation[]
+  engines?: Engine[]
 }

@@ -9,10 +9,12 @@ const engineShapeUpdate = {
     .min(1, { message: 'La función del motor debe tener al menos 1 caracter' }),
   mark: z
     .string({ required_error: 'La marca del motor es requerido' })
-    .min(1, { message: 'La marca del motor debe tener al menos 1 caracter' }),
+    .min(1, { message: 'La marca del motor debe tener al menos 1 caracter' })
+    .optional(),
   type: z
     .string({ required_error: 'El tipo del motor es requerido' })
-    .min(1, { message: 'El tipo del motor debe tener al menos 1 caracter' }),
+    .min(1, { message: 'El tipo del motor debe tener al menos 1 caracter' })
+    .optional(),
   powerHp: createZodDecimal({
     precision: 3,
     scale: 1,
@@ -44,8 +46,8 @@ const engineShapeUpdate = {
     .int({ message: 'Las rpm del motor debe ser número entero' }),
   cosPhi: createZodDecimal({
     precision: 4,
-    scale: 2,
-    messageError: 'El cos ϕ del motor debe tener precisión de 4 y escala de 2',
+    scale: 3,
+    messageError: 'El cos ϕ del motor debe tener precisión de 4 y escala de 3',
     required_error: 'El cos ϕ del motor es requerido',
   }),
   performance: createZodDecimal({

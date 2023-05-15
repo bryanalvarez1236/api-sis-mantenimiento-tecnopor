@@ -8,6 +8,7 @@ import {
   MACHINE_CODE,
   MAINTENANCE_REQUEST_ROUTES,
 } from './helpers'
+import { machineNotFoundMessage } from '../../src/services/machine.service'
 
 beforeEach(async () => {
   await prisma.maintenanceRequest.deleteMany()
@@ -34,9 +35,7 @@ describe('Maintenance Request EndPoint => POST', () => {
       .send(CREATE_MAINTENANCE_REQUEST_DTO)
       .expect('Content-Type', /json/)
       .expect(404)
-    expect(body.message).toBe(
-      `La máquina con el código '${machineCode}' no existe`
-    )
+    expect(body.message).toBe(machineNotFoundMessage(machineCode))
   })
   test('POST: create a new maintenance request', async () => {
     const { body } = await api

@@ -1,22 +1,16 @@
 import { Router } from 'express'
 import {
-  createEngine,
-  getEngineByCode,
-  getMachineEngines,
-  updateEngineByCode,
-} from '../controllers/engine.controllers'
-import {
   createMachine,
-  getAllMachines,
   getMachineByCode,
+  getMachines,
   updateMachine,
 } from '../controllers/machine.controllers'
 import { transformBody } from '../middlewares/machine.middlewares'
 import { validateBody } from '../middlewares/validate'
-import { createEngineDto, updateEngineDto } from '../schemas/engine'
-import { createMachineDto, updateMachineDto } from '../schemas/machine'
+import { CREATE_MACHINE_ZOD, UPDATE_MACHINE_ZOD } from '../schemas/machine'
 import { mergeMaintenanceRequestRouter } from './maintenanceRequest.route'
 import { mergeFailureReportRouter } from './failureReport.route'
+import { mergeEngineRouter } from './engine.routes'
 
 export const machineRoute = '/machines'
 export const engineRoute = (machineCode?: string) =>
@@ -24,30 +18,22 @@ export const engineRoute = (machineCode?: string) =>
 
 const machineRouter = Router()
 
+machineRouter.get('/', getMachines)
+machineRouter.get('/:code', getMachineByCode)
 machineRouter.post(
   '/',
   transformBody,
-  validateBody(createMachineDto),
+  validateBody(CREATE_MACHINE_ZOD),
   createMachine
 )
-machineRouter.get('/', getAllMachines)
-machineRouter.get('/:code', getMachineByCode)
 machineRouter.put(
   '/:code',
   transformBody,
-  validateBody(updateMachineDto),
+  validateBody(UPDATE_MACHINE_ZOD),
   updateMachine
 )
 
-machineRouter.get(engineRoute(), getMachineEngines)
-machineRouter.get(`${engineRoute()}/:engineCode`, getEngineByCode)
-machineRouter.post(engineRoute(), validateBody(createEngineDto), createEngine)
-machineRouter.put(
-  `${engineRoute()}/:engineCode`,
-  validateBody(updateEngineDto),
-  updateEngineByCode
-)
-
+mergeEngineRouter(machineRouter)
 mergeMaintenanceRequestRouter(machineRouter)
 mergeFailureReportRouter(machineRouter)
 

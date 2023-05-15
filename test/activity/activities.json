@@ -1,35 +1,187 @@
 [
   {
-    "code": "1",
-    "machineCode": "CB-01-PRX-01",
-    "name": "ORDEN DE TRABAJO PASADA COMPLETADA",
-    "frequency": 8640,
-    "activityType": "PERIODIC_MAINTENANCE",
-    "pem": null,
-    "state": "ACTIVE",
-    "createdAt": "2023-04-16T04:00:00.000Z",
-    "updatedAt": "2023-04-16T04:00:00.000Z"
+    "code": "PRX01",
+    "machineCode": "CB-04-PRX-01",
+    "name": "LIMPIEZA DE TABLERO ELECTRICO, INSPECCION DE ELEMENTOS DE FUERZA Y MANDO",
+    "frequency": 2160,
+    "activityType": "PERIODIC_MAINTENANCE"
   },
   {
-    "code": "2",
-    "machineCode": "CB-01-PRX-01",
-    "name": "ORDEN DE TRABAJO PENDIENTE",
+    "code": "PRX02",
+    "machineCode": "CB-04-PRX-01",
+    "name": "MANTENIMIENTO A MOTOR AGITADOR",
     "frequency": 8640,
-    "activityType": "PERIODIC_MAINTENANCE",
-    "pem": null,
-    "state": "ACTIVE",
-    "createdAt": "2023-04-16T04:00:00.000Z",
-    "updatedAt": "2023-04-16T04:00:00.000Z"
+    "activityType": "PERIODIC_MAINTENANCE"
   },
   {
-    "code": "3",
-    "machineCode": "CB-01-PRX-01",
-    "name": "ACTIVIDAD DE MANTENIMIENTO PERIODICO",
+    "code": "PRX03",
+    "machineCode": "CB-04-PRX-01",
+    "name": "MANTENIMIENTO A MOTOR TRANSPORTE MATERIA PRIMA",
     "frequency": 8640,
+    "activityType": "PERIODIC_MAINTENANCE"
+  },
+  {
+    "code": "PRX04",
+    "machineCode": "CB-04-PRX-01",
+    "name": "MANTENIMIENTO A MOTOR  VENTILADOR DE CARGA",
+    "frequency": 8640,
+    "activityType": "PERIODIC_MAINTENANCE"
+  },
+  {
+    "code": "PRX05",
+    "machineCode": "CB-04-PRX-01",
+    "name": "MANTENIMIENTO A MOTOR  SECADO",
+    "frequency": 8640,
+    "activityType": "PERIODIC_MAINTENANCE"
+  },
+  {
+    "code": "PRX06",
+    "machineCode": "CB-04-PRX-01",
+    "name": "MANTENIMIENTO MOTOR Y REDUCTOR PALETAS ROTATIVAS",
+    "frequency": 8640,
+    "activityType": "PERIODIC_MAINTENANCE"
+  },
+  {
+    "code": "PRX07",
+    "machineCode": "CB-04-PRX-01",
+    "name": "MANTENIMIENTO A MOTOR Y REDUCTOR DESGRANULADOR",
+    "frequency": 8640,
+    "activityType": "PERIODIC_MAINTENANCE"
+  },
+  {
+    "code": "PRX08",
+    "machineCode": "CB-04-PRX-01",
+    "name": "MANTENIMIENTO A MOTOR  VENTILADOR TRANSPORTE",
+    "frequency": 8640,
+    "activityType": "PERIODIC_MAINTENANCE"
+  },
+  {
+    "code": "PRX09",
+    "machineCode": "CB-04-PRX-01",
+    "name": "MANTENIMIENTO EJE AGITADOR DE CAMARA",
+    "frequency": 8640,
+    "activityType": "PERIODIC_MAINTENANCE"
+  },
+  {
+    "code": "PRX10",
+    "machineCode": "CB-04-PRX-01",
+    "name": "MANTENIMIENTO A CAMARA DE SECADO",
+    "frequency": 8640,
+    "activityType": "PERIODIC_MAINTENANCE"
+  },
+  {
+    "code": "PRX11",
+    "machineCode": "CB-04-PRX-01",
+    "name": "MANTENIMIENTO A REDUCTOR DE AGITADOR",
+    "frequency": 8640,
+    "activityType": "PERIODIC_MAINTENANCE"
+  },
+  {
+    "code": "PRX12",
+    "machineCode": "CB-04-PRX-01",
+    "name": "MANTENIMIENTO DE CILINDROS NEUMATICOS",
+    "frequency": 4320,
+    "activityType": "PERIODIC_MAINTENANCE"
+  },
+  {
+    "code": "PRX13",
+    "machineCode": "CB-04-PRX-01",
+    "name": "MANTENIMIENTO A UNIDADES DE MANTENIMIENTO",
+    "frequency": 4320,
+    "activityType": "PERIODIC_MAINTENANCE"
+  },
+  {
+    "code": "PRX14",
+    "machineCode": "CB-04-PRX-01",
+    "name": "VERIFICACION DE SISTEMA ELECTRONEUMATICO Y MANGUERAS",
+    "frequency": 4320,
+    "activityType": "PERIODIC_MAINTENANCE"
+  },
+  {
+    "code": "PRX15",
+    "machineCode": "CB-04-PRX-01",
+    "name": "MANTENIMIENTO A ACTUADORES NEUMATICO",
+    "frequency": 4320,
+    "activityType": "PERIODIC_MAINTENANCE"
+  },
+  {
+    "code": "PRX16",
+    "machineCode": "CB-04-PRX-01",
+    "name": "MANTENIMIENTO A VALVULA REGULADORA DE VAPOR",
+    "frequency": 4320,
+    "activityType": "PERIODIC_MAINTENANCE"
+  },
+  {
+    "code": "PRX17",
+    "machineCode": "CB-04-PRX-01",
+    "name": "MANTENIMIENTO A VALVULA PROPORCIONAL",
+    "frequency": 4320,
+    "activityType": "PERIODIC_MAINTENANCE"
+  },
+  {
+    "code": "PRX18",
+    "machineCode": "CB-04-PRX-01",
+    "name": "MANTENIMIENTO A CAMARA DE PRE EXPANDIDO",
+    "frequency": 4320,
+    "activityType": "PERIODIC_MAINTENANCE"
+  },
+  {
+    "code": "PRX19",
+    "machineCode": "CB-04-PRX-01",
+    "name": "MANTENIMIENTO A RADIADOR PARA SECADO DE PERLA",
+    "frequency": 4320,
     "activityType": "PERIODIC_MAINTENANCE",
-    "pem": null,
-    "state": "ACTIVE",
-    "createdAt": "2023-04-16T04:00:00.000Z",
-    "updatedAt": "2023-04-16T04:00:00.000Z"
+    "state": "DELETED"
+  },
+
+  {
+    "code": "COM101",
+    "machineCode": "CB-03-COM-01",
+    "name": "CAMBIO DE ACEITE, SUSTITUCION DE FILTRO DE ACEITE Y VERIFICACION DE FUGAS DE ACEITE, VERIFICACION Y APRIETE DE LAS CONEXIONES DE LLAVE ELECTRICA, SUSTITUCION FILTRO DE AIRE",
+    "frequency": 2160,
+    "activityType": "PERIODIC_MAINTENANCE"
+  },
+  {
+    "code": "COM102",
+    "machineCode": "CB-03-COM-01",
+    "name": "SUSTITUCION ELEMENTO SEPARADOR DE AIRE/ACEITE. VERIFICACION DE CONDICIONES DE MANGUERAS",
+    "frequency": 4320,
+    "activityType": "PERIODIC_MAINTENANCE"
+  },
+  {
+    "code": "COM103",
+    "machineCode": "CB-03-COM-01",
+    "name": "MANTENIMIENTO A MOTOR ELECTRICO",
+    "frequency": 8640,
+    "activityType": "PERIODIC_MAINTENANCE"
+  },
+  {
+    "code": "COM104",
+    "machineCode": "CB-03-COM-01",
+    "name": "INSPECCION VALVULA DE SEGURIDAD",
+    "frequency": 8640,
+    "activityType": "PERIODIC_MAINTENANCE"
+  },
+  {
+    "code": "COM105",
+    "machineCode": "CB-03-COM-01",
+    "name": "LIMPIEZA DE TABLERO ELECTRICO, INSPECCION DE ELEMENTOS DE FUERZA Y MANDO",
+    "frequency": 2160,
+    "activityType": "PERIODIC_MAINTENANCE"
+  },
+
+  {
+    "code": "ACV01",
+    "machineCode": "CB-05-ACV-01",
+    "name": "MANTENIMIENTO A BOMBA DE AGUA",
+    "frequency": 8640,
+    "activityType": "PERIODIC_MAINTENANCE"
+  },
+  {
+    "code": "ACV02",
+    "machineCode": "CB-05-ACV-01",
+    "name": "MANTENIMIENTO VISOR",
+    "frequency": 8640,
+    "activityType": "PERIODIC_MAINTENANCE"
   }
 ]

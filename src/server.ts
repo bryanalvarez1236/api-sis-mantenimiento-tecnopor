@@ -17,6 +17,7 @@ import maintenanceRequestRouter, {
 import failureReportRouter, {
   FAILURE_REPORT_ROUTE,
 } from './routes/failureReport.route'
+import engineRouter, { ENGINE_ROUTE } from './routes/engine.routes'
 
 export class Server {
   private app: Application
@@ -43,6 +44,7 @@ export class Server {
   private routes() {
     this.app.use(testRouter)
     this.app.use(this.createRoute(machineRoute), machineRouter)
+    this.app.use(this.createRoute(ENGINE_ROUTE), engineRouter)
     this.app.use(this.createRoute(activityRoute), activityRouter)
     this.app.use(this.createRoute(draftWorkOrderRoute), draftWorkOrderRouter)
     this.app.use(this.createRoute(workOrderRoute), workOrderRouter)

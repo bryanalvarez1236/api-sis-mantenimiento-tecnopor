@@ -1,8 +1,7 @@
 import { ServiceError } from '.'
-import { validateDate } from '../libs/date'
+import { RANGES, validateDate } from '../libs/date'
 import prisma from '../libs/db'
 import { CreateWorkOrderFromDraftWorkOrderDto } from '../schemas/draftWorkOrder'
-import { RANGES } from './workOrder.service'
 import * as workOrderService from './workOrder.service'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime'
 

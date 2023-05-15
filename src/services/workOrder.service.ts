@@ -1,82 +1,25 @@
-import {
-  CheckList,
-  WorkOrderActivityType,
-  WorkOrderState,
-} from '@prisma/client'
+import { PrismaClientValidationError } from '@prisma/client/runtime'
 import { ServiceError } from '.'
+import { RANGES, validateDate } from '../libs/date'
 import prisma from '../libs/db'
 import {
   CreateWorkOrderDto,
   UpdateWorkOrderGeneralDto,
+  getNextState,
+  isInspection,
 } from '../schemas/workOrder'
-import * as engineService from './engine.service'
-import * as activityService from './activity.service'
-import * as draftWorkOrderService from './draftWorkOrder.service'
-import { PrismaClientValidationError } from '@prisma/client/runtime'
-import { validateDate } from '../libs/date'
+import { getEngineByCode } from './engine.service'
+import { getActivityByCode } from './activity.service'
+import { createDraftWorkOrder } from './draftWorkOrder.service'
 
-export const RANGES = {
-  WEEKLY: (year: number, month: number, day: number) => {
-    const weekDay = new Date(year, month, day).getDay()
-    const firstWeekDay = day - weekDay
-    const lastWeekDay = firstWeekDay + 6
-    const gte = new Date(year, month, firstWeekDay)
-    const lte = new Date(year, month, lastWeekDay, 23, 59, 59)
-    return { gte, lte }
-  },
-  MONTHLY: (year: number, month: number) => {
-    const monthDays = new Date(year, month + 1, 0).getDate()
-    const gte = new Date(year, month, 1)
-    const lte = new Date(year, month, monthDays, 23, 59, 59)
-    return { gte, lte }
-  },
-  ANNUAL: (year: number) => {
-    const gte = new Date(year, 0)
-    const lte = new Date(year, 12, 31, 23, 59, 59)
-    return { gte, lte }
-  },
+export function workOrderNotFoundMessage(workOrderId: number) {
+  return `La órden de trabajo con el código ${workOrderId} no existe`
 }
-
-const NEXT_STATE = {
-  [WorkOrderState.PLANNED]: WorkOrderState.VALIDATED,
-  [WorkOrderState.VALIDATED]: WorkOrderState.DOING,
-  [WorkOrderState.DOING]: WorkOrderState.DONE,
+export function workOrderNotDeleteMessage(workOrderId: number) {
+  return `No se puede eliminar la órden de trabajo '${workOrderId}'`
 }
-
-interface IsInspectionProps {
-  activityName: string | null
-  activityType: WorkOrderActivityType
-  checkList: CheckList[]
-}
-function isInspection({
-  activityName,
-  activityType,
-  checkList,
-}: IsInspectionProps) {
-  return (
-    checkList.length > 0 &&
-    activityName?.replace('Ó', 'O') === 'INSPECCION' &&
-    activityType === 'INSPECTION'
-  )
-}
-
-interface GetNextStateProps extends IsInspectionProps {
-  state: WorkOrderState
-}
-function getNextState({
-  activityName,
-  activityType,
-  checkList,
-  state,
-}: GetNextStateProps) {
-  if (
-    state === 'PLANNED' &&
-    isInspection({ activityName, activityType, checkList })
-  ) {
-    return 'DOING'
-  }
-  return NEXT_STATE[state as keyof typeof NEXT_STATE]
-}
+export const WORK_ORDER_INVALID_ID_MESSAGE =
+  'El código de la órden de trabajo debe ser un número'
 
 interface GetWorkOrdersProps {
   date?: string
@@ -134,14 +77,20 @@ export async function getWorkOrderById({ id }: GetWorkOrderByIdProps) {
     const foundWorkOrder = await prisma.workOrder.findUnique({
       where: { code: id },
       include: {
-        machine: { select: { name: true, area: true, checkList: true } },
+        machine: {
+          select: {
+            name: true,
+            checkList: true,
+            area: { select: { name: true } },
+          },
+        },
         checkListVerified: true,
       },
     })
     if (!foundWorkOrder) {
       throw new ServiceError({
         status: 404,
-        message: `La órden de trabajo con el código ${id} no existe`,
+        message: workOrderNotFoundMessage(id),
       })
     }
     const {
@@ -172,7 +121,7 @@ export async function getWorkOrderById({ id }: GetWorkOrderByIdProps) {
     if (error instanceof PrismaClientValidationError) {
       throw new ServiceError({
         status: 400,
-        message: 'El código de la órden de trabajo debe ser un número',
+        message: WORK_ORDER_INVALID_ID_MESSAGE,
       })
     }
     throw new ServiceError({ status: 500 })
@@ -188,17 +137,15 @@ export async function createWorkOrder({
   const { engineCode, activityCode } = createWorkOrderDto
 
   if (engineCode) {
-    const { function: engineFunction } = await engineService.getEngineByCode(
-      engineCode,
-      { select: { function: true } }
-    )
+    const { function: engineFunction } = await getEngineByCode({
+      code: engineCode,
+    })
     createWorkOrderDto.engineFunction = engineFunction
   }
   if (activityCode) {
-    const { name: activityName } = await activityService.getActivityByCode(
-      activityCode,
-      { select: { name: true } }
-    )
+    const { name: activityName } = await getActivityByCode({
+      code: activityCode,
+    })
     createWorkOrderDto.activityName = activityName
   }
 
@@ -269,7 +216,7 @@ export async function updateWorkOrderById({
     if (activity != null && updateWorkOrderDto.endDate != null) {
       const { frequency } = activity
       const { endDate: currentDate } = updateWorkOrderDto
-      await draftWorkOrderService.createDraftWorkOrder({
+      await createDraftWorkOrder({
         createDraftWorkOrderDto: { currentDate, frequency, workOrderCode: id },
       })
     }
@@ -302,8 +249,8 @@ export async function getWorkOrdersCount() {
     const machines = await prisma.machine.findMany({
       select: {
         code: true,
-        area: true,
         name: true,
+        area: { select: { name: true } },
         activities: { select: { code: true, name: true, activityType: true } },
         engines: { select: { code: true, function: true } },
       },
@@ -325,7 +272,7 @@ export async function deleteWorkOrderById({ id }: DeleteWorkOrderByIdProps) {
   if (state === 'DONE') {
     throw new ServiceError({
       status: 405,
-      message: `No se puede eliminar la órden de trabajo '${id}'`,
+      message: workOrderNotDeleteMessage(id),
     })
   }
 

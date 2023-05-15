@@ -1,23 +1,21 @@
-import { beforeEach, describe, expect, test } from 'vitest'
+import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import prisma from '../../src/libs/db'
-import { machines } from '../machine/helpers'
-import { FAILURE_REPORT_ROUTES, failureReports } from './helpers'
+import { areas, machines } from '../machine/helpers'
+import {
+  FAILURE_REPORT_ROUTES,
+  failureReportImages,
+  failureReports,
+} from './helpers'
 import { api } from '../helpers/api'
 
-beforeEach(async () => {
-  await prisma.failureReportImage.deleteMany()
-  await prisma.failureReport.deleteMany()
-  await prisma.maintenanceRequest.deleteMany()
-  await prisma.activity.deleteMany()
-  await prisma.workOrder.deleteMany()
-  await prisma.machine.deleteMany()
-  await prisma.machine.createMany({ data: machines })
-  await prisma.failureReport.createMany({
-    data: failureReports,
-  })
-})
-
 describe('Failure Report EndPoint => PATCH', () => {
+  beforeAll(async () => {
+    await prisma.area.createMany({ data: areas })
+    await prisma.machine.createMany({ data: machines })
+    await prisma.failureReport.createMany({ data: failureReports })
+    await prisma.failureReportImage.createMany({ data: failureReportImages })
+  })
+
   test('PATCH: invalid id', async () => {
     const { body } = await api
       .patch(FAILURE_REPORT_ROUTES.baseWithId('ID_INVALID'))
@@ -40,5 +38,12 @@ describe('Failure Report EndPoint => PATCH', () => {
       .expect('Content-Type', /json/)
       .expect(200)
     expect(body).toEqual({ id: +id })
+  })
+
+  afterAll(async () => {
+    await prisma.failureReportImage.deleteMany()
+    await prisma.failureReport.deleteMany()
+    await prisma.machine.deleteMany()
+    await prisma.area.deleteMany()
   })
 })

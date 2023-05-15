@@ -1,133 +1,88 @@
-import { Engine, Machine, Prisma } from '@prisma/client'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime'
-import {
-  CheckSelect,
-  CreateArgsType,
-  FindUniqueArgs,
-  FindUniqueType,
-  getCreateArgsConfig,
-  getFindManyArgsConfig,
-  getFindUniqueArgsConfig,
-  getUpdateArgsConfig,
-  PRISMA_NOT_FOUND_ERROR_CODE,
-  PRISMA_UNIQUE_ERROR_CODE,
-  ReturnCheck,
-  ServiceError,
-  ThrowError,
-  UpdateArgsType,
-} from '.'
+import { ServiceError } from '.'
 import prisma from '../libs/db'
 import { CreateEngineDto, UpdateEngineDto } from '../schemas/engine'
-import * as machineService from './machine.service'
+import { getMachineByCode, machineNotFoundMessage } from './machine.service'
 
-type EngineCreateArgs = Prisma.EngineCreateArgs
-type EngineFindUniqueArgs = Prisma.EngineFindUniqueArgs
-type EngineFindManyArgs = Prisma.EngineFindManyArgs
-type EngineUpdateArgs = Prisma.EngineUpdateArgs
-
-type EngineClient<T> = Prisma.Prisma__EngineClient<T>
-type EngineGetPayload<T extends FindUniqueType<EngineFindUniqueArgs>> =
-  Prisma.EngineGetPayload<T>
-
-function engineNotFound(engineCode: string): ThrowError {
-  return {
-    status: 404,
-    message: `El motor con el código '${engineCode}' no existe`,
-  }
+export function engineNotFoundMessage(engineCode: string) {
+  return `El motor con el código '${engineCode}' no existe`
+}
+export function engineAlreadyExistsMessage(engineCode: string) {
+  return `El motor con el código '${engineCode}' ya existe`
 }
 
-export async function getMachineEngines<
-  T extends EngineFindManyArgs,
-  S extends Machine & { image: { url: string } } & { engines: Array<Engine> },
-  P extends EngineGetPayload<T>,
-  U extends Machine & { image: { url: string } } & { engines: Array<P> }
->(machineCode: string, config?: T): ReturnCheck<T, S, U> {
-  const defaultEngineConfig = getFindManyArgsConfig<EngineFindManyArgs>(
-    { orderBy: { code: 'asc' } },
-    config
-  )
-  const foundMachine = await machineService.getMachineByCode(machineCode, {
-    include: { engines: defaultEngineConfig, image: { select: { url: true } } },
+interface GetMachineEnginesProps {
+  machineCode: string
+}
+export async function getMachineEngines({
+  machineCode,
+}: GetMachineEnginesProps) {
+  const { engines } = await getMachineByCode({ code: machineCode })
+  return engines
+}
+
+interface GetEngineByCodeProps {
+  code: string
+}
+export async function getEngineByCode({ code }: GetEngineByCodeProps) {
+  const foundEngine = await prisma.engine.findUnique({
+    where: { code },
   })
-  return foundMachine as never as CheckSelect<T, S, U>
-}
-
-export async function getEngineByCode<
-  T extends FindUniqueType<EngineFindUniqueArgs>,
-  S extends EngineClient<Engine>,
-  P extends EngineGetPayload<T>,
-  U extends EngineClient<P>
->(
-  engineCode: string,
-  config?: FindUniqueArgs<T, EngineFindUniqueArgs>
-): ReturnCheck<T, S, U> {
-  const defaultConfig = getFindUniqueArgsConfig(
-    { where: { code: engineCode } },
-    config
-  )
-  const foundEngine = await prisma.engine.findUnique(defaultConfig)
-  if (!foundEngine) {
-    throw new ServiceError(engineNotFound(engineCode))
+  if (foundEngine == null) {
+    throw new ServiceError({
+      status: 404,
+      message: engineNotFoundMessage(code),
+    })
   }
-  return foundEngine as never as CheckSelect<T, S, U>
+  return foundEngine
 }
 
-export async function createEngine<
-  T extends CreateArgsType<EngineCreateArgs>,
-  S extends EngineClient<Engine>,
-  P extends EngineGetPayload<T>,
-  U extends EngineClient<P>
->(
-  createEngineDto: CreateEngineDto,
-  machineCode: string,
-  config?: T
-): ReturnCheck<T, S, U> {
-  await machineService.getMachineByCode(machineCode)
-  const defaultConfig = getCreateArgsConfig<EngineCreateArgs>(
-    { data: { ...createEngineDto, machineCode } },
-    config
-  )
+interface AddEngineProps {
+  machineCode: string
+  createDto: CreateEngineDto
+}
+export async function addEngine({ machineCode, createDto }: AddEngineProps) {
   try {
-    const createdEngine = await prisma.engine.create(defaultConfig)
-    return createdEngine as never as CheckSelect<T, S, U>
+    return await prisma.engine.create({ data: { ...createDto, machineCode } })
   } catch (error) {
-    const { code } = error as PrismaClientKnownRequestError
-    const throwError: ThrowError = {
-      status: 500,
+    if (error instanceof PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        throw new ServiceError({
+          status: 409,
+          message: engineAlreadyExistsMessage(createDto.code),
+        })
+      }
+      if (error.code === 'P2003') {
+        throw new ServiceError({
+          status: 404,
+          message: machineNotFoundMessage(machineCode),
+        })
+      }
     }
-    if (code === PRISMA_UNIQUE_ERROR_CODE) {
-      throwError.status = 409
-      throwError.message = `El motor con el código '${createEngineDto.code}' ya existe`
-    }
-    throw throwError
+    throw new ServiceError({ status: 500 })
   }
 }
 
-export async function updateEngineByCode<
-  T extends UpdateArgsType<EngineUpdateArgs>,
-  S extends EngineClient<Engine>,
-  P extends EngineGetPayload<T>,
-  U extends EngineClient<P>
->(
-  engineCode: string,
-  updateEngineDto: UpdateEngineDto,
-  config?: T
-): ReturnCheck<T, S, U> {
-  const defaultConfig = getUpdateArgsConfig<EngineUpdateArgs>(
-    { data: updateEngineDto, where: { code: engineCode } },
-    config
-  )
+interface UpdateEngineByCodeProps {
+  code: string
+  updateDto: UpdateEngineDto
+}
+export async function updateEngineByCode({
+  code,
+  updateDto,
+}: UpdateEngineByCodeProps) {
   try {
-    const updatedEngine = await prisma.engine.update(defaultConfig)
-    return updatedEngine as never as CheckSelect<T, S, U>
+    return await prisma.engine.update({ where: { code }, data: updateDto })
   } catch (error) {
-    let throwError: ThrowError = {
-      status: 500,
+    if (
+      error instanceof PrismaClientKnownRequestError &&
+      error.code === 'P2025'
+    ) {
+      throw new ServiceError({
+        status: 404,
+        message: engineNotFoundMessage(code),
+      })
     }
-    const { code } = error as PrismaClientKnownRequestError
-    if (code === PRISMA_NOT_FOUND_ERROR_CODE) {
-      throwError = engineNotFound(engineCode)
-    }
-    throw new ServiceError(throwError)
+    throw new ServiceError({ status: 500 })
   }
 }

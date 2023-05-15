@@ -3,7 +3,7 @@ import {
   createActivity,
   deleteActivityByCode,
   getActivityByCode,
-  getMachineActivitiesByMachineCode,
+  getMachineActivities,
   updateActivityByCode,
 } from '../controllers/activity.controllers'
 import { validateBody } from '../middlewares/validate'
@@ -13,7 +13,7 @@ export const activityRoute = '/activities'
 
 const activityRouter = Router()
 
-activityRouter.get('/', getMachineActivitiesByMachineCode)
+activityRouter.get('/', getMachineActivities)
 activityRouter.get('/:code', getActivityByCode)
 activityRouter.post('/', validateBody(createActivityDto), createActivity)
 activityRouter.put(

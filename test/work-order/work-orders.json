@@ -1,9 +1,9 @@
 [
   {
-    "code": 1,
-    "machineCode": "CB-01-PRX-01",
+    "code": 100000000,
+    "machineCode": "CB-04-PRX-01",
     "engineCode": null,
-    "activityCode": "1",
+    "activityCode": "PRX01",
     "activityType": "ROUTINE",
     "priority": "URGENT",
     "engineFunction": null,
@@ -25,10 +25,10 @@
     "updatedAt": "2023-01-02T14:00:00.000Z"
   },
   {
-    "code": 2,
-    "machineCode": "CB-01-PRX-01",
+    "code": 200000000,
+    "machineCode": "CB-04-PRX-01",
     "engineCode": null,
-    "activityCode": "2",
+    "activityCode": "PRX02",
     "activityType": "CORRECTIVE",
     "priority": "NORMAL",
     "engineFunction": null,
@@ -50,10 +50,10 @@
     "updatedAt": "2023-01-01T04:00:00.000Z"
   },
   {
-    "code": 3,
-    "machineCode": "CB-01-PRX-01",
+    "code": 300000000,
+    "machineCode": "CB-04-PRX-01",
     "engineCode": null,
-    "activityCode": "3",
+    "activityCode": "PRX03",
     "activityType": "CONDITION_CHECK",
     "priority": "IMPORTANT",
     "engineFunction": null,
@@ -74,8 +74,8 @@
     "updatedAt": "2023-04-16T04:00:00.000Z"
   },
   {
-    "code": 4,
-    "machineCode": "CB-01-PRX-01",
+    "code": 400000000,
+    "machineCode": "CB-04-PRX-01",
     "activityType": "INSPECTION",
     "priority": "NORMAL",
     "activityName": "INSPECCION",
@@ -84,8 +84,8 @@
     "updatedAt": "2023-04-18T03:59:59.000Z"
   },
   {
-    "code": 5,
-    "machineCode": "CB-01-PRX-01",
+    "code": 500000000,
+    "machineCode": "CB-04-PRX-01",
     "activityType": "CONDITION_CHECK",
     "priority": "IMPORTANT",
     "activityName": "ACTIVIDAD DE MANTENIMIENTO PERIODICO",

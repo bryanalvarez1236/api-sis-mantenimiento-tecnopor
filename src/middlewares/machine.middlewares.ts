@@ -17,5 +17,9 @@ export function transformBody(
   } else {
     body.technicalDocumentation = []
   }
+  const { areaId } = req.body
+  if (!isNaN(areaId)) {
+    req.body.areaId = +areaId
+  }
   return next()
 }
