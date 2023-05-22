@@ -194,9 +194,13 @@ export async function updateWorkOrderById({
         workOrderCode: code,
       }))
       await prisma.checkListVerified.createMany({ data })
+      const now = new Date()
       const totalHours =
-        (new Date().getTime() - updatedAt.getTime()) / (1000 * 60 * 60)
+        (now.getTime() - updatedAt.getTime()) / (1000 * 60 * 60)
       restUpdate.totalHours = Math.ceil(totalHours)
+      if (restUpdate.endDate == null) {
+        restUpdate.endDate = now
+      }
     }
     const { activity, ...updatedWorkOrder } = await prisma.workOrder.update({
       where: { code: id },

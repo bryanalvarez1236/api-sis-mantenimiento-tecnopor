@@ -2,8 +2,8 @@
   { "id": 1, "name": "PRE EXPANDIDO", "hours": 24, "days": 6 },
   { "id": 2, "name": "RECICLADO", "hours": 24, "days": 6 },
   { "id": 3, "name": "BLOQUEADO", "hours": 24, "days": 6 },
-  { "id": 4, "name": "CORTE", "hours": 24, "days": 6 },
-  { "id": 5, "name": "VIGUETAS", "hours": 24, "days": 6 },
+  { "id": 4, "name": "CORTE", "hours": 16, "days": 6 },
+  { "id": 5, "name": "VIGUETAS", "hours": 8, "days": 6 },
   { "id": 6, "name": "SERVICIOS", "hours": 24, "days": 6 },
   { "id": 7, "name": "GENERAL", "hours": 24, "days": 6 }
 ]

@@ -72,7 +72,6 @@ describe('Work orders EndPoint => GET', () => {
       .get(WORK_ORDER_ROUTES.count)
       .expect('Content-Type', /json/)
       .expect(200)
-    // validate body.machines
   })
 
   afterAll(async () => {

@@ -35,3 +35,18 @@ export const RANGES = {
     return { gte, lte }
   },
 }
+
+interface GetBusinessDaysProps {
+  year: number
+  month: number
+}
+export function getBusinessDays({ year, month }: GetBusinessDaysProps) {
+  const firstDay = new Date(year, month, 1).getDay()
+  const lastDate = new Date(year, month + 1, 0).getDate()
+  let restDays = lastDate
+  if (firstDay !== 0) {
+    restDays -= 7 - firstDay
+  }
+  const totalSundays = Math.ceil(restDays / 7)
+  return lastDate - totalSundays
+}

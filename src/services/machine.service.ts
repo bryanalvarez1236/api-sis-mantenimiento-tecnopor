@@ -55,6 +55,7 @@ export async function getMachineByCode({ code }: GetMachineByCodeProps) {
       function: true,
       specificData: true,
       technicalDocumentation: true,
+      areaId: true,
       area: { select: { name: true } },
       image: { select: { url: true } },
       engines: { orderBy: { code: 'asc' } },

@@ -17,8 +17,8 @@ interface GetMachineEnginesProps {
 export async function getMachineEngines({
   machineCode,
 }: GetMachineEnginesProps) {
-  const { engines } = await getMachineByCode({ code: machineCode })
-  return engines
+  const foundMachine = await getMachineByCode({ code: machineCode })
+  return foundMachine
 }
 
 interface GetEngineByCodeProps {
