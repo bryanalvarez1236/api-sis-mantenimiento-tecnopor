@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "machineCode": "CB-01-PRX-01",
+    "machineCode": "CB-04-PRX-01",
     "systemFailedState": "ELECTRIC",
     "description": "PRESENTA FALLAS ELECTRICAS",
     "operatorName": "OPERATOR 1",
@@ -10,7 +10,7 @@
   },
   {
     "id": 2,
-    "machineCode": "CB-01-PRX-01",
+    "machineCode": "CB-04-PRX-01",
     "systemFailedState": "MECHANIC",
     "description": "PRESENTA FALLAS MECANICAS",
     "operatorName": "OPERATOR 2",
@@ -19,7 +19,7 @@
   },
   {
     "id": 3,
-    "machineCode": "CB-01-PRX-01",
+    "machineCode": "CB-04-PRX-01",
     "systemFailedState": "OTHER",
     "description": "PRESENTA FALLAS",
     "operatorName": "OPERATOR 1",

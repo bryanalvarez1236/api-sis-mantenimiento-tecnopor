@@ -2,6 +2,7 @@ import { PrismaClientValidationError } from '@prisma/client/runtime'
 import { ServiceError } from '.'
 import prisma from '../libs/db'
 import { CreateMaintenanceRequestDto } from '../schemas/maintenanceRequest'
+import { machineNotFoundMessage } from './machine.service'
 
 interface CreateMaintenanceRequestProps {
   machineCode: string
@@ -18,7 +19,7 @@ export async function createMaintenanceRequest({
   if (machine == null) {
     throw new ServiceError({
       status: 404,
-      message: `La máquina con el código '${machineCode}' no existe`,
+      message: machineNotFoundMessage(machineCode),
     })
   }
 

@@ -13,12 +13,13 @@ datasource db {
 model Machine {
   code                   String                   @id
   name                   String
-  maker                  String
+  maker                  String?
   location               String
-  area                   MachineArea
-  model                  String
-  specificData           String
-  function               String
+  area                   Area                     @relation(fields: [areaId], references: [id])
+  areaId                 Int
+  model                  String?
+  specificData           String?
+  function               String?
   technicalDocumentation TechnicalDocumentation[]
   criticality            Criticality
   image                  MachineImage?
@@ -30,6 +31,14 @@ model Machine {
   failureReports         FailureReport[]
   createdAt              DateTime                 @default(now())
   updatedAt              DateTime                 @default(now()) @updatedAt
+}
+
+model Area {
+  id       Int       @id @default(autoincrement())
+  name     String
+  hours    Int
+  days     Int
+  machines Machine[]
 }
 
 model CheckList {
@@ -55,8 +64,8 @@ model Engine {
   machine     Machine     @relation(fields: [machineCode], references: [code])
   machineCode String
   function    String
-  mark        String
-  type        String
+  mark        String?
+  type        String?
   powerHp     Float
   powerKw     Float
   voltage     String
@@ -69,8 +78,6 @@ model Engine {
   ip          Int
   boot        Boot
   workOrders  WorkOrder[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @default(now()) @updatedAt
 }
 
 model Activity {
@@ -83,8 +90,6 @@ model Activity {
   pem          String?
   state        State        @default(ACTIVE)
   workOrders   WorkOrder[]
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @default(now()) @updatedAt
 }
 
 model WorkOrder {

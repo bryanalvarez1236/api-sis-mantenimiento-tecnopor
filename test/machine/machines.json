@@ -1,15 +1,58 @@
 [
   {
-    "code": "CB-01-PRX-01",
+    "code": "CB-04-PRX-01",
     "name": "PRE EXPANSORA",
-    "maker": "-",
+    "maker": "HANGZHOU FANGYUAN",
     "location": "EPS",
-    "area": "CUTTING",
-    "model": "-",
-    "specificData": "-",
-    "function": "-",
-    "technicalDocumentation": [],
+    "areaId": 1,
+    "model": "SPJ-130",
+    "specificData": "380 V",
+    "function": "PREEXPANDIDO DE POLIESTIRENO",
+    "technicalDocumentation": ["OPERATIONS_MANUAL", "ELECTRICAL_PLANS"],
     "criticality": "HIGH",
+    "createdAt": "2023-01-01T00:00:00.000Z",
+    "updatedAt": "2023-01-01T00:00:00.000Z"
+  },
+  {
+    "code": "CB-03-COM-01",
+    "name": "COMPRESOR SRP 3030",
+    "maker": "SCHULZ",
+    "model": "SRP 3030-MAX",
+    "location": "EPS",
+    "areaId": 6,
+    "criticality": "HIGH",
+    "function": "COMPRESION DE AIRE",
+    "specificData": "380 V-COMPRESOR A TORNILLO",
+    "technicalDocumentation": [
+      "OPERATIONS_MANUAL",
+      "MAINTENANCE_MANUAL",
+      "ELECTRICAL_PLANS"
+    ],
+    "createdAt": "2023-01-01T00:00:00.000Z",
+    "updatedAt": "2023-01-01T00:00:00.000Z"
+  },
+  {
+    "code": "CB-03-ABL-01",
+    "name": "ABLANDADOR",
+    "location": "EPS",
+    "areaId": 6,
+    "criticality": "LOW",
+    "function": "ABLANDAR AGUA PARA CALDERO",
+    "specificData": "SISTEMA AUTOMATICO CON 2 CABEZALES",
+    "technicalDocumentation": ["OPERATIONS_MANUAL"],
+    "createdAt": "2023-01-01T00:00:00.000Z",
+    "updatedAt": "2023-01-01T00:00:00.000Z"
+  },
+  {
+    "code": "CB-05-ACV-01",
+    "name": "ACUMULADOR DE VAPOR",
+    "maker": "CARLOS CABALLERO",
+    "location": "EPS",
+    "areaId": 6,
+    "criticality": "MEDIUM",
+    "function": "ACUMULACION DE VAPOR DE AGUA",
+    "specificData": "PRESION DE TRABAJO 4 BAR",
+    "technicalDocumentation": [],
     "createdAt": "2023-01-01T00:00:00.000Z",
     "updatedAt": "2023-01-01T00:00:00.000Z"
   }

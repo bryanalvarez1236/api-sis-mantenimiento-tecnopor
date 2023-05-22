@@ -4,6 +4,9 @@ import {
   CLOUDINARY_API_SECRET,
   CLOUDINARY_CLOUD_NAME,
 } from '../config/environment'
+import { ServiceError } from '../services'
+
+type Folder = 'machines' | 'failure-reports'
 
 cloudinary.config({
   cloud_name: CLOUDINARY_CLOUD_NAME,
@@ -13,16 +16,13 @@ cloudinary.config({
 
 const { uploader } = cloudinary
 
-export async function uploadMachineImage(filePath: string) {
-  return await uploader.upload(filePath, { folder: 'machines' })
-}
-
-export async function deleteMachineImage(publicId: string) {
-  return await uploader.destroy(publicId)
-}
-
-export async function uploadFailureReportImage(filePath: string) {
-  return await uploader.upload(filePath, { folder: 'failure-reports' })
+export async function uploadFile(path: string, folder: Folder) {
+  try {
+    const { public_id, secure_url } = await uploader.upload(path, { folder })
+    return { publicId: public_id, url: secure_url }
+  } catch (error) {
+    throw new ServiceError({ status: 500, message: 'Error con Cloudinary' })
+  }
 }
 
 export async function deleteFile(publicId: string) {

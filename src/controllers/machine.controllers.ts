@@ -1,31 +1,44 @@
 import { Request, Response } from 'express'
 import * as machineService from '../services/machine.service'
 import { ThrowError } from '../services'
+import type { CreateMachineDto, UpdateMachineDto } from '../schemas/machine'
 
-export async function getAllMachines(_req: Request, res: Response) {
-  const machines = await machineService.getAllMachines({
-    orderBy: { name: 'asc' },
-  })
-  return res.json(machines)
+export async function getMachines(_req: Request, res: Response) {
+  try {
+    const machines = await machineService.getMachines()
+    return res.json(machines)
+  } catch (error) {
+    const { status, message } = error as ThrowError
+    return res.status(status).json({ message })
+  }
 }
 
-export async function createMachine(req: Request, res: Response) {
+export async function createMachine(
+  req: Request<never, never, CreateMachineDto>,
+  res: Response
+) {
   const { body, files } = req
   try {
-    const createdMachine = await machineService.createMachine(body, files)
-    return res.status(201).json(createdMachine)
+    const response = await machineService.createMachine({
+      createDto: body,
+      files,
+    })
+    return res.status(201).json(response)
   } catch (error) {
     const { message, status } = error as ThrowError
     return res.status(status).json({ message })
   }
 }
 
-export async function getMachineByCode(req: Request, res: Response) {
+export async function getMachineByCode(
+  req: Request<{ code: string }>,
+  res: Response
+) {
   const {
     params: { code },
   } = req
   try {
-    const foundMachine = await machineService.getMachineByCode(code)
+    const foundMachine = await machineService.getMachineByCode({ code })
     return res.json(foundMachine)
   } catch (error) {
     const { message, status } = error as ThrowError
@@ -33,17 +46,18 @@ export async function getMachineByCode(req: Request, res: Response) {
   }
 }
 
-export async function updateMachine(req: Request, res: Response) {
-  const {
-    params: { code },
-  } = req
+export async function updateMachine(
+  req: Request<{ code: string }, never, UpdateMachineDto>,
+  res: Response
+) {
+  const { code } = req.params
   const { body, files } = req
   try {
-    const updatedMachine = await machineService.updateMachineByCode(
+    const updatedMachine = await machineService.updateMachineByCode({
       code,
-      body,
-      files
-    )
+      updateDto: body,
+      files,
+    })
     return res.json(updatedMachine)
   } catch (error) {
     const { message, status } = error as ThrowError

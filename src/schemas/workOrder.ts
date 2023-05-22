@@ -1,12 +1,48 @@
 import {
-  Activity,
-  Engine,
-  Machine,
-  MachineArea,
-  WorkOrder,
+  CheckList,
+  WorkOrderActivityType,
   WorkOrderState,
 } from '@prisma/client'
 import { z } from 'zod'
+
+export const NEXT_STATE = {
+  [WorkOrderState.PLANNED]: WorkOrderState.VALIDATED,
+  [WorkOrderState.VALIDATED]: WorkOrderState.DOING,
+  [WorkOrderState.DOING]: WorkOrderState.DONE,
+}
+interface IsInspectionProps {
+  activityName: string | null
+  activityType: WorkOrderActivityType
+  checkList: CheckList[]
+}
+export function isInspection({
+  activityName,
+  activityType,
+  checkList,
+}: IsInspectionProps) {
+  return (
+    checkList.length > 0 &&
+    activityName?.replace('Ó', 'O') === 'INSPECCION' &&
+    activityType === 'INSPECTION'
+  )
+}
+interface GetNextStateProps extends IsInspectionProps {
+  state: WorkOrderState
+}
+export function getNextState({
+  activityName,
+  activityType,
+  checkList,
+  state,
+}: GetNextStateProps) {
+  if (
+    state === 'PLANNED' &&
+    isInspection({ activityName, activityType, checkList })
+  ) {
+    return 'DOING'
+  }
+  return NEXT_STATE[state as keyof typeof NEXT_STATE]
+}
 
 const ACTIVITY_TYPE_VALUES = [
   'PLANNED_PREVENTIVE',
@@ -356,27 +392,27 @@ export type CreateWorkOrderDto = z.infer<typeof createWorkOrderDto>
 export const updateWorkOrderDto = z.object(workOrderShapeUpdate)
 export type UpdateWorkOrderDto = z.infer<typeof updateWorkOrderDto>
 
-export interface WorkOrderResponseDto
-  extends Omit<WorkOrder, 'startDate' | 'endDate' | 'createdAt' | 'updatedAt'> {
-  startDate?: string
-  endDate?: string
-  machineCode: string
-  machineName: string
-  machineArea: MachineArea
-  createdAt: string
-  updatedAt: string
-}
+// export interface WorkOrderResponseDto
+//   extends Omit<WorkOrder, 'startDate' | 'endDate' | 'createdAt' | 'updatedAt'> {
+//   startDate?: string
+//   endDate?: string
+//   machineCode: string
+//   machineName: string
+//   machineArea: MachineArea
+//   createdAt: string
+//   updatedAt: string
+// }
 
-export interface WorkOrderResponseDb
-  extends Omit<
-    WorkOrder,
-    'startDate' | 'endDate' | 'failureCause' | 'createdAt' | 'updatedAt'
-  > {
-  startDate?: string
-  endDate?: string
-  failureCause?: string
-  activity: Pick<Activity, 'name' | 'activityType'>
-  engine: Pick<Engine, 'function'> & {
-    machine: Pick<Machine, 'code' | 'area' | 'name'>
-  }
-}
+// export interface WorkOrderResponseDb
+//   extends Omit<
+//     WorkOrder,
+//     'startDate' | 'endDate' | 'failureCause' | 'createdAt' | 'updatedAt'
+//   > {
+//   startDate?: string
+//   endDate?: string
+//   failureCause?: string
+//   activity: Pick<Activity, 'name' | 'activityType'>
+//   engine: Pick<Engine, 'function'> & {
+//     machine: Pick<Machine, 'code' | 'area' | 'name'>
+//   }
+// }

@@ -1,8 +1,7 @@
 import { Prisma } from '@prisma/client'
 import { ServiceError } from '.'
-import { validateDate } from '../libs/date'
+import { RANGES, validateDate } from '../libs/date'
 import prisma from '../libs/db'
-import { RANGES } from './workOrder.service'
 import {
   PrismaClientKnownRequestError,
   PrismaClientValidationError,

@@ -38,6 +38,13 @@ const activityShapeUpdate = {
       },
     }
   ),
+  pem: z
+    .string()
+    .regex(/^PEM [0-9]{3}/, {
+      message:
+        "El pem de la actividad debe tener el formato: PEM NNN (donde 'N' es número)",
+    })
+    .optional(),
 }
 
 const activityShapeCreate = {
@@ -51,13 +58,6 @@ const activityShapeCreate = {
   machineCode: z.string({
     required_error: 'El código de la máquina es requerido',
   }),
-  pem: z
-    .string()
-    .regex(/^PEM [0-9]{3}/, {
-      message:
-        "El pem de la actividad debe tener el formato: PEM NNN (donde 'N' es número)",
-    })
-    .optional(),
 }
 
 export const createActivityDto = z.object(activityShapeCreate)
