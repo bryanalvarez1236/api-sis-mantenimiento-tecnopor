@@ -11,6 +11,7 @@ import { CREATE_MACHINE_ZOD, UPDATE_MACHINE_ZOD } from '../schemas/machine'
 import { mergeMaintenanceRequestRouter } from './maintenanceRequest.route'
 import { mergeFailureReportRouter } from './failureReport.route'
 import { mergeEngineRouter } from './engine.routes'
+import { mergeHistoricalRouter } from './historical.route'
 
 export const machineRoute = '/machines'
 export const engineRoute = (machineCode?: string) =>
@@ -36,5 +37,6 @@ machineRouter.put(
 mergeEngineRouter(machineRouter)
 mergeMaintenanceRequestRouter(machineRouter)
 mergeFailureReportRouter(machineRouter)
+mergeHistoricalRouter(machineRouter)
 
 export default machineRouter
