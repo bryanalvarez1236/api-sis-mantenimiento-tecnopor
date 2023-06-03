@@ -65,7 +65,7 @@ export const FIRST_WORK_ORDER_ID = FIRST_WORK_ORDER.code
 export const SECOND_WORK_ORDER_ID = workOrders[1].code
 export const FIRST_WORK_ORDER_RESPONSE: WorkOrderResponseDto = {
   ...FIRST_WORK_ORDER,
-  startDate: FIRST_WORK_ORDER.startDate?.toISOString() ?? null,
+  startDate: new Date(FIRST_WORK_ORDER.startDate ?? '').toISOString() ?? null,
   endDate: new Date(FIRST_WORK_ORDER.endDate ?? '').toISOString() ?? null,
   createdAt: new Date(FIRST_WORK_ORDER.createdAt).toISOString(),
   updatedAt: new Date(FIRST_WORK_ORDER.updatedAt).toISOString(),
