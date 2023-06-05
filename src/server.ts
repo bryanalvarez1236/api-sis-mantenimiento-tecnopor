@@ -18,6 +18,7 @@ import failureReportRouter, {
   FAILURE_REPORT_ROUTE,
 } from './routes/failureReport.route'
 import engineRouter, { ENGINE_ROUTE } from './routes/engine.routes'
+import storeRouter, { STORE_ROUTE } from './routes/store.routes'
 
 export class Server {
   private app: Application
@@ -55,6 +56,7 @@ export class Server {
       maintenanceRequestRouter
     )
     this.app.use(this.createRoute(FAILURE_REPORT_ROUTE), failureReportRouter)
+    this.app.use(this.createRoute(STORE_ROUTE), storeRouter)
   }
 
   private createRoute(route: string) {

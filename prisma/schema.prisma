@@ -29,6 +29,7 @@ model Machine {
   checkList              CheckList[]
   maintenanceRequests    MaintenanceRequest[]
   failureReports         FailureReport[]
+  stores                 Store[]
   createdAt              DateTime                 @default(now())
   updatedAt              DateTime                 @default(now()) @updatedAt
 }
@@ -172,6 +173,24 @@ model FailureReportImage {
   failureReportId Int           @unique
   publicId        String
   url             String
+}
+
+model Store {
+  id            Int     @id @default(autoincrement())
+  machine       Machine @relation(fields: [machineCode], references: [code])
+  machineCode   String
+  name          String
+  unit          Unit    @relation(fields: [unitId], references: [id])
+  unitId        Int
+  amount        Int
+  minimumAmount Int
+  deleted       Boolean @default(false)
+}
+
+model Unit {
+  id     Int     @id @default(autoincrement())
+  name   String  @unique
+  stores Store[]
 }
 
 enum State {

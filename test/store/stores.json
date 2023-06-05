@@ -1,0 +1,19 @@
+[
+  {
+    "id": 500,
+    "machineCode": "CB-04-PRX-01",
+    "name": "SELLOS DE GOMA DE NITRILO",
+    "unitId": 0,
+    "amount": 0,
+    "minimumAmount": 0,
+    "deleted": true
+  },
+  {
+    "id": 1000,
+    "machineCode": "CB-04-PRX-01",
+    "name": "ANILLO DE GOMA",
+    "unitId": 1,
+    "amount": 5,
+    "minimumAmount": 6
+  }
+]
