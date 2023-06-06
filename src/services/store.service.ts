@@ -5,6 +5,7 @@ import {
   CreateStoreDto,
   StoreResponseDto,
   UpdateStoreDto,
+  VerifyStoreDto,
 } from '../schemas/store'
 import { machineNotFoundMessage } from './machine.service'
 import * as unitService from './unit.service'
@@ -23,6 +24,21 @@ export function storeAlreadyExistsMessage({
 }
 export function storeIdValidationErrorMessage() {
   return 'El id del repuesto debe ser un número'
+}
+export function storeInsufficientAmountMessage(storeName: string) {
+  return `El repuesto ${storeName} no tiene la cantidad suficiente`
+}
+export function storeUnverifiedAmountMessage({
+  storeName,
+  amount,
+}: {
+  storeName: string
+  amount: number
+}) {
+  if (amount < 1) {
+    return `No hay stock del repuesto ${storeName}`
+  }
+  return `Solo queda ${amount} en stock del repuesto ${storeName}`
 }
 
 interface TransformCreateStoreDtoProps {
@@ -209,4 +225,91 @@ export async function getFieldsToCreate() {
     orderBy: { name: 'asc' },
   })
   return { machines, units }
+}
+
+interface UpdateStoresProps {
+  machineCode: string
+  workOrderCode: number
+  stores: { name: string; amount: number }[]
+}
+export async function updateStores({
+  machineCode,
+  workOrderCode,
+  stores,
+}: UpdateStoresProps) {
+  const storeSet = stores.reduce((acc: typeof stores, value) => {
+    const index = acc.findIndex(({ name }) => name === value.name)
+    if (index >= 0) {
+      const store = acc[index]
+      store.amount += value.amount
+      acc[index] = store
+      return [...acc]
+    }
+    return [...acc, value]
+  }, [])
+
+  for (const { name, amount } of storeSet) {
+    const workOrders = { create: { amount, workOrderCode } }
+    const foundStore = await prisma.store.findFirst({
+      where: { machineCode, name },
+      select: { id: true, amount: true, deleted: true },
+    })
+    if (foundStore == null || foundStore.deleted) {
+      const id = foundStore?.id ?? 0
+      await prisma.store.upsert({
+        where: { id },
+        update: {
+          workOrders,
+        },
+        create: {
+          name,
+          amount: 0,
+          minimumAmount: 1,
+          machineCode,
+          unitId: 0,
+          deleted: true,
+          workOrders,
+        },
+      })
+      continue
+    }
+
+    const result = foundStore.amount - amount
+    if (result < 0) {
+      throw new ServiceError({
+        status: 406,
+        message: storeInsufficientAmountMessage(name),
+      })
+    }
+
+    const { id } = foundStore
+    await prisma.store.update({
+      where: { id },
+      data: {
+        amount: result,
+        workOrders,
+      },
+    })
+  }
+}
+
+interface VerifyStoreProps {
+  store: VerifyStoreDto
+}
+export async function verifyStore({ store }: VerifyStoreProps) {
+  const { machineCode, name, amount } = store
+  const foundStore = await prisma.store.findFirst({
+    where: { machineCode, name, deleted: false },
+    select: { amount: true },
+  })
+  if (foundStore != null && foundStore.amount < amount) {
+    throw new ServiceError({
+      status: 405,
+      message: storeUnverifiedAmountMessage({
+        storeName: name,
+        amount: foundStore.amount,
+      }),
+    })
+  }
+  return { name, amount }
 }

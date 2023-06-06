@@ -110,8 +110,7 @@ model WorkOrder {
   protectionEquipments  WorkOrderProtectionEquipment[]
   // from doing to done
   activityDescription   String?
-  storeDescription      String?
-  storeUnit             Int?
+  stores                StoreWorkOrder[]
   // show only if it's corrective
   failureCause          String?
   startDate             DateTime?
@@ -176,21 +175,31 @@ model FailureReportImage {
 }
 
 model Store {
-  id            Int     @id @default(autoincrement())
-  machine       Machine @relation(fields: [machineCode], references: [code])
+  id            Int              @id @default(autoincrement())
+  machine       Machine          @relation(fields: [machineCode], references: [code])
   machineCode   String
   name          String
-  unit          Unit    @relation(fields: [unitId], references: [id])
+  unit          Unit             @relation(fields: [unitId], references: [id])
   unitId        Int
   amount        Int
   minimumAmount Int
-  deleted       Boolean @default(false)
+  deleted       Boolean          @default(false)
+  workOrders    StoreWorkOrder[]
 }
 
 model Unit {
   id     Int     @id @default(autoincrement())
   name   String  @unique
   stores Store[]
+}
+
+model StoreWorkOrder {
+  id            Int       @id @default(autoincrement())
+  workOrder     WorkOrder @relation(fields: [workOrderCode], references: [code])
+  workOrderCode Int
+  store         Store     @relation(fields: [storeId], references: [id])
+  storeId       Int
+  amount        Int
 }
 
 enum State {

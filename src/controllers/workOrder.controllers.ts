@@ -23,6 +23,24 @@ export async function getWorkOrders(
   }
 }
 
+export async function getWorkOrderByCode(
+  req: Request<{ code: string }, never, never, { state?: string }>,
+  res: Response
+) {
+  const { code } = req.params
+  const { state } = req.query
+  try {
+    const workOrder = await workOrderService.getWorkOrderByCode({
+      code: +code,
+      state,
+    })
+    return res.json(workOrder)
+  } catch (error) {
+    const { status, message } = error as ThrowError
+    return res.status(status).json({ message })
+  }
+}
+
 export async function getWorkOrderById(
   req: Request<{ id: string }>,
   res: Response

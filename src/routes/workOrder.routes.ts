@@ -2,7 +2,7 @@ import { Router } from 'express'
 import {
   createWorkOrder,
   deleteWorkOrderByCode,
-  getWorkOrderById,
+  getWorkOrderByCode,
   getWorkOrders,
   getWorkOrdersCount,
   updateWorkOrder,
@@ -17,7 +17,7 @@ const workOrderRouter = Router()
 
 workOrderRouter.get('/', getWorkOrders)
 workOrderRouter.get('/count', getWorkOrdersCount)
-workOrderRouter.get('/:id', getWorkOrderById)
+workOrderRouter.get('/:code', getWorkOrderByCode)
 workOrderRouter.post('/', validateBody(createWorkOrderDto), createWorkOrder)
 workOrderRouter.put('/:id', validateUpdateWorkOrderDto, updateWorkOrder)
 workOrderRouter.delete('/:id', deleteWorkOrderByCode)

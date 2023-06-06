@@ -1,5 +1,9 @@
 import { Request, Response } from 'express'
-import { CreateStoreDto, UpdateStoreDto } from '../schemas/store'
+import {
+  CreateStoreDto,
+  UpdateStoreDto,
+  VerifyStoreDto,
+} from '../schemas/store'
 import * as storeService from '../services/store.service'
 import { ThrowError } from '../services'
 
@@ -55,4 +59,18 @@ export async function deleteStoreById(
 export async function getFieldsToCreate(_req: Request, res: Response) {
   const fields = await storeService.getFieldsToCreate()
   return res.json(fields)
+}
+
+export async function verifyStore(
+  req: Request<never, never, VerifyStoreDto>,
+  res: Response
+) {
+  const store = req.body
+  try {
+    const verified = await storeService.verifyStore({ store })
+    return res.json(verified)
+  } catch (error) {
+    const { status, message } = error as ThrowError
+    return res.status(status).json({ message })
+  }
 }

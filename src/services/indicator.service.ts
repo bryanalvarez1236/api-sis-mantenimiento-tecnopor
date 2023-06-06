@@ -33,6 +33,10 @@ export async function getIndicators({ date }: GetIndicatorsProps) {
             areaId: true,
           },
         },
+        stores: {
+          select: { amount: true, store: { select: { name: true } } },
+          orderBy: { store: { name: 'asc' } },
+        },
       },
       orderBy: { code: 'asc' },
     })
