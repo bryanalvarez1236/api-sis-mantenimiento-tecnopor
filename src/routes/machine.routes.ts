@@ -12,6 +12,7 @@ import { mergeMaintenanceRequestRouter } from './maintenanceRequest.route'
 import { mergeFailureReportRouter } from './failureReport.route'
 import { mergeEngineRouter } from './engine.routes'
 import { mergeHistoricalRouter } from './historical.route'
+import { mergeStoreRouter } from './store.routes'
 
 export const machineRoute = '/machines'
 export const engineRoute = (machineCode?: string) =>
@@ -38,5 +39,6 @@ mergeEngineRouter(machineRouter)
 mergeMaintenanceRequestRouter(machineRouter)
 mergeFailureReportRouter(machineRouter)
 mergeHistoricalRouter(machineRouter)
+mergeStoreRouter(machineRouter)
 
 export default machineRouter

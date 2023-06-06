@@ -11,6 +11,8 @@ import {
 import { getEngineByCode } from './engine.service'
 import { getActivityByCode } from './activity.service'
 import { createDraftWorkOrder } from './draftWorkOrder.service'
+import * as storeService from './store.service'
+import { WorkOrderState } from '@prisma/client'
 
 export function workOrderNotFoundMessage(workOrderId: number) {
   return `La órden de trabajo con el código ${workOrderId} no existe`
@@ -171,6 +173,7 @@ export async function updateWorkOrderById({
     code,
     nextState: nextState,
     updatedAt,
+    machineCode,
   } = await getWorkOrderById({ id })
 
   if (nextState == null || nextState !== updateWorkOrderDto.state) {
@@ -185,7 +188,7 @@ export async function updateWorkOrderById({
     updateWorkOrderDto.failureCause = undefined
   }
 
-  const { checkListVerified, ...restUpdate } = updateWorkOrderDto
+  const { checkListVerified, stores, ...restUpdate } = updateWorkOrderDto
 
   try {
     if (checkListVerified) {
@@ -201,6 +204,13 @@ export async function updateWorkOrderById({
       if (restUpdate.endDate == null) {
         restUpdate.endDate = now
       }
+    }
+    if (stores != null && stores.length > 0) {
+      await storeService.updateStores({
+        machineCode,
+        workOrderCode: id,
+        stores,
+      })
     }
     const { activity, ...updatedWorkOrder } = await prisma.workOrder.update({
       where: { code: id },
@@ -288,4 +298,119 @@ export async function deleteWorkOrderById({ id }: DeleteWorkOrderByIdProps) {
   } catch (error) {
     throw new ServiceError({ status: 500 })
   }
+}
+
+interface GetWorkOrderByCodeProps {
+  code: number
+  state?: string
+}
+export async function getWorkOrderByCode({
+  code,
+  state,
+}: GetWorkOrderByCodeProps) {
+  try {
+    let select = SELECT_PLANNED_WORK_ORDER
+    if (state != null && state in WorkOrderState) {
+      select = SELECT_WORK_ORDER[
+        state as WorkOrderState
+      ] as typeof SELECT_PLANNED_WORK_ORDER
+    }
+    const foundWorkOrder = await prisma.workOrder.findUnique({
+      where: { code },
+      select,
+    })
+    if (foundWorkOrder == null) {
+      throw new ServiceError({
+        status: 404,
+        message: workOrderNotFoundMessage(code),
+      })
+    }
+    let stores
+    if (state === 'DOING' && foundWorkOrder.state === state) {
+      const {
+        machine: { code: machineCode },
+      } = foundWorkOrder
+      stores = await prisma.store.findMany({
+        where: { machineCode, deleted: false },
+        select: { name: true, amount: true },
+        orderBy: { name: 'asc' },
+      })
+    }
+    return {
+      ...foundWorkOrder,
+      ...(stores ? { stores } : {}),
+      nextState: getNextState({
+        activityName: foundWorkOrder.activityName,
+        activityType: foundWorkOrder.activityType,
+        checkList: foundWorkOrder.machine.checkList ?? [],
+        state: foundWorkOrder.state,
+      }),
+    }
+  } catch (error) {
+    if (error instanceof PrismaClientValidationError) {
+      throw new ServiceError({
+        status: 400,
+        message: WORK_ORDER_INVALID_ID_MESSAGE,
+      })
+    }
+    if (error instanceof ServiceError) {
+      throw error
+    }
+    throw new ServiceError({ status: 500 })
+  }
+}
+
+const SELECT_PLANNED_WORK_ORDER = {
+  code: true,
+  activityType: true,
+  state: true,
+  priority: true,
+  createdAt: true,
+  activity: { select: { code: true, name: true } },
+  activityName: true,
+  machineCode: true,
+  machine: {
+    select: {
+      code: true,
+      name: true,
+      area: { select: { name: true } },
+      checkList: { take: 1 },
+    },
+  },
+  engine: { select: { code: true, function: true } },
+}
+
+const SELECT_VALIDATED_WORK_ORDER = {
+  ...SELECT_PLANNED_WORK_ORDER,
+  machine: {
+    select: { code: true, name: true, area: { select: { name: true } } },
+  },
+}
+
+const SELECT_DOING_WORK_ORDER = {
+  ...SELECT_VALIDATED_WORK_ORDER,
+  securityMeasureStarts: true,
+  protectionEquipments: true,
+}
+
+const SELECT_DONE_WORK_ORDER = {
+  ...SELECT_DOING_WORK_ORDER,
+  activityDescription: true,
+  failureCause: true,
+  startDate: true,
+  endDate: true,
+  totalHours: true,
+  securityMeasureEnds: true,
+  observations: true,
+  stores: {
+    select: { id: true, amount: true, store: { select: { name: true } } },
+  },
+  checkListVerified: { select: { id: true, field: true, value: true } },
+}
+
+const SELECT_WORK_ORDER = {
+  [WorkOrderState.PLANNED]: SELECT_PLANNED_WORK_ORDER,
+  [WorkOrderState.VALIDATED]: SELECT_VALIDATED_WORK_ORDER,
+  [WorkOrderState.DOING]: SELECT_DOING_WORK_ORDER,
+  [WorkOrderState.DONE]: SELECT_DONE_WORK_ORDER,
 }

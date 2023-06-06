@@ -16,7 +16,7 @@ const technicalDocumentationValues = [
 
 const criticalityValues = ['HIGH', 'MEDIUM', 'LOW']
 
-const MACHINE_CODE_ZOD = z
+export const MACHINE_CODE_ZOD = z
   .string({
     required_error: 'El código de la máquina es requerido',
     invalid_type_error: 'El código de la máquina de ser un texto',

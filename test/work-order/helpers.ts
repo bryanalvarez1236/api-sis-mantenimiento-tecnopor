@@ -10,9 +10,11 @@ import type {
   CheckListVerified,
   Machine,
   WorkOrder,
+  WorkOrderState,
 } from '@prisma/client'
 import workOrderData from './work-orders.json'
 import { FIRST_MACHINE, areas, machines } from '../machine/helpers'
+import { MACHINE_CODE } from '../store/helpers'
 
 export const workOrders: WorkOrder[] = workOrderData as unknown as WorkOrder[]
 export const CURRENT_DATE = new Date('2023-04-16')
@@ -81,7 +83,20 @@ export const FIRST_WORK_ORDER_RESPONSE: WorkOrderResponseDto = {
 
 export const CURRENT_WORK_ORDER = workOrders[1]
 export const UPDATE_WORK_ORDER: UpdateWorkOrderGeneralDto = {
-  state: 'VALIDATED',
+  securityMeasureStarts: [],
+  protectionEquipments: [],
+  activityDescription: 'ESTA ES UNA DESCRIPCION',
+  stores: [
+    { name: 'ANILLO DE GOMA', amount: 5 },
+    { name: 'SELLO DE NITRILO', amount: 32 },
+    { name: 'SELLO DE NITRILO', amount: 20 },
+    { name: 'NUEVO REPUESTO', amount: 2 },
+  ],
+  totalHours: 14,
+  securityMeasureEnds: [],
+  state: 'DONE',
+  endDate: new Date(),
+  checkListVerified: [],
 }
 export const UPDATED_WORK_ORDER_RESPONSE = {
   code: CURRENT_WORK_ORDER.code,
@@ -123,8 +138,6 @@ export const CREATED_WORK_ORDER_RESPONSE: WorkOrderResponseDto = {
   securityMeasureEnds: [],
   securityMeasureStarts: [],
   state: 'PLANNED',
-  storeDescription: null,
-  storeUnit: null,
   startDate: null,
   endDate: null,
   totalHours: null,
@@ -174,3 +187,16 @@ export const ALL_WORK_ORDERS = workOrders
       }
     }
   )
+
+export const WORK_ORDER_CODE_TO_UPDATE = 0
+export const WORK_ORDER_TO_UPDATE: CreateWorkOrderDto & {
+  code: number
+  state: WorkOrderState
+} = {
+  code: WORK_ORDER_CODE_TO_UPDATE,
+  state: 'DOING',
+  activityType: 'CONDITION_CHECK',
+  machineCode: MACHINE_CODE,
+  priority: 'NORMAL',
+  activityName: 'ORDEN DE TRABAJO PARA ACTUALIZAR',
+}

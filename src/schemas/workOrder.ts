@@ -4,6 +4,7 @@ import {
   WorkOrderState,
 } from '@prisma/client'
 import { z } from 'zod'
+import { STORE_NAME_ZOD } from './store'
 
 export const NEXT_STATE = {
   [WorkOrderState.PLANNED]: WorkOrderState.VALIDATED,
@@ -258,19 +259,24 @@ export const checkListVerified = z.object({
   checkListVerified: z.array(z.object(checkListVerifiedShape)),
   endDate: dateSchema,
 })
+
+const STORE_ZOD = {
+  name: STORE_NAME_ZOD,
+  amount: z
+    .number({
+      required_error: 'La cantidad de repuestos es requerida',
+      invalid_type_error: 'La cantidad de repuestos debe ser un número',
+    })
+    .int('La cantidad de repuestos debe ser un número entero')
+    .min(1, 'La cantidad de repuestos debe ser mayor a 1'),
+}
+
 const workOrderShapeUpdateToDone = {
   activityDescription: z.string({
     required_error:
       'La descripción de la actividad de la orden de trabajo es requerida',
   }),
-  storeDescription: z.string({
-    required_error:
-      'La descripción de los repuestos de la orden de trabajo es requerida',
-  }),
-  storeUnit: z.number({
-    required_error:
-      'La unidad de los repuestos de la orden de trabajo es requerida',
-  }),
+  stores: z.object(STORE_ZOD).array(),
   failureCause: z.string().optional(),
   endDate: dateSchema,
   securityMeasureEnds: z
@@ -346,8 +352,7 @@ const workOrderShapeUpdateGeneral = {
     })
     .optional(),
   activityDescription: z.string().optional().nullable(),
-  storeDescription: z.string().optional().nullable(),
-  storeUnit: z.number().optional().nullable(),
+  stores: z.array(z.object(STORE_ZOD)).optional(),
   failureCause: z.string().optional(),
   startDate: dateSchema.optional(),
   endDate: dateSchema.optional(),
@@ -398,28 +403,3 @@ export type CreateWorkOrderDto = z.infer<typeof createWorkOrderDto>
 
 export const updateWorkOrderDto = z.object(workOrderShapeUpdate)
 export type UpdateWorkOrderDto = z.infer<typeof updateWorkOrderDto>
-
-// export interface WorkOrderResponseDto
-//   extends Omit<WorkOrder, 'startDate' | 'endDate' | 'createdAt' | 'updatedAt'> {
-//   startDate?: string
-//   endDate?: string
-//   machineCode: string
-//   machineName: string
-//   machineArea: MachineArea
-//   createdAt: string
-//   updatedAt: string
-// }
-
-// export interface WorkOrderResponseDb
-//   extends Omit<
-//     WorkOrder,
-//     'startDate' | 'endDate' | 'failureCause' | 'createdAt' | 'updatedAt'
-//   > {
-//   startDate?: string
-//   endDate?: string
-//   failureCause?: string
-//   activity: Pick<Activity, 'name' | 'activityType'>
-//   engine: Pick<Engine, 'function'> & {
-//     machine: Pick<Machine, 'code' | 'area' | 'name'>
-//   }
-// }
