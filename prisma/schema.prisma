@@ -70,7 +70,8 @@ model Engine {
   frequency   Int
   poles       Int
   ip          Int
-  boot        Boot
+  boot        Boot        @relation(fields: [bootId], references: [id])
+  bootId      Int
   workOrders  WorkOrder[]
 }
 
@@ -216,15 +217,16 @@ model TechnicalDocumentation {
   Machine Machine[] @relation("MachineTechnicalDocumentation")
 }
 
+model Boot {
+  id     Int      @id
+  name   String   @unique
+  Engine Engine[]
+}
+
 enum State {
   ACTIVE
   INNACTIVE
   DELETED
-}
-
-enum Boot {
-  DIRECT
-  SOFT
 }
 
 enum ActivityType {

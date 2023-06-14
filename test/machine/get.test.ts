@@ -12,6 +12,8 @@ import { machineNotFoundMessage } from '../../src/services/machine.service'
 import { areas } from '../area/helpers'
 import { criticalities } from '../criticality/helpers'
 import { technicalDocumentation } from '../technical-documentation/helpers'
+import { boots } from '../boot/helpers'
+import { engines } from '../engine/helpers'
 
 beforeAll(async () => {
   await prisma.area.createMany({ data: areas })
@@ -19,7 +21,10 @@ beforeAll(async () => {
   await prisma.technicalDocumentation.createMany({
     data: technicalDocumentation,
   })
+  await prisma.boot.createMany({ data: boots })
+
   await prisma.machine.createMany({ data: machines })
+  await prisma.engine.createMany({ data: engines })
 })
 
 describe('Machines EndPoint => GET all machines', () => {
@@ -51,7 +56,10 @@ describe('Machines EndPoint => GET a machine by code', () => {
 })
 
 afterAll(async () => {
+  await prisma.engine.deleteMany()
   await prisma.machine.deleteMany()
+
+  await prisma.boot.deleteMany()
   await prisma.technicalDocumentation.deleteMany()
   await prisma.criticality.deleteMany()
   await prisma.area.deleteMany()

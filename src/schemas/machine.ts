@@ -19,7 +19,7 @@ import { generateImageZod } from './image'
 export const MACHINE_CODE_ZOD = z
   .string({
     required_error: 'El código de la máquina es requerido',
-    invalid_type_error: 'El código de la máquina de ser un texto',
+    invalid_type_error: 'El código de la máquina debe ser un texto',
   })
   .regex(/^[A-Z]{2}-[0-9]{2}-[A-Z]{3}-[0-9]{2}$/, {
     message:

@@ -6,14 +6,14 @@ import {
   ENGINE_ROUTE,
   ENGINE_WITH_MACHINE_ROUTE,
 } from '../../src/routes/engine.routes'
-import { FIRST_MACHINE_CODE } from '../machine/helpers'
-import { CreateEngineDto, UpdateEngineDto } from '../../src/schemas/engine'
-
-type EngineResponseDto = Engine
+import {
+  CreateEngineDto,
+  EngineResponseDto,
+  UpdateEngineDto,
+} from '../../src/schemas/engine'
+import { boots } from '../boot/helpers'
 
 export const engines: Engine[] = engineData as never as Engine[]
-export const FIRST_ENGINE = engines[0]
-export const FIRST_ENGINE_CODE = FIRST_ENGINE.code
 
 export const ENGINE_ROUTES = {
   baseWithMachine: (machineCode: string) =>
@@ -24,10 +24,12 @@ export const ENGINE_ROUTES = {
   baseWithCode: (code: string) => `${serverRoute}${ENGINE_ROUTE}/${code}`,
 }
 
+const FIRST_ENGINE = engines[0]
+export const FIRST_ENGINE_CODE = FIRST_ENGINE.code
+
 export const CREATE_ENGINE_DTO: CreateEngineDto = {
-  code: 'CB-04-PRX-01-MOT-007',
+  code: 'CB-03-ABL-01-MOT-100',
   function: 'PALETAS ROTATIVAS',
-  mark: 'XIAOLAODA&KAPTEENI',
   type: 'Y90S-4',
   powerHp: 1.5,
   powerKw: 1.1,
@@ -39,13 +41,24 @@ export const CREATE_ENGINE_DTO: CreateEngineDto = {
   frequency: 50,
   poles: 4,
   ip: 44,
-  boot: 'DIRECT',
+  bootId: 1,
 }
 export const CREATED_ENGINE_RESPONSE_DTO: EngineResponseDto = {
-  ...CREATE_ENGINE_DTO,
+  code: CREATE_ENGINE_DTO.code,
+  function: CREATE_ENGINE_DTO.function,
   mark: CREATE_ENGINE_DTO.mark ?? null,
   type: CREATE_ENGINE_DTO.type ?? null,
-  machineCode: FIRST_MACHINE_CODE,
+  powerHp: CREATE_ENGINE_DTO.powerHp,
+  powerKw: CREATE_ENGINE_DTO.powerKw,
+  voltage: CREATE_ENGINE_DTO.voltage,
+  current: CREATE_ENGINE_DTO.current,
+  rpm: CREATE_ENGINE_DTO.rpm,
+  cosPhi: CREATE_ENGINE_DTO.cosPhi,
+  performance: CREATE_ENGINE_DTO.performance,
+  frequency: CREATE_ENGINE_DTO.frequency,
+  poles: CREATE_ENGINE_DTO.poles,
+  ip: CREATE_ENGINE_DTO.ip,
+  boot: boots.find(({ id }) => id === CREATE_ENGINE_DTO.bootId)?.name ?? '',
 }
 
 export const UPDATE_ENGINE_DTO: UpdateEngineDto = {
@@ -62,16 +75,22 @@ export const UPDATE_ENGINE_DTO: UpdateEngineDto = {
   frequency: 50,
   poles: 6,
   ip: 44,
-  boot: 'SOFT',
+  bootId: 2,
 }
 export const UPDATED_ENGINE_RESPONSE_DTO: EngineResponseDto = {
-  ...UPDATE_ENGINE_DTO,
+  code: FIRST_ENGINE_CODE,
+  function: UPDATE_ENGINE_DTO.function,
   mark: UPDATE_ENGINE_DTO.mark ?? null,
   type: UPDATE_ENGINE_DTO.type ?? null,
-  code: FIRST_ENGINE_CODE,
-  machineCode: FIRST_MACHINE_CODE,
+  powerHp: UPDATE_ENGINE_DTO.powerHp,
+  powerKw: UPDATE_ENGINE_DTO.powerKw,
+  voltage: UPDATE_ENGINE_DTO.voltage,
+  current: UPDATE_ENGINE_DTO.current,
+  rpm: UPDATE_ENGINE_DTO.rpm,
+  cosPhi: UPDATE_ENGINE_DTO.cosPhi,
+  performance: UPDATE_ENGINE_DTO.performance,
+  frequency: UPDATE_ENGINE_DTO.frequency,
+  poles: UPDATE_ENGINE_DTO.poles,
+  ip: UPDATE_ENGINE_DTO.ip,
+  boot: boots.find(({ id }) => id === UPDATE_ENGINE_DTO.bootId)?.name ?? '',
 }
-
-export const ALL_ENGINES: Engine[] = engines
-  .filter(({ machineCode }) => machineCode === FIRST_MACHINE_CODE)
-  .sort(({ code: c1 }, { code: c2 }) => c1.localeCompare(c2))

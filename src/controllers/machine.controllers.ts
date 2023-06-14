@@ -71,17 +71,17 @@ export async function updateMachine(
   return res.status(status).json(data)
 }
 
-export async function getFieldsToCreate(_req: Request, res: Response) {
-  const fields = await machineService.getFieldsToCreate()
+export async function getFieldsToCreateMachine(_req: Request, res: Response) {
+  const fields = await machineService.getFieldsToCreateMachine()
   return res.json(fields)
 }
-export async function getFieldsToUpdate(
+export async function getFieldsToUpdateMachine(
   req: Request<{ code: string }>,
   res: Response
 ) {
   const { code } = req.params
   try {
-    const response = await machineService.getFieldsToUpdate({ code })
+    const response = await machineService.getFieldsToUpdateMachine({ code })
     return res.json(response)
   } catch (error) {
     const { status, message } = error as ThrowError

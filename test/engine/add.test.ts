@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import prisma from '../../src/libs/db'
-import { FIRST_MACHINE_CODE, areas, machines } from '../machine/helpers'
+import { FIRST_MACHINE_CODE, machines } from '../machine/helpers'
 import {
   CREATED_ENGINE_RESPONSE_DTO,
   CREATE_ENGINE_DTO,
@@ -11,11 +11,21 @@ import {
 import { api } from '../helpers/api'
 import { engineAlreadyExistsMessage } from '../../src/services/engine.service'
 import { machineNotFoundMessage } from '../../src/services/machine.service'
+import { criticalities } from '../criticality/helpers'
+import { technicalDocumentation } from '../technical-documentation/helpers'
+import { boots } from '../boot/helpers'
+import { areas } from '../area/helpers'
 
 describe('Engines EndPoint => POST', () => {
   beforeAll(async () => {
     await prisma.area.createMany({ data: areas })
+    await prisma.criticality.createMany({ data: criticalities })
+    await prisma.technicalDocumentation.createMany({
+      data: technicalDocumentation,
+    })
+    await prisma.boot.createMany({ data: boots })
     await prisma.machine.createMany({ data: machines })
+
     await prisma.engine.createMany({ data: engines })
   })
 
@@ -58,7 +68,11 @@ describe('Engines EndPoint => POST', () => {
 
   afterAll(async () => {
     await prisma.engine.deleteMany()
+
     await prisma.machine.deleteMany()
+    await prisma.boot.deleteMany()
+    await prisma.technicalDocumentation.deleteMany()
+    await prisma.criticality.deleteMany()
     await prisma.area.deleteMany()
   })
 })

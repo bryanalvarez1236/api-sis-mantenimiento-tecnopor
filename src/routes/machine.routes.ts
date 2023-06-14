@@ -1,8 +1,8 @@
 import { Router } from 'express'
 import {
   createMachine,
-  getFieldsToCreate,
-  getFieldsToUpdate,
+  getFieldsToCreateMachine,
+  getFieldsToUpdateMachine,
   getMachineByCode,
   getMachines,
   updateMachine,
@@ -21,8 +21,8 @@ const machineRouter = Router()
 
 machineRouter.get('/', getMachines)
 machineRouter.get('/:code', getMachineByCode)
-machineRouter.get('/fields/create', getFieldsToCreate)
-machineRouter.get('/:code/fields/update', getFieldsToUpdate)
+machineRouter.get('/fields/create', getFieldsToCreateMachine)
+machineRouter.get('/:code/fields/update', getFieldsToUpdateMachine)
 
 machineRouter.post(
   '/',

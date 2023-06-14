@@ -8,6 +8,7 @@ import {
 } from '../schemas/machine'
 import { deleteFile, uploadFile } from '../libs/cloudinary'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime'
+import { getAllEngines } from './engine.service'
 
 export function machineNotFoundMessage(machineCode: string) {
   return `La máquina con el código '${machineCode}' no existe`
@@ -56,7 +57,7 @@ export async function getMachineByCode({ code }: GetMachineByCodeProps) {
       // areaId: true,
       area: { select: { name: true } },
       image: { select: { url: true } },
-      engines: { orderBy: { code: 'asc' } },
+      // engines: { orderBy: { code: 'asc' } },
     },
   })
   if (foundMachine == null) {
@@ -65,7 +66,8 @@ export async function getMachineByCode({ code }: GetMachineByCodeProps) {
       message: machineNotFoundMessage(code),
     })
   }
-  return foundMachine
+  const engines = await getAllEngines({ machineCode: code })
+  return { ...foundMachine, engines }
 }
 
 interface CreateMachineProps {
@@ -187,7 +189,7 @@ export async function updateMachineByCode({
   }
 }
 
-export async function getFieldsToCreate() {
+export async function getFieldsToCreateMachine() {
   const areas = await prisma.area.findMany({
     select: { id: true, name: true },
     orderBy: { id: 'asc' },
@@ -203,10 +205,12 @@ export async function getFieldsToCreate() {
   return { areas, criticalities, technicalDocumentation }
 }
 
-interface GetFieldsToEditProps {
+interface GetFieldsToEditMachineProps {
   code: string
 }
-export async function getFieldsToUpdate({ code }: GetFieldsToEditProps) {
+export async function getFieldsToUpdateMachine({
+  code,
+}: GetFieldsToEditMachineProps) {
   const foundMachine = await prisma.machine.findUnique({
     where: { code },
     select: {
@@ -228,7 +232,7 @@ export async function getFieldsToUpdate({ code }: GetFieldsToEditProps) {
       message: machineNotFoundMessage(code),
     })
   }
-  const fields = await getFieldsToCreate()
+  const fields = await getFieldsToCreateMachine()
   const { image, technicalDocumentation, ...machine } = foundMachine
 
   return {

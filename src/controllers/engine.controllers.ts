@@ -69,3 +69,33 @@ export async function updateEngineByCode(
     return res.status(status).json({ message })
   }
 }
+
+export async function getFieldsToCreateEngine(
+  req: Request<never, never, never, { machineCode?: string }>,
+  res: Response
+) {
+  const { machineCode = '' } = req.query
+  try {
+    const response = await engineService.getFieldsToCreateEngine({
+      machineCode: `${machineCode}`,
+    })
+    return res.json(response)
+  } catch (error) {
+    const { status, message } = error as ThrowError
+    return res.status(status).json({ message })
+  }
+}
+
+export async function getFieldsToUpdateEngine(
+  req: Request<{ code: string }>,
+  res: Response
+) {
+  const { code } = req.params
+  try {
+    const response = await engineService.getFieldsToUpdateEngine({ code })
+    return res.json(response)
+  } catch (error) {
+    const { status, message } = error as ThrowError
+    return res.status(status).json({ message })
+  }
+}
