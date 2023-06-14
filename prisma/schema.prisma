@@ -20,8 +20,9 @@ model Machine {
   model                  String?
   specificData           String?
   function               String?
-  technicalDocumentation TechnicalDocumentation[]
-  criticality            Criticality
+  technicalDocumentation TechnicalDocumentation[] @relation("MachineTechnicalDocumentation")
+  criticality            Criticality              @relation(fields: [criticalityId], references: [id])
+  criticalityId          Int
   image                  MachineImage?
   engines                Engine[]
   activities             Activity[]
@@ -30,16 +31,8 @@ model Machine {
   maintenanceRequests    MaintenanceRequest[]
   failureReports         FailureReport[]
   stores                 Store[]
-  createdAt              DateTime                 @default(now())
-  updatedAt              DateTime                 @default(now()) @updatedAt
-}
-
-model Area {
-  id       Int       @id @default(autoincrement())
-  name     String
-  hours    Int
-  days     Int
-  machines Machine[]
+  // createdAt              DateTime                 @default(now())
+  // updatedAt              DateTime                 @default(now()) @updatedAt
 }
 
 model CheckList {
@@ -202,33 +195,31 @@ model StoreWorkOrder {
   amount        Int
 }
 
+// Manually created data
+model Area {
+  id       Int       @id
+  name     String    @unique
+  hours    Int
+  days     Int
+  machines Machine[]
+}
+
+model Criticality {
+  id      Int       @id
+  name    String    @unique
+  Machine Machine[]
+}
+
+model TechnicalDocumentation {
+  id      Int       @id
+  name    String    @unique
+  Machine Machine[] @relation("MachineTechnicalDocumentation")
+}
+
 enum State {
   ACTIVE
   INNACTIVE
   DELETED
-}
-
-enum MachineArea {
-  PRE_EXPANDED
-  RECYCLED
-  LOCKED
-  CUTTING
-  JOISTS
-  SERVICES
-  GENERAL
-}
-
-enum Criticality {
-  HIGH
-  MEDIUM
-  LOW
-}
-
-enum TechnicalDocumentation {
-  OPERATIONS_MANUAL
-  MAINTENANCE_MANUAL
-  ELECTRICAL_PLANS
-  MECHANICAL_PLANS
 }
 
 enum Boot {

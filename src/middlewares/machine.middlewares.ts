@@ -1,25 +1,35 @@
 import { NextFunction, Request, Response } from 'express'
+import { AnyZodObject, ZodError } from 'zod'
+import { ServiceError } from '../services'
+import { deleteUploadedFiles } from '../libs/files'
 
-export function transformBody(
-  req: Request,
-  _res: Response,
-  next: NextFunction
-) {
-  const { body } = req
-  const { technicalDocumentation: technicalDocumentationInput } = body
-  if (technicalDocumentationInput) {
-    if (typeof technicalDocumentationInput === 'string') {
-      body.technicalDocumentation = [technicalDocumentationInput]
-    } else {
-      const technicalDocumentation = new Set(technicalDocumentationInput)
-      body.technicalDocumentation = [...technicalDocumentation]
+interface ValidateBodyWithFileProps {
+  schema: AnyZodObject
+  fileName: string
+}
+
+export function validateBodyWithFile({
+  schema,
+  fileName,
+}: ValidateBodyWithFileProps) {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    const { body, files } = req
+    try {
+      const result = await schema.parseAsync({
+        ...body,
+        [fileName]: files?.[fileName],
+      })
+      req.body = result
+      return next()
+    } catch (error) {
+      deleteUploadedFiles(files)
+      if (error instanceof ZodError) {
+        const { issues } = error
+        const message = issues.map(({ message }) => message).join('\n')
+        return res.status(400).json({ message })
+      }
+      const { status, message } = new ServiceError({ status: 400 })
+      return res.status(status).json({ message })
     }
-  } else {
-    body.technicalDocumentation = []
   }
-  const { areaId } = req.body
-  if (!isNaN(areaId)) {
-    req.body.areaId = +areaId
-  }
-  return next()
 }

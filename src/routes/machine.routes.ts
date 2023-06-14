@@ -1,12 +1,13 @@
 import { Router } from 'express'
 import {
   createMachine,
+  getFieldsToCreate,
+  getFieldsToUpdate,
   getMachineByCode,
   getMachines,
   updateMachine,
 } from '../controllers/machine.controllers'
-import { transformBody } from '../middlewares/machine.middlewares'
-import { validateBody } from '../middlewares/validate'
+import { validateBodyWithFile } from '../middlewares/machine.middlewares'
 import { CREATE_MACHINE_ZOD, UPDATE_MACHINE_ZOD } from '../schemas/machine'
 import { mergeMaintenanceRequestRouter } from './maintenanceRequest.route'
 import { mergeFailureReportRouter } from './failureReport.route'
@@ -15,23 +16,23 @@ import { mergeHistoricalRouter } from './historical.route'
 import { mergeStoreRouter } from './store.routes'
 
 export const machineRoute = '/machines'
-export const engineRoute = (machineCode?: string) =>
-  `/${machineCode ?? ':machineCode'}/engines`
 
 const machineRouter = Router()
 
 machineRouter.get('/', getMachines)
 machineRouter.get('/:code', getMachineByCode)
+machineRouter.get('/fields/create', getFieldsToCreate)
+machineRouter.get('/:code/fields/update', getFieldsToUpdate)
+
 machineRouter.post(
   '/',
-  transformBody,
-  validateBody(CREATE_MACHINE_ZOD),
+  validateBodyWithFile({ schema: CREATE_MACHINE_ZOD, fileName: 'image' }),
   createMachine
 )
+
 machineRouter.put(
   '/:code',
-  transformBody,
-  validateBody(UPDATE_MACHINE_ZOD),
+  validateBodyWithFile({ schema: UPDATE_MACHINE_ZOD, fileName: 'image' }),
   updateMachine
 )
 

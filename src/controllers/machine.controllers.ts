@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import * as machineService from '../services/machine.service'
 import { ThrowError } from '../services'
 import type { CreateMachineDto, UpdateMachineDto } from '../schemas/machine'
+import { deleteUploadedFiles } from '../libs/files'
 
 export async function getMachines(_req: Request, res: Response) {
   try {
@@ -18,16 +19,20 @@ export async function createMachine(
   res: Response
 ) {
   const { body, files } = req
+  let status = 201
+  let data
   try {
-    const response = await machineService.createMachine({
+    data = await machineService.createMachine({
       createDto: body,
-      files,
     })
-    return res.status(201).json(response)
   } catch (error) {
-    const { message, status } = error as ThrowError
-    return res.status(status).json({ message })
+    const { message, status: errorStatus } = error as ThrowError
+    status = errorStatus
+    data = { message }
+  } finally {
+    deleteUploadedFiles(files)
   }
+  return res.status(status).json(data)
 }
 
 export async function getMachineByCode(
@@ -51,16 +56,35 @@ export async function updateMachine(
   res: Response
 ) {
   const { code } = req.params
-  const { body, files } = req
+  const { body: updateDto, files } = req
+  let status = 200
+  let data
   try {
-    const updatedMachine = await machineService.updateMachineByCode({
-      code,
-      updateDto: body,
-      files,
-    })
-    return res.json(updatedMachine)
+    data = await machineService.updateMachineByCode({ code, updateDto })
   } catch (error) {
-    const { message, status } = error as ThrowError
+    const { message, status: errorStatus } = error as ThrowError
+    status = errorStatus
+    data = { message }
+  } finally {
+    deleteUploadedFiles(files)
+  }
+  return res.status(status).json(data)
+}
+
+export async function getFieldsToCreate(_req: Request, res: Response) {
+  const fields = await machineService.getFieldsToCreate()
+  return res.json(fields)
+}
+export async function getFieldsToUpdate(
+  req: Request<{ code: string }>,
+  res: Response
+) {
+  const { code } = req.params
+  try {
+    const response = await machineService.getFieldsToUpdate({ code })
+    return res.json(response)
+  } catch (error) {
+    const { status, message } = error as ThrowError
     return res.status(status).json({ message })
   }
 }

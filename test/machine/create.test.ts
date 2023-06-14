@@ -5,14 +5,13 @@ import {
   CREATE_MACHINE_DTO,
   FIRST_MACHINE_CODE,
   MACHINE_ROUTES,
-  areas,
   machines,
 } from './helpers'
 import { api } from '../helpers/api'
-import {
-  areaNotFoundMessage,
-  machineAlreadyExists,
-} from '../../src/services/machine.service'
+import { machineAlreadyExists } from '../../src/services/machine.service'
+import { areas } from '../area/helpers'
+import { criticalities } from '../criticality/helpers'
+import { technicalDocumentation } from '../technical-documentation/helpers'
 
 vi.mock('../../src/libs/cloudinary', () => ({
   uploadFile: vi.fn().mockImplementation(() => ({
@@ -25,6 +24,10 @@ vi.mock('../../src/libs/cloudinary', () => ({
 describe('Machines EndPoint => POST', () => {
   beforeAll(async () => {
     await prisma.area.createMany({ data: areas })
+    await prisma.criticality.createMany({ data: criticalities })
+    await prisma.technicalDocumentation.createMany({
+      data: technicalDocumentation,
+    })
     await prisma.machine.createMany({ data: machines })
   })
 
@@ -43,7 +46,15 @@ describe('Machines EndPoint => POST', () => {
 
     Object.entries({ ...CREATE_MACHINE_DTO, code: FIRST_MACHINE_CODE }).forEach(
       ([key, value]) => {
-        request.field(key, value)
+        if (value != null) {
+          if (value instanceof Array) {
+            value.forEach((value) => {
+              request.field(key, value)
+            })
+          } else {
+            request.field(key, value)
+          }
+        }
       }
     )
 
@@ -53,30 +64,21 @@ describe('Machines EndPoint => POST', () => {
       .expect(409)
     expect(body.message).toBe(machineAlreadyExists(FIRST_MACHINE_CODE))
   })
-  test('POST: area does not exist', async () => {
-    const areaId = 1000
-    const request = api
-      .post(MACHINE_ROUTES.base)
-      .attach('image', 'test/files/test-image.jpg')
-
-    Object.entries({ ...CREATE_MACHINE_DTO, areaId }).forEach(
-      ([key, value]) => {
-        request.field(key, value)
-      }
-    )
-    const { body } = await request
-      .set('Accept', 'multipart/form-data')
-      .expect('Content-Type', /json/)
-      .expect(404)
-    expect(body.message).toBe(areaNotFoundMessage(areaId))
-  })
   test('POST: create a new machine', async () => {
     const request = api
       .post(MACHINE_ROUTES.base)
       .attach('image', 'test/files/test-image.jpg')
 
     Object.entries(CREATE_MACHINE_DTO).forEach(([key, value]) => {
-      request.field(key, value)
+      if (value != null) {
+        if (value instanceof Array) {
+          value.forEach((value) => {
+            request.field(key, value)
+          })
+        } else {
+          request.field(key, value)
+        }
+      }
     })
 
     const { body } = await request
@@ -87,8 +89,11 @@ describe('Machines EndPoint => POST', () => {
   })
 
   afterAll(async () => {
+    await prisma.$queryRaw`DELETE FROM "_MachineTechnicalDocumentation"`
     await prisma.machineImage.deleteMany()
     await prisma.machine.deleteMany()
+    await prisma.technicalDocumentation.deleteMany()
+    await prisma.criticality.deleteMany()
     await prisma.area.deleteMany()
   })
 })

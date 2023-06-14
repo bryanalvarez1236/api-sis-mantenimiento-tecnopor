@@ -2,477 +2,391 @@
   {
     "code": "CB-03-ABL-01",
     "name": "ABLANDADOR",
-    "maker": "-",
     "location": "EPS",
-    "areaId": 6,
-    "model": "-",
+    "areaId": 3,
     "specificData": "SISTEMA AUTOMATICO CON 2 CABEZALES",
     "function": "ABLANDAR AGUA PARA CALDERO",
-    "technicalDocumentation": ["OPERATIONS_MANUAL"],
-    "criticality": "LOW"
+    "criticalityId": 3
   },
   {
     "code": "CB-05-ACV-01",
     "name": "ACUMULADOR DE VAPOR",
     "maker": "CARLOS CABALLERO",
     "location": "EPS",
-    "areaId": 6,
-    "model": "-",
+    "areaId": 3,
     "specificData": "PRESION DE TRABAJO 4 BAR",
     "function": "ACUMULACION DE VAPOR DE AGUA",
-    "technicalDocumentation": [],
-    "criticality": "MEDIUM"
+    "criticalityId": 2
   },
   {
     "code": "CB-06-BIS-01",
     "name": "BISELADORA #1 - 50 CM",
     "maker": "LOCAL",
     "location": "EPS",
-    "areaId": 4,
-    "model": "-",
+    "areaId": 6,
     "specificData": "380V",
     "function": "CORTE DE COMPLEMENTOS DE EPS",
-    "technicalDocumentation": [],
-    "criticality": "LOW"
+    "criticalityId": 3
   },
   {
     "code": "CB-06-BIS-02",
     "name": "BISELADORA #2 - 42 CM",
     "maker": "LOCAL",
     "location": "EPS",
-    "areaId": 4,
-    "model": "-",
+    "areaId": 6,
     "specificData": "380V",
     "function": "CORTE DE COMPLEMENTOS DE EPS",
-    "technicalDocumentation": [],
-    "criticality": "LOW"
+    "criticalityId": 3
   },
   {
     "code": "CB-06-BIS-03",
     "name": "BISELADORA #3 - 44 CM",
     "maker": "LOCAL",
     "location": "EPS",
-    "areaId": 4,
-    "model": "-",
+    "areaId": 6,
     "specificData": "380V",
     "function": "CORTE DE COMPLEMENTOS DE EPS",
-    "technicalDocumentation": [],
-    "criticality": "MEDIUM"
+    "criticalityId": 2
   },
   {
     "code": "CB-05-BLQ-02",
     "name": "BLOQUERA 3M",
     "maker": "HANGZHOU FANGYUAN",
     "location": "EPS",
-    "areaId": 3,
-    "model": "-",
+    "areaId": 5,
     "specificData": "380V",
     "function": "PRODUCIR BLOQUES EPS",
-    "technicalDocumentation": [],
-    "criticality": "MEDIUM"
+    "criticalityId": 2
   },
   {
     "code": "CB-05-BLQ-01",
     "name": "BLOQUERA 4M",
     "maker": "HANGZHOU FANGYUAN",
     "location": "EPS",
-    "areaId": 3,
+    "areaId": 5,
     "model": "SPB-LZT-4000",
     "specificData": "380V",
     "function": "PRODUCIR BLOQUES EPS",
-    "technicalDocumentation": ["OPERATIONS_MANUAL", "ELECTRICAL_PLANS"],
-    "criticality": "HIGH"
+    "criticalityId": 1
   },
   {
     "code": "CB-03-CAL-01",
     "name": "CALDERA GONELLA",
     "maker": "GONELLA",
     "location": "EPS",
-    "areaId": 6,
+    "areaId": 3,
     "model": "S2/E10",
     "specificData": "380V-PRESION DE TRABAJO 8 BAR",
     "function": "GENERACION DE VAPOR",
-    "technicalDocumentation": ["OPERATIONS_MANUAL", "ELECTRICAL_PLANS"],
-    "criticality": "HIGH"
+    "criticalityId": 1
   },
   {
     "code": "CB-02-CAR-01",
     "name": "CARPA DE VAPOR #1",
     "maker": "LOCAL",
     "location": "VIGUETAS",
-    "areaId": 5,
-    "model": "-",
+    "areaId": 2,
     "specificData": "CONSTA DE 4 TECLES ",
     "function": "FRAGUADO DE VIGUETAS",
-    "technicalDocumentation": [],
-    "criticality": "LOW"
+    "criticalityId": 3
   },
   {
     "code": "CB-02-CAR-02",
     "name": "CARPA DE VAPOR #2",
     "maker": "LOCAL",
     "location": "VIGUETAS",
-    "areaId": 5,
-    "model": "-",
+    "areaId": 2,
     "specificData": "CONSTA DE 4 TECLES ",
     "function": "FRAGUADO DE VIGUETAS",
-    "technicalDocumentation": [],
-    "criticality": "LOW"
+    "criticalityId": 3
   },
   {
     "code": "CB-02-CAR-03",
     "name": "CARPA DE VAPOR #3",
     "maker": "LOCAL",
     "location": "VIGUETAS",
-    "areaId": 5,
-    "model": "-",
+    "areaId": 2,
     "specificData": "CONSTA DE 4 TECLES ",
     "function": "FRAGUADO DE VIGUETAS",
-    "technicalDocumentation": [],
-    "criticality": "LOW"
+    "criticalityId": 3
   },
   {
     "code": "CB-03-COM-02",
     "name": "COMPRESOR MSWV 80 MAX",
     "maker": "SCHULZ",
     "location": "EPS",
-    "areaId": 6,
+    "areaId": 3,
     "model": "MSWV 80 MAX",
     "specificData": "380V-COMPRESOR A PISTON",
     "function": "COMPRESION DE AIRE",
-    "technicalDocumentation": ["OPERATIONS_MANUAL", "MAINTENANCE_MANUAL"],
-    "criticality": "MEDIUM"
+    "criticalityId": 2
   },
   {
     "code": "CB-03-COM-01",
     "name": "COMPRESOR SRP 3030",
     "maker": "SCHULZ",
     "location": "EPS",
-    "areaId": 6,
+    "areaId": 3,
     "model": "SRP 3030-MAX",
     "specificData": "380 V-COMPRESOR A TORNILLO",
     "function": "COMPRESION DE AIRE",
-    "technicalDocumentation": [
-      "OPERATIONS_MANUAL",
-      "MAINTENANCE_MANUAL",
-      "ELECTRICAL_PLANS"
-    ],
-    "criticality": "HIGH"
+    "criticalityId": 1
   },
   {
     "code": "CB-06-COR-09",
     "name": "CORTADORA 4M",
     "maker": "HANGZHOU FANGYUAN",
     "location": "EPS",
-    "areaId": 4,
-    "model": "-",
+    "areaId": 6,
     "specificData": "380V-CORTE HORIZONTAL Y VERTICAL",
     "function": "CORTE DE BLOQUES DE EPS",
-    "technicalDocumentation": [],
-    "criticality": "LOW"
+    "criticalityId": 3
   },
   {
     "code": "CB-06-COR-07",
     "name": "CORTADORA AZUL",
     "maker": "LOCAL",
     "location": "EPS",
-    "areaId": 4,
-    "model": "-",
+    "areaId": 6,
     "specificData": "380V-CORTE VERTICAL",
     "function": "CORTE DE BLOQUES DE EPS",
-    "technicalDocumentation": [],
-    "criticality": "MEDIUM"
+    "criticalityId": 2
   },
   {
     "code": "CB-02-COT-01",
     "name": "CORTADORA DE VIGUETAS ",
     "maker": "LOCAL",
     "location": "VIGUETAS",
-    "areaId": 5,
-    "model": "-",
+    "areaId": 2,
     "specificData": "380V ",
     "function": "CORTE DE VIGUETAS",
-    "technicalDocumentation": [],
-    "criticality": "LOW"
+    "criticalityId": 3
   },
   {
     "code": "CB-06-COR-03",
     "name": "CORTADORA PLANO INCLINADO 1",
     "maker": "LOCAL",
     "location": "EPS",
-    "areaId": 4,
-    "model": "-",
+    "areaId": 6,
     "specificData": "220V",
     "function": "CORTE DE BLOQUES DE EPS",
-    "technicalDocumentation": [],
-    "criticality": "LOW"
+    "criticalityId": 3
   },
   {
     "code": "CB-06-COR-04",
     "name": "CORTADORA PLANO INCLINADO 2",
     "maker": "LOCAL",
     "location": "EPS",
-    "areaId": 4,
-    "model": "-",
+    "areaId": 6,
     "specificData": "220V",
     "function": "CORTE DE BLOQUES DE EPS",
-    "technicalDocumentation": [],
-    "criticality": "LOW"
+    "criticalityId": 3
   },
   {
     "code": "CB-06-COR-05",
     "name": "CORTADORA PLANO INCLINADO 3",
     "maker": "LOCAL",
     "location": "EPS",
-    "areaId": 4,
-    "model": "-",
+    "areaId": 6,
     "specificData": "220V",
     "function": "CORTE DE BLOQUES DE EPS",
-    "technicalDocumentation": [],
-    "criticality": "LOW"
+    "criticalityId": 3
   },
   {
     "code": "CB-06-COR-06",
     "name": "CORTADORA PLANO INCLINADO 4 PLANCHAS",
     "maker": "LOCAL",
     "location": "EPS",
-    "areaId": 4,
-    "model": "-",
+    "areaId": 6,
     "specificData": "380V",
     "function": "CORTE DE BLOQUES DE EPS EN PLANCHAS",
-    "technicalDocumentation": [],
-    "criticality": "MEDIUM"
+    "criticalityId": 2
   },
   {
     "code": "CB-06-COR-08",
     "name": "CORTADORA VERDE",
-    "maker": "-",
     "location": "EPS",
-    "areaId": 4,
-    "model": "-",
+    "areaId": 6,
     "specificData": "380V-CORTE HORIZONTAL Y VERTICAL",
     "function": "CORTE DE BLOQUES DE EPS",
-    "technicalDocumentation": ["OPERATIONS_MANUAL"],
-    "criticality": "MEDIUM"
+    "criticalityId": 2
   },
   {
     "code": "CB-05-COL-01",
     "name": "EXTRACTOR DE POLVO",
     "maker": "ZHANG LIANG",
     "location": "EPS",
-    "areaId": 2,
+    "areaId": 7,
     "model": "MF-9075",
     "specificData": "380V-15 MANGAS COLECTORAS",
     "function": "EXTRACCION DE POLVO DE MATERIAL TRITURADO",
-    "technicalDocumentation": [],
-    "criticality": "MEDIUM"
+    "criticalityId": 2
   },
   {
     "code": "CB-06-COR-01",
     "name": "GUILLOTINA GRANDE",
     "maker": "LOCAL",
     "location": "EPS",
-    "areaId": 4,
-    "model": "-",
+    "areaId": 6,
     "specificData": "220V",
     "function": "CORTE DE BLOQUES DE EPS",
-    "technicalDocumentation": [],
-    "criticality": "LOW"
+    "criticalityId": 3
   },
   {
     "code": "CB-06-COR-02",
     "name": "GUILLOTINA PEQUE�A",
     "maker": "LOCAL",
     "location": "EPS",
-    "areaId": 4,
-    "model": "-",
+    "areaId": 6,
     "specificData": "220V",
     "function": "CORTE DE BLOQUES DE EPS",
-    "technicalDocumentation": [],
-    "criticality": "MEDIUM"
+    "criticalityId": 2
   },
   {
     "code": "CB-01-HER-01",
     "name": "HERRAMIENTAS",
-    "maker": "-",
     "location": "GENERAL",
-    "areaId": 7,
-    "model": "-",
+    "areaId": 1,
     "specificData": "HERRAMIENTAS IMPORTANTES",
-    "function": "-",
-    "technicalDocumentation": [],
-    "criticality": "LOW"
+    "criticalityId": 3
   },
   {
     "code": "CB-01-INF-01",
     "name": "INFRAESTRUCTURA",
-    "maker": "-",
     "location": "GENERAL",
-    "areaId": 7,
-    "model": "-",
+    "areaId": 1,
     "specificData": "INFRAESTRUCTURA EN GENARAL",
-    "function": "-",
-    "technicalDocumentation": [],
-    "criticality": "LOW"
+    "criticalityId": 3
   },
   {
     "code": "CB-02-MEZ-01",
     "name": "MEZCLADORA ",
     "maker": "MENEGOTTI",
     "location": "VIGUETAS",
-    "areaId": 5,
-    "model": "-",
+    "areaId": 2,
     "specificData": "CAPACIDAD 600 LITROS\n380V",
     "function": "MEZCLA DE CONCRETO",
-    "technicalDocumentation": ["OPERATIONS_MANUAL"],
-    "criticality": "MEDIUM"
+    "criticalityId": 2
   },
   {
     "code": "CB-05-MIX-01",
     "name": "MIXER",
     "maker": "HANGZHOU FANGYUAN",
     "location": "EPS",
-    "areaId": 2,
+    "areaId": 7,
     "model": "SPG60",
     "specificData": "380V",
     "function": "MEZCLA DE PERLITAS DE POLIESTIRENO",
-    "technicalDocumentation": ["OPERATIONS_MANUAL", "ELECTRICAL_PLANS"],
-    "criticality": "MEDIUM"
+    "criticalityId": 2
   },
   {
     "code": "CB-02-PIS-01",
     "name": "PISTA DE VACIADO #1",
-    "maker": "-",
     "location": "VIGUETAS",
-    "areaId": 5,
-    "model": "-",
+    "areaId": 2,
     "specificData": "10 CARRILES DE 58 Mts",
     "function": "MOLDE PARA VACIADO DE VIGUETAS",
-    "technicalDocumentation": [],
-    "criticality": "LOW"
+    "criticalityId": 3
   },
   {
     "code": "CB-02-PIS-02",
     "name": "PISTA DE VACIADO #2",
-    "maker": "-",
     "location": "VIGUETAS",
-    "areaId": 5,
-    "model": "-",
+    "areaId": 2,
     "specificData": "10 CARRILES DE 58 Mts",
     "function": "MOLDE PARA VACIADO DE VIGUETAS",
-    "technicalDocumentation": [],
-    "criticality": "LOW"
+    "criticalityId": 3
   },
   {
     "code": "CB-02-PIS-03",
     "name": "PISTA DE VACIADO #3",
-    "maker": "-",
     "location": "VIGUETAS",
-    "areaId": 5,
-    "model": "-",
+    "areaId": 2,
     "specificData": "10 CARRILES DE 58 Mts",
     "function": "MOLDE PARA VACIADO DE VIGUETAS",
-    "technicalDocumentation": [],
-    "criticality": "LOW"
+    "criticalityId": 3
   },
   {
     "code": "CB-04-PRX-01",
     "name": "PRE EXPANSORA",
     "maker": "HANGZHOU FANGYUAN",
     "location": "EPS",
-    "areaId": 1,
+    "areaId": 4,
     "model": "SPJ-130",
     "specificData": "380 V",
     "function": "PREEXPANDIDO DE POLIESTIRENO",
-    "technicalDocumentation": ["OPERATIONS_MANUAL", "ELECTRICAL_PLANS"],
-    "criticality": "HIGH"
+    "criticalityId": 1
   },
   {
     "code": "CB-02-PRH-01",
     "name": "PRENSA HIDRAULICA ",
-    "maker": "-",
     "location": "LABORATORIO",
-    "areaId": 5,
-    "model": "-",
+    "areaId": 2,
     "specificData": "220 V",
     "function": "PRENSADO DE PROBETAS",
-    "technicalDocumentation": [],
-    "criticality": "LOW"
+    "criticalityId": 3
   },
   {
     "code": "CB-05-TRI-01",
     "name": "RECICLADORA",
     "maker": "HANGZHOU FANGYUAN",
     "location": "EPS",
-    "areaId": 2,
+    "areaId": 7,
     "model": "FS-320",
     "specificData": "380V",
     "function": "TRITURADO DE EPS",
-    "technicalDocumentation": [
-      "OPERATIONS_MANUAL",
-      "ELECTRICAL_PLANS",
-      "MECHANICAL_PLANS"
-    ],
-    "criticality": "HIGH"
+    "criticalityId": 1
   },
   {
     "code": "CB-05-TAM-01",
     "name": "TAMIZADOR",
     "maker": "HANGZHOU FANGYUAN",
     "location": "EPS",
-    "areaId": 2,
+    "areaId": 7,
     "model": "SPFL-30",
     "specificData": "380V",
     "function": "SEPARAR POLVILLO DEL MATERIAL TRITURADO",
-    "technicalDocumentation": ["ELECTRICAL_PLANS", "MECHANICAL_PLANS"],
-    "criticality": "MEDIUM"
+    "criticalityId": 2
   },
   {
     "code": "CB-02-TES-01",
     "name": "TENSADORA UNIFILAR",
     "maker": "VITUS BRAIG E HIJOS S.A.",
     "location": "VIGUETAS",
-    "areaId": 5,
+    "areaId": 2,
     "model": "AUT-5204",
     "specificData": "380 V",
     "function": "TENSADO DE ALAMBRE",
-    "technicalDocumentation": [],
-    "criticality": "HIGH"
+    "criticalityId": 1
   },
   {
     "code": "CB-02-VIB-01",
     "name": "VIBRADORA AMARILLA #1",
     "maker": "LOCAL",
     "location": "VIGUETAS",
-    "areaId": 5,
-    "model": "-",
+    "areaId": 2,
     "specificData": "380V ",
     "function": "VIBRADO DE CONCRETO",
-    "technicalDocumentation": [],
-    "criticality": "LOW"
+    "criticalityId": 3
   },
   {
     "code": "CB-02-VIB-02",
     "name": "VIBRADORA AMARILLA #2",
     "maker": "LOCAL",
     "location": "VIGUETAS",
-    "areaId": 5,
-    "model": "-",
+    "areaId": 2,
     "specificData": "380V ",
     "function": "VIBRADO DE CONCRETO",
-    "technicalDocumentation": [],
-    "criticality": "LOW"
+    "criticalityId": 3
   },
   {
     "code": "CB-02-VIB-03",
     "name": "VIBRADORA NARANJA #3",
     "maker": "LOCAL",
     "location": "VIGUETAS",
-    "areaId": 5,
-    "model": "-",
+    "areaId": 2,
     "specificData": "380V ",
     "function": "VIBRADO DE CONCRETO",
-    "technicalDocumentation": [],
-    "criticality": "LOW"
+    "criticalityId": 3
   }
 ]
