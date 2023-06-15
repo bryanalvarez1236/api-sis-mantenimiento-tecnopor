@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import prisma from '../../src/libs/db'
-import { areas, machines } from '../machine/helpers'
+import { machines } from '../machine/helpers'
 import {
   ACTIVITY_ROUTES,
   FIRST_ACTIVITY_CODE,
@@ -9,15 +9,25 @@ import {
   activities,
 } from './helpers'
 import { api } from '../helpers/api'
-import {
-  activityNotEditMessage,
-  activityNotFoundMessage,
-} from '../../src/services/activity.service'
+import { activityNotFoundMessage } from '../../src/services/activity.service'
+import { areas } from '../area/helpers'
+import { criticalities } from '../criticality/helpers'
+import { technicalDocumentation } from '../technical-documentation/helpers'
+import { activityTypes } from '../activity-type/helpers'
+import { frequencies } from '../frequency/helpers'
 
 describe('Activities EndPoint => POST', () => {
   beforeAll(async () => {
     await prisma.area.createMany({ data: areas })
+    await prisma.criticality.createMany({ data: criticalities })
+    await prisma.technicalDocumentation.createMany({
+      data: technicalDocumentation,
+    })
     await prisma.machine.createMany({ data: machines })
+
+    await prisma.activityType.createMany({ data: activityTypes })
+    await prisma.frequency.createMany({ data: frequencies })
+
     await prisma.activity.createMany({ data: activities })
   })
 
@@ -46,8 +56,8 @@ describe('Activities EndPoint => POST', () => {
       .set('Accept', 'application/json')
       .send(UPDATE_ACTIVITY_DTO)
       .expect('Content-Type', /json/)
-      .expect(405)
-    expect(body.message).toBe(activityNotEditMessage(code))
+      .expect(404)
+    expect(body.message).toBe(activityNotFoundMessage(code))
   })
   test('PUT: update an activity by its code', async () => {
     const { body } = await api
@@ -61,7 +71,13 @@ describe('Activities EndPoint => POST', () => {
 
   afterAll(async () => {
     await prisma.activity.deleteMany()
+
+    await prisma.activityType.deleteMany()
+    await prisma.frequency.deleteMany()
+
     await prisma.machine.deleteMany()
+    await prisma.technicalDocumentation.deleteMany()
+    await prisma.criticality.deleteMany()
     await prisma.area.deleteMany()
   })
 })

@@ -1,7 +1,11 @@
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime'
 import { ServiceError } from '.'
 import prisma from '../libs/db'
-import { CreateActivityDto, UpdateActivityDto } from '../schemas/activity'
+import {
+  ActivityResponseDto,
+  CreateActivityDto,
+  UpdateActivityDto,
+} from '../schemas/activity'
 import { machineNotFoundMessage } from './machine.service'
 
 export function activityNotFoundMessage(activityCode: string) {
@@ -17,6 +21,15 @@ export function activityAlreadyDeleteMessage(activityCode: string) {
   return `La actividad con el código ${activityCode} ya está eliminada`
 }
 
+async function filterByActivityType(activities: ActivityResponseDto[]) {
+  const activityTypes = await prisma.activityType.findMany()
+  return activityTypes.map(({ id, name }) => ({
+    id,
+    name,
+    activities: activities.filter(({ activityType }) => activityType === name),
+  }))
+}
+
 interface GetMachineActivitiesProps {
   machineCode: string
 }
@@ -28,12 +41,12 @@ export async function getMachineActivities({
     select: {
       name: true,
       activities: {
-        where: { state: 'ACTIVE' },
+        where: { deleted: false },
         select: {
           code: true,
           name: true,
           frequency: true,
-          activityType: true,
+          activityType: { select: { name: true } },
           pem: true,
         },
         orderBy: { code: 'asc' },
@@ -46,8 +59,21 @@ export async function getMachineActivities({
       message: machineNotFoundMessage(machineCode),
     })
   }
-  const { activities, name } = foundMachine
-  return { activities, machineName: name }
+  const frequencies = await prisma.frequency.findMany({
+    select: { value: true, name: true },
+  })
+  const allActivities = foundMachine.activities.map(
+    ({ frequency, activityType, ...rest }) => ({
+      ...rest,
+      frequency: frequency
+        ? frequencies.find(({ value }) => value === frequency)?.name ??
+          `${frequency} hrs.`
+        : undefined,
+      activityType: activityType.name,
+    })
+  )
+  const activities = await filterByActivityType(allActivities)
+  return { machineName: foundMachine.name, activities }
 }
 
 interface GetActivityByCodeProps {
@@ -60,7 +86,7 @@ export async function getActivityByCode({ code }: GetActivityByCodeProps) {
       code: true,
       name: true,
       frequency: true,
-      activityType: true,
+      activityTypeId: true,
       pem: true,
     },
   })
@@ -70,7 +96,18 @@ export async function getActivityByCode({ code }: GetActivityByCodeProps) {
       message: activityNotFoundMessage(code),
     })
   }
-  return foundActivity
+  const { pem, ...activity } = foundActivity
+  const frequencies = await prisma.frequency.findMany({
+    select: { name: true, value: true },
+  })
+  const activityTypes = await prisma.activityType.findMany()
+  return {
+    activity: { ...activity, pem: pem ?? undefined },
+    fields: {
+      frequencies: frequencies.map(({ name, value }) => ({ name, id: value })),
+      activityTypes,
+    },
+  }
 }
 
 interface CreateActivityProps {
@@ -78,16 +115,17 @@ interface CreateActivityProps {
 }
 export async function createActivity({ createDto }: CreateActivityProps) {
   try {
-    return await prisma.activity.create({
+    const { activityType, ...rest } = await prisma.activity.create({
       data: createDto,
       select: {
         code: true,
         name: true,
         frequency: true,
-        activityType: true,
+        activityType: { select: { name: true } },
         pem: true,
       },
     })
+    return { ...rest, activityType: activityType.name }
   } catch (error) {
     if (error instanceof PrismaClientKnownRequestError) {
       if (error.code === 'P2002') {
@@ -117,32 +155,26 @@ export async function updateActivityByCode({
 }: UpdateActivityByCodeProps) {
   const foundActivity = await prisma.activity.findUnique({
     where: { code },
-    select: { state: true },
+    select: { deleted: true },
   })
-  if (foundActivity == null) {
+  if (foundActivity == null || foundActivity.deleted) {
     throw new ServiceError({
       status: 404,
       message: activityNotFoundMessage(code),
     })
   }
-  const { state } = foundActivity
-  if (state !== 'ACTIVE') {
-    throw new ServiceError({
-      status: 405,
-      message: activityNotEditMessage(code),
-    })
-  }
-  return await prisma.activity.update({
+  const { activityType, ...rest } = await prisma.activity.update({
     data: updateDto,
     where: { code },
     select: {
       code: true,
       name: true,
       frequency: true,
-      activityType: true,
+      activityType: { select: { name: true } },
       pem: true,
     },
   })
+  return { ...rest, activityType: activityType.name }
 }
 
 interface DeleteActivityByCodeProps {
@@ -153,30 +185,53 @@ export async function deleteActivityByCode({
 }: DeleteActivityByCodeProps) {
   const foundActivity = await prisma.activity.findUnique({
     where: { code },
-    select: { state: true },
+    select: { deleted: true },
   })
-  if (foundActivity == null) {
+  if (foundActivity == null || foundActivity.deleted) {
     throw new ServiceError({
       status: 404,
       message: activityNotFoundMessage(code),
     })
   }
-  const { state } = foundActivity
-  if (state === 'DELETED') {
-    throw new ServiceError({
-      status: 406,
-      message: activityAlreadyDeleteMessage(code),
-    })
-  }
-  return await prisma.activity.update({
-    data: { state: 'DELETED' },
+  const { activityType, ...rest } = await prisma.activity.update({
+    data: { deleted: true },
     where: { code },
     select: {
       code: true,
       name: true,
       frequency: true,
-      activityType: true,
+      activityType: { select: { name: true } },
       pem: true,
     },
   })
+  return { ...rest, activityType: activityType.name }
+}
+
+interface GetFieldsToCreateActivityProps {
+  machineCode: string
+}
+export async function getFieldsToCreateActivity({
+  machineCode,
+}: GetFieldsToCreateActivityProps) {
+  const machine = await prisma.machine.findUnique({
+    where: { code: machineCode },
+    select: { name: true },
+  })
+  if (machine == null) {
+    throw new ServiceError({
+      status: 404,
+      message: machineNotFoundMessage(machineCode),
+    })
+  }
+  const frequencies = await prisma.frequency.findMany({
+    select: { name: true, value: true },
+  })
+  const activityTypes = await prisma.activityType.findMany()
+  return {
+    machine,
+    fields: {
+      frequencies: frequencies.map(({ name, value }) => ({ name, id: value })),
+      activityTypes,
+    },
+  }
 }

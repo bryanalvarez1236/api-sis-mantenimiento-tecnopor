@@ -76,15 +76,16 @@ model Engine {
 }
 
 model Activity {
-  code         String       @id @default(uuid())
-  machine      Machine      @relation(fields: [machineCode], references: [code])
-  machineCode  String
-  name         String
-  frequency    Int?
-  activityType ActivityType
-  pem          String?
-  state        State        @default(ACTIVE)
-  workOrders   WorkOrder[]
+  code           String       @id @default(uuid())
+  machine        Machine      @relation(fields: [machineCode], references: [code])
+  machineCode    String
+  name           String
+  frequency      Int?
+  activityType   ActivityType @relation(fields: [activityTypeId], references: [id])
+  activityTypeId Int
+  pem            String?
+  deleted        Boolean      @default(false)
+  workOrders     WorkOrder[]
 }
 
 model WorkOrder {
@@ -206,36 +207,33 @@ model Area {
 }
 
 model Criticality {
-  id      Int       @id
-  name    String    @unique
-  Machine Machine[]
+  id       Int       @id
+  name     String    @unique
+  machines Machine[]
 }
 
 model TechnicalDocumentation {
-  id      Int       @id
-  name    String    @unique
-  Machine Machine[] @relation("MachineTechnicalDocumentation")
+  id       Int       @id
+  name     String    @unique
+  machines Machine[] @relation("MachineTechnicalDocumentation")
 }
 
 model Boot {
-  id     Int      @id
-  name   String   @unique
-  Engine Engine[]
+  id      Int      @id
+  name    String   @unique
+  engines Engine[]
 }
 
-enum State {
-  ACTIVE
-  INNACTIVE
-  DELETED
+model ActivityType {
+  id         Int        @id
+  name       String     @unique
+  activities Activity[]
 }
 
-enum ActivityType {
-  CONDITION_CHECK
-  VISUAL_INSPECTIONS
-  LUBRICATION
-  AUTONOMOUS_MAINTENANCE
-  PERIODIC_MAINTENANCE
-  CORRECTIVE_MAINTENANCE
+model Frequency {
+  id    Int    @id
+  name  String @unique
+  value Int    @unique
 }
 
 enum WorkOrderState {

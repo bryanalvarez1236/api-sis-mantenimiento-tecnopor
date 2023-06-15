@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "name": "SEMANAL",
+    "value": 168
+  },
+  {
+    "id": 2,
+    "name": "QUINCENAL",
+    "value": 336
+  },
+  {
+    "id": 3,
+    "name": "MENSUAL",
+    "value": 720
+  },
+  {
+    "id": 4,
+    "name": "BIMESTRAL",
+    "value": 1440
+  },
+  {
+    "id": 5,
+    "name": "TRIMESTRAL",
+    "value": 2160
+  },
+  {
+    "id": 6,
+    "name": "CUATRIMESTRE",
+    "value": 2880
+  },
+  {
+    "id": 7,
+    "name": "SEMESTRAL",
+    "value": 4320
+  },
+  {
+    "id": 8,
+    "name": "ANUAL",
+    "value": 8640
+  },
+  {
+    "id": 9,
+    "name": "2 AÑOS",
+    "value": 17280
+  },
+  {
+    "id": 10,
+    "name": "4 AÑOS",
+    "value": 34560
+  }
+]

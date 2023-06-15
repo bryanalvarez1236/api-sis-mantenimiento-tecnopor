@@ -3,6 +3,7 @@ import {
   createActivity,
   deleteActivityByCode,
   getActivityByCode,
+  getFieldsToCreateActivity,
   getMachineActivities,
   updateActivityByCode,
 } from '../controllers/activity.controllers'
@@ -22,5 +23,7 @@ activityRouter.put(
   updateActivityByCode
 )
 activityRouter.delete('/:code', deleteActivityByCode)
+
+activityRouter.post('/fields/create', getFieldsToCreateActivity)
 
 export default activityRouter
