@@ -145,7 +145,9 @@ export async function createWorkOrder({
     createWorkOrderDto.engineFunction = engineFunction
   }
   if (activityCode) {
-    const { name: activityName } = await getActivityByCode({
+    const {
+      activity: { name: activityName },
+    } = await getActivityByCode({
       code: activityCode,
     })
     createWorkOrderDto.activityName = activityName
@@ -382,6 +384,8 @@ const SELECT_PLANNED_WORK_ORDER = {
 
 const SELECT_VALIDATED_WORK_ORDER = {
   ...SELECT_PLANNED_WORK_ORDER,
+  startDate: true,
+  endDate: true,
   machine: {
     select: { code: true, name: true, area: { select: { name: true } } },
   },
@@ -389,6 +393,14 @@ const SELECT_VALIDATED_WORK_ORDER = {
 
 const SELECT_DOING_WORK_ORDER = {
   ...SELECT_VALIDATED_WORK_ORDER,
+  machine: {
+    select: {
+      code: true,
+      name: true,
+      area: { select: { name: true } },
+      checkList: true,
+    },
+  },
   securityMeasureStarts: true,
   protectionEquipments: true,
 }
@@ -397,8 +409,6 @@ const SELECT_DONE_WORK_ORDER = {
   ...SELECT_DOING_WORK_ORDER,
   activityDescription: true,
   failureCause: true,
-  startDate: true,
-  endDate: true,
   totalHours: true,
   securityMeasureEnds: true,
   observations: true,

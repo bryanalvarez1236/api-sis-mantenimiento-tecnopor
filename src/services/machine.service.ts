@@ -54,10 +54,8 @@ export async function getMachineByCode({ code }: GetMachineByCodeProps) {
         select: { name: true },
         orderBy: { id: 'asc' },
       },
-      // areaId: true,
       area: { select: { name: true } },
       image: { select: { url: true } },
-      // engines: { orderBy: { code: 'asc' } },
     },
   })
   if (foundMachine == null) {

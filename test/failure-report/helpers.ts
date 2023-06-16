@@ -59,7 +59,7 @@ export const ALL_FAILURE_REPORTS: FailureReportResponseDto[] = failureReports
       operatorName,
       stopHours,
       createdAt,
-      machine: { name: FIRST_MACHINE.name },
+      machine: { name: 'PRE EXPANSORA' },
       image:
         failureReportImages
           .filter(({ failureReportId }) => failureReportId === id)

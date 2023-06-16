@@ -71,7 +71,6 @@ export async function getEngineByCode({ code }: GetEngineByCodeProps) {
       poles: true,
       ip: true,
       bootId: true,
-      // boot: { select: { name: true } },
     },
   })
   if (foundEngine == null) {
