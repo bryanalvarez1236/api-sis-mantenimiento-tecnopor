@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import prisma from '../../src/libs/db'
-import { areas, machines } from '../machine/helpers'
+import { machines } from '../machine/helpers'
 import {
   ENGINE_ROUTES,
   FIRST_ENGINE_CODE,
@@ -10,11 +10,21 @@ import {
 } from './helpers'
 import { api } from '../helpers/api'
 import { engineNotFoundMessage } from '../../src/services/engine.service'
+import { areas } from '../area/helpers'
+import { criticalities } from '../criticality/helpers'
+import { technicalDocumentation } from '../technical-documentation/helpers'
+import { boots } from '../boot/helpers'
 
 describe('Engines EndPoint => PUT', async () => {
   beforeAll(async () => {
     await prisma.area.createMany({ data: areas })
+    await prisma.criticality.createMany({ data: criticalities })
+    await prisma.technicalDocumentation.createMany({
+      data: technicalDocumentation,
+    })
+    await prisma.boot.createMany({ data: boots })
     await prisma.machine.createMany({ data: machines })
+
     await prisma.engine.createMany({ data: engines })
   })
 
@@ -48,7 +58,11 @@ describe('Engines EndPoint => PUT', async () => {
 
   afterAll(async () => {
     await prisma.engine.deleteMany()
+
     await prisma.machine.deleteMany()
+    await prisma.boot.deleteMany()
+    await prisma.technicalDocumentation.deleteMany()
+    await prisma.criticality.deleteMany()
     await prisma.area.deleteMany()
   })
 })

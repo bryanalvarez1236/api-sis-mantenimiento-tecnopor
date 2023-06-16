@@ -3,8 +3,6 @@
     "code": "CB-02-VIB-01-MOT-001",
     "machineCode": "CB-02-VIB-01",
     "function": "MOTOR VIBRADOR",
-    "mark": "-",
-    "type": "-",
     "powerHp": 2,
     "powerKw": 1.5,
     "voltage": "380",
@@ -15,14 +13,12 @@
     "frequency": 50,
     "poles": 2,
     "ip": 44,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-02-VIB-02-MOT-001",
     "machineCode": "CB-02-VIB-02",
     "function": "MOTOR VIBRADOR",
-    "mark": "-",
-    "type": "-",
     "powerHp": 2,
     "powerKw": 1.5,
     "voltage": "380",
@@ -33,14 +29,12 @@
     "frequency": 50,
     "poles": 2,
     "ip": 44,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-02-VIB-03-MOT-001",
     "machineCode": "CB-02-VIB-03",
     "function": "MOTOR VIBRADOR",
-    "mark": "-",
-    "type": "-",
     "powerHp": 3,
     "powerKw": 2.2,
     "voltage": "380",
@@ -51,14 +45,12 @@
     "frequency": 50,
     "poles": 2,
     "ip": 44,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-02-TES-01-MOT-001",
     "machineCode": "CB-02-TES-01",
     "function": "MOTOR TESADOR",
-    "mark": "-",
-    "type": "-",
     "powerHp": 4,
     "powerKw": 3,
     "voltage": "380",
@@ -69,7 +61,7 @@
     "frequency": 50,
     "poles": 4,
     "ip": 55,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-02-MEZ-01-MOT-001",
@@ -87,7 +79,7 @@
     "frequency": 50,
     "poles": 4,
     "ip": 56,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-02-COT-01-MOT-001",
@@ -105,14 +97,12 @@
     "frequency": 50,
     "poles": 2,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-02-PRH-01-MOT-001",
     "machineCode": "CB-02-PRH-01",
     "function": "MOTOR PRENSA HIDRAULICA",
-    "mark": "-",
-    "type": "-",
     "powerHp": 1,
     "powerKw": 0.75,
     "voltage": "220",
@@ -123,14 +113,13 @@
     "frequency": 50,
     "poles": 0,
     "ip": 0,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-03-COM-01-MOT-001",
     "machineCode": "CB-03-COM-01",
     "function": "MOTOR PRINCIPAL ",
     "mark": "WEG",
-    "type": "-",
     "powerHp": 30,
     "powerKw": 22.5,
     "voltage": "380",
@@ -141,7 +130,7 @@
     "frequency": 50,
     "poles": 4,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-03-COM-02-MOT-001",
@@ -159,7 +148,7 @@
     "frequency": 50,
     "poles": 2,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-03-CAL-01-MOT-001",
@@ -177,7 +166,7 @@
     "frequency": 50,
     "poles": 2,
     "ip": 55,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-03-CAL-01-MOT-002",
@@ -195,7 +184,7 @@
     "frequency": 50,
     "poles": 2,
     "ip": 0,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-03-CAL-01-MOT-003",
@@ -213,7 +202,7 @@
     "frequency": 50,
     "poles": 2,
     "ip": 0,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-03-CAL-01-MOT-004",
@@ -224,14 +213,14 @@
     "powerHp": 0.75,
     "powerKw": 0.55,
     "voltage": "220",
-    "current": "-",
+    "current": "0",
     "rpm": 2800,
     "cosPhi": 0.86,
     "performance": 0.68,
     "frequency": 50,
     "poles": 2,
     "ip": 44,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-04-PRX-01-MOT-001",
@@ -249,7 +238,7 @@
     "frequency": 50,
     "poles": 6,
     "ip": 44,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-04-PRX-01-MOT-002",
@@ -267,7 +256,7 @@
     "frequency": 50,
     "poles": 4,
     "ip": 54,
-    "boot": "SOFT"
+    "bootId": 2
   },
   {
     "code": "CB-04-PRX-01-MOT-003",
@@ -285,7 +274,7 @@
     "frequency": 50,
     "poles": 4,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-04-PRX-01-MOT-004",
@@ -303,7 +292,7 @@
     "frequency": 50,
     "poles": 2,
     "ip": 44,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-04-PRX-01-MOT-005",
@@ -321,7 +310,7 @@
     "frequency": 50,
     "poles": 2,
     "ip": 44,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-04-PRX-01-MOT-006",
@@ -339,7 +328,7 @@
     "frequency": 50,
     "poles": 2,
     "ip": 0,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-04-PRX-01-MOT-007",
@@ -357,14 +346,12 @@
     "frequency": 50,
     "poles": 4,
     "ip": 44,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-05-TRI-01-MOT-001",
     "machineCode": "CB-05-TRI-01",
     "function": "M. SUCCION",
-    "mark": "-",
-    "type": "-",
     "powerHp": 3,
     "powerKw": 2.2,
     "voltage": "380",
@@ -375,14 +362,12 @@
     "frequency": 50,
     "poles": 4,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-05-TRI-01-MOT-002",
     "machineCode": "CB-05-TRI-01",
     "function": "M. TRITURADORA",
-    "mark": "-",
-    "type": "-",
     "powerHp": 5.5,
     "powerKw": 4,
     "voltage": "380",
@@ -393,14 +378,12 @@
     "frequency": 50,
     "poles": 4,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-05-TRI-01-MOT-003",
     "machineCode": "CB-05-TRI-01",
     "function": "M. MOLEDORA",
-    "mark": "-",
-    "type": "-",
     "powerHp": 15,
     "powerKw": 11,
     "voltage": "380",
@@ -411,14 +394,12 @@
     "frequency": 50,
     "poles": 4,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-05-TAM-01-MOT-001",
     "machineCode": "CB-05-TAM-01",
     "function": "M. LLENADO ",
-    "mark": "-",
-    "type": "-",
     "powerHp": 0.5,
     "powerKw": 0.37,
     "voltage": "380",
@@ -429,14 +410,12 @@
     "frequency": 50,
     "poles": 4,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-05-TAM-01-MOT-002",
     "machineCode": "CB-05-TAM-01",
     "function": "M. TAMIZADOR",
-    "mark": "-",
-    "type": "-",
     "powerHp": 2,
     "powerKw": 1.5,
     "voltage": "380",
@@ -447,14 +426,12 @@
     "frequency": 50,
     "poles": 4,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-05-TAM-01-MOT-003",
     "machineCode": "CB-05-TAM-01",
     "function": "T.VENTILADOR 1 (RECICLADO)",
-    "mark": "-",
-    "type": "-",
     "powerHp": 4,
     "powerKw": 3,
     "voltage": "380",
@@ -465,14 +442,12 @@
     "frequency": 50,
     "poles": 4,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-05-TAM-01-MOT-004",
     "machineCode": "CB-05-TAM-01",
     "function": "T.VENTILADOR 2 (PERLAS)",
-    "mark": "-",
-    "type": "-",
     "powerHp": 4,
     "powerKw": 3,
     "voltage": "380",
@@ -483,13 +458,12 @@
     "frequency": 50,
     "poles": 4,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-05-COL-01-MOT-001",
     "machineCode": "CB-05-COL-01",
     "function": "M. EXTRACTOR DE POLVO",
-    "mark": "-",
     "type": "Y132M",
     "powerHp": 10,
     "powerKw": 7.5,
@@ -501,7 +475,7 @@
     "frequency": 50,
     "poles": 4,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-05-BLQ-01-MOT-001",
@@ -519,7 +493,7 @@
     "frequency": 50,
     "poles": 2,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-05-BLQ-01-MOT-002",
@@ -537,14 +511,13 @@
     "frequency": 50,
     "poles": 4,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-05-BLQ-01-MOT-003",
     "machineCode": "CB-05-BLQ-01",
     "function": "M. UP-DOWN",
     "mark": "CHINA",
-    "type": "-",
     "powerHp": 4,
     "powerKw": 3,
     "voltage": "380",
@@ -555,7 +528,7 @@
     "frequency": 50,
     "poles": 4,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-05-BLQ-01-MOT-004",
@@ -573,7 +546,7 @@
     "frequency": 50,
     "poles": 4,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-05-BLQ-01-MOT-005",
@@ -591,7 +564,7 @@
     "frequency": 50,
     "poles": 4,
     "ip": 55,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-05-BLQ-01-MOT-006",
@@ -609,14 +582,12 @@
     "frequency": 50,
     "poles": 0,
     "ip": 0,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-05-BLQ-02-MOT-001",
     "machineCode": "CB-05-BLQ-02",
     "function": "M. VENTILADOR",
-    "mark": "-",
-    "type": "-",
     "powerHp": 0,
     "powerKw": 1.5,
     "voltage": "380 ∆",
@@ -627,14 +598,12 @@
     "frequency": 50,
     "poles": 4,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-05-BLQ-02-MOT-002",
     "machineCode": "CB-05-BLQ-02",
     "function": "M. HIDRAULICO ",
-    "mark": "-",
-    "type": "-",
     "powerHp": 0,
     "powerKw": 2.2,
     "voltage": "380 ∆",
@@ -645,14 +614,12 @@
     "frequency": 50,
     "poles": 4,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-05-BLQ-02-MOT-003",
     "machineCode": "CB-05-BLQ-02",
     "function": "M. ACOPLADO CON BOMBA",
-    "mark": "-",
-    "type": "-",
     "powerHp": 0,
     "powerKw": 7.5,
     "voltage": "380",
@@ -663,14 +630,12 @@
     "frequency": 50,
     "poles": 4,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-05-BLQ-02-MOT-004",
     "machineCode": "CB-05-BLQ-02",
     "function": "BOMBA DE VACIO",
-    "mark": "-",
-    "type": "-",
     "powerHp": 0,
     "powerKw": 0.75,
     "voltage": "380",
@@ -681,14 +646,12 @@
     "frequency": 50,
     "poles": 4,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-05-ACV-01-MOT-001",
     "machineCode": "CB-05-ACV-01",
     "function": "MOTOR BOMBA ACUMULADOR",
-    "mark": "-",
-    "type": "-",
     "powerHp": 1,
     "powerKw": 0.75,
     "voltage": "220",
@@ -699,7 +662,7 @@
     "frequency": 50,
     "poles": 2,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-05-MIX-01-MOT-001",
@@ -717,7 +680,7 @@
     "frequency": 50,
     "poles": 4,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-05-MIX-01-MOT-002",
@@ -735,7 +698,7 @@
     "frequency": 50,
     "poles": 4,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-05-MIX-01-MOT-003",
@@ -753,14 +716,12 @@
     "frequency": 50,
     "poles": 2,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-06-COR-02-MOT-001",
     "machineCode": "CB-06-COR-02",
     "function": "MOTOR ELECTRICO",
-    "mark": "-",
-    "type": "-",
     "powerHp": 0.5,
     "powerKw": 0.37,
     "voltage": "220",
@@ -771,7 +732,7 @@
     "frequency": 50,
     "poles": 0,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-06-COR-06-MOT-001",
@@ -789,7 +750,7 @@
     "frequency": 50,
     "poles": 2,
     "ip": 54,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-06-COR-07-MOT-001",
@@ -807,14 +768,12 @@
     "frequency": 50,
     "poles": 4,
     "ip": 55,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-06-COR-08-MOT-001",
     "machineCode": "CB-06-COR-08",
     "function": "MOTOR CORTE H",
-    "mark": "-",
-    "type": "-",
     "powerHp": 0.2,
     "powerKw": 0.18,
     "voltage": "380",
@@ -825,14 +784,12 @@
     "frequency": 50,
     "poles": 0,
     "ip": 55,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-06-COR-08-MOT-002",
     "machineCode": "CB-06-COR-08",
     "function": "MOTOR DC CORTE V",
-    "mark": "-",
-    "type": "-",
     "powerHp": 0.2,
     "powerKw": 0.18,
     "voltage": "380",
@@ -843,7 +800,7 @@
     "frequency": 50,
     "poles": 0,
     "ip": 55,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-06-BIS-01-MOT-001",
@@ -861,7 +818,7 @@
     "frequency": 50,
     "poles": 2,
     "ip": 55,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-06-BIS-01-MOT-002",
@@ -879,7 +836,7 @@
     "frequency": 50,
     "poles": 2,
     "ip": 55,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-06-BIS-01-MOT-003",
@@ -897,7 +854,7 @@
     "frequency": 50,
     "poles": 2,
     "ip": 55,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-06-BIS-01-MOT-004",
@@ -915,7 +872,7 @@
     "frequency": 50,
     "poles": 2,
     "ip": 55,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-06-BIS-01-MOT-005",
@@ -933,7 +890,7 @@
     "frequency": 50,
     "poles": 2,
     "ip": 55,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-06-BIS-02-MOT-001",
@@ -951,7 +908,7 @@
     "frequency": 50,
     "poles": 2,
     "ip": 55,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-06-BIS-02-MOT-002",
@@ -969,7 +926,7 @@
     "frequency": 50,
     "poles": 2,
     "ip": 55,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-06-BIS-02-MOT-003",
@@ -987,7 +944,7 @@
     "frequency": 50,
     "poles": 2,
     "ip": 55,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-06-BIS-02-MOT-004",
@@ -1005,7 +962,7 @@
     "frequency": 50,
     "poles": 2,
     "ip": 55,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-06-BIS-02-MOT-005",
@@ -1023,7 +980,7 @@
     "frequency": 50,
     "poles": 2,
     "ip": 55,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-06-BIS-03-MOT-001",
@@ -1041,7 +998,7 @@
     "frequency": 50,
     "poles": 2,
     "ip": 55,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-06-BIS-03-MOT-002",
@@ -1059,7 +1016,7 @@
     "frequency": 50,
     "poles": 2,
     "ip": 55,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-06-BIS-03-MOT-003",
@@ -1077,7 +1034,7 @@
     "frequency": 50,
     "poles": 2,
     "ip": 55,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-06-BIS-03-MOT-004",
@@ -1095,7 +1052,7 @@
     "frequency": 50,
     "poles": 2,
     "ip": 55,
-    "boot": "DIRECT"
+    "bootId": 1
   },
   {
     "code": "CB-06-BIS-03-MOT-005",
@@ -1113,6 +1070,6 @@
     "frequency": 50,
     "poles": 2,
     "ip": 55,
-    "boot": "DIRECT"
+    "bootId": 1
   }
 ]

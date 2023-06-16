@@ -13,8 +13,9 @@ import type {
   WorkOrderState,
 } from '@prisma/client'
 import workOrderData from './work-orders.json'
-import { FIRST_MACHINE, areas, machines } from '../machine/helpers'
+import { FIRST_MACHINE, machines } from '../machine/helpers'
 import { MACHINE_CODE } from '../store/helpers'
+import { areas } from '../area/helpers'
 
 export const workOrders: WorkOrder[] = workOrderData as unknown as WorkOrder[]
 export const CURRENT_DATE = new Date('2023-04-16')

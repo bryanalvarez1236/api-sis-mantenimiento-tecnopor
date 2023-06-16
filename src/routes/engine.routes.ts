@@ -2,6 +2,8 @@ import { Router } from 'express'
 import {
   addEngine,
   getEngineByCode,
+  getFieldsToCreateEngine,
+  getFieldsToUpdateEngine,
   getMachineEngines,
   updateEngineByCode,
 } from '../controllers/engine.controllers'
@@ -24,5 +26,7 @@ const engineRouter = Router()
 
 engineRouter.get('/:code', getEngineByCode)
 engineRouter.put('/:code', validateBody(updateEngineDto), updateEngineByCode)
+engineRouter.post('/fields/create', getFieldsToCreateEngine)
+engineRouter.put('/:code/fields/update', getFieldsToUpdateEngine)
 
 export default engineRouter

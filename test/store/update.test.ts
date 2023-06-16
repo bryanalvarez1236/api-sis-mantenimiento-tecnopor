@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import prisma from '../../src/libs/db'
-import { areas, machines } from '../machine/helpers'
+import { machines } from '../machine/helpers'
 import {
   DELETED_STORE_ID,
   STORE_ID,
@@ -12,10 +12,17 @@ import {
 import { api } from '../helpers/api'
 import { storeNotFoundMessage } from '../../src/services/store.service'
 import { units } from '../unit/helpers'
+import { areas } from '../area/helpers'
+import { criticalities } from '../criticality/helpers'
+import { technicalDocumentation } from '../technical-documentation/helpers'
 
 describe('Store Endpoint => PUT', () => {
   beforeAll(async () => {
     await prisma.area.createMany({ data: areas })
+    await prisma.criticality.createMany({ data: criticalities })
+    await prisma.technicalDocumentation.createMany({
+      data: technicalDocumentation,
+    })
     await prisma.machine.createMany({ data: machines })
     await prisma.unit.createMany({ data: units })
     await prisma.store.createMany({ data: stores })
@@ -66,6 +73,8 @@ describe('Store Endpoint => PUT', () => {
     await prisma.store.deleteMany()
     await prisma.unit.deleteMany()
     await prisma.machine.deleteMany()
+    await prisma.technicalDocumentation.deleteMany()
+    await prisma.criticality.deleteMany()
     await prisma.area.deleteMany()
   })
 })

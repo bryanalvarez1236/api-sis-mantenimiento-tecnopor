@@ -7,7 +7,7 @@ import {
   WORK_ORDER_TO_UPDATE,
 } from './helpers'
 import prisma from '../../src/libs/db'
-import { areas, machines } from '../machine/helpers'
+import { machines } from '../machine/helpers'
 import {
   WORK_ORDER_INVALID_ID_MESSAGE,
   workOrderNotFoundMessage,
@@ -15,10 +15,17 @@ import {
 import { units } from '../unit/helpers'
 import { stores } from '../store/helpers'
 import { storeInsufficientAmountMessage } from '../../src/services/store.service'
+import { areas } from '../area/helpers'
+import { criticalities } from '../criticality/helpers'
+import { technicalDocumentation } from '../technical-documentation/helpers'
 
 describe('Work orders EndPoint => PUT', () => {
   beforeAll(async () => {
     await prisma.area.createMany({ data: areas })
+    await prisma.criticality.createMany({ data: criticalities })
+    await prisma.technicalDocumentation.createMany({
+      data: technicalDocumentation,
+    })
     await prisma.machine.createMany({ data: machines })
     await prisma.workOrder.create({ data: WORK_ORDER_TO_UPDATE })
 
@@ -81,6 +88,8 @@ describe('Work orders EndPoint => PUT', () => {
 
     await prisma.workOrder.deleteMany()
     await prisma.machine.deleteMany()
+    await prisma.technicalDocumentation.deleteMany()
+    await prisma.criticality.deleteMany()
     await prisma.area.deleteMany()
   })
 })

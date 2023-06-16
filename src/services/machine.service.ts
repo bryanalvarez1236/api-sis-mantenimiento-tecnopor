@@ -6,19 +6,15 @@ import {
   UpdateMachineData,
   UpdateMachineDto,
 } from '../schemas/machine'
-import { FileArray, UploadedFile } from 'express-fileupload'
-import * as fs from 'fs-extra'
 import { deleteFile, uploadFile } from '../libs/cloudinary'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime'
+import { getAllEngines } from './engine.service'
 
 export function machineNotFoundMessage(machineCode: string) {
   return `La máquina con el código '${machineCode}' no existe`
 }
 export function machineAlreadyExists(machineCode: string) {
   return `La máquina con el código '${machineCode}' ya existe`
-}
-export function areaNotFoundMessage(areaId: number) {
-  return `El área con el id '${areaId}' no existe`
 }
 
 export async function getMachines() {
@@ -28,7 +24,7 @@ export async function getMachines() {
         code: true,
         name: true,
         location: true,
-        criticality: true,
+        criticality: { select: { name: true } },
         area: { select: { name: true } },
         image: { select: { url: true } },
       },
@@ -51,14 +47,15 @@ export async function getMachineByCode({ code }: GetMachineByCodeProps) {
       maker: true,
       model: true,
       location: true,
-      criticality: true,
+      criticality: { select: { name: true } },
       function: true,
       specificData: true,
-      technicalDocumentation: true,
-      areaId: true,
+      technicalDocumentation: {
+        select: { name: true },
+        orderBy: { id: 'asc' },
+      },
       area: { select: { name: true } },
       image: { select: { url: true } },
-      engines: { orderBy: { code: 'asc' } },
     },
   })
   if (foundMachine == null) {
@@ -67,65 +64,60 @@ export async function getMachineByCode({ code }: GetMachineByCodeProps) {
       message: machineNotFoundMessage(code),
     })
   }
-  return foundMachine
+  const engines = await getAllEngines({ machineCode: code })
+  return { ...foundMachine, engines }
 }
 
 interface CreateMachineProps {
   createDto: CreateMachineDto
-  files?: FileArray | null
 }
-export async function createMachine({ createDto, files }: CreateMachineProps) {
-  let data: CreateMachineData = { ...createDto }
-  const { tempFilePath } = (files?.image as UploadedFile) || {}
+export async function createMachine({ createDto }: CreateMachineProps) {
+  const { image: path, technicalDocumentation, ...restDto } = createDto
+  let data = restDto as CreateMachineData
   try {
-    if (files && files.image) {
-      const image = await uploadFile(tempFilePath, 'machines')
-      await fs.unlink(tempFilePath)
+    if (path != null) {
+      const image = await uploadFile(path, 'machines')
       data = { ...data, image: { create: image } }
     }
     return await prisma.machine.create({
-      data,
+      data: {
+        ...data,
+        technicalDocumentation: {
+          connect: technicalDocumentation.map((id) => ({ id })),
+        },
+      },
       select: {
         code: true,
         name: true,
         maker: true,
         model: true,
         location: true,
-        criticality: true,
+        criticality: { select: { name: true } },
         function: true,
         specificData: true,
-        technicalDocumentation: true,
+        technicalDocumentation: {
+          select: { name: true },
+          orderBy: { id: 'asc' },
+        },
         area: { select: { name: true } },
         image: { select: { url: true } },
         engines: { orderBy: { code: 'asc' } },
       },
     })
   } catch (error) {
-    if (tempFilePath != null && fs.existsSync(tempFilePath)) {
-      await fs.unlink(tempFilePath)
-    }
     const { image } = data
     if (image != null) {
       const { publicId } = image.create
       await deleteFile(publicId)
     }
-    if (error instanceof ServiceError) {
-      throw error
-    }
-    if (error instanceof PrismaClientKnownRequestError) {
-      const { code } = error
-      if (code === 'P2002') {
-        throw new ServiceError({
-          status: 409,
-          message: machineAlreadyExists(createDto.code),
-        })
-      }
-      if (code === 'P2003') {
-        throw new ServiceError({
-          status: 404,
-          message: areaNotFoundMessage(createDto.areaId),
-        })
-      }
+    if (
+      error instanceof PrismaClientKnownRequestError &&
+      error.code === 'P2002'
+    ) {
+      throw new ServiceError({
+        status: 409,
+        message: machineAlreadyExists(createDto.code),
+      })
     }
     throw new ServiceError({ status: 500 })
   }
@@ -134,28 +126,40 @@ export async function createMachine({ createDto, files }: CreateMachineProps) {
 interface UpdateMachineByCodeProps {
   code: string
   updateDto: UpdateMachineDto
-  files?: FileArray | null
 }
 export async function updateMachineByCode({
   code,
   updateDto,
-  files,
 }: UpdateMachineByCodeProps) {
-  let data: UpdateMachineData = updateDto
-  const { tempFilePath } = (files?.image as UploadedFile) || {}
+  const { image: path, technicalDocumentation, ...restDto } = updateDto
+  let data = restDto as UpdateMachineData
   try {
     const foundMachine = await getMachineByCode({ code })
-    if (files && files.image) {
-      const image = await uploadFile(tempFilePath, 'machines')
-      await fs.unlink(tempFilePath)
+    if (path != null) {
+      const image = await uploadFile(path, 'machines')
       data = {
         ...data,
         image:
           foundMachine.image != null ? { update: image } : { create: image },
       }
+      if (foundMachine.image != null) {
+        const image = await prisma.machineImage.findFirst({
+          where: { url: foundMachine.image.url },
+          select: { publicId: true },
+        })
+        if (image != null) {
+          await deleteFile(image.publicId)
+        }
+      }
     }
+
     return await prisma.machine.update({
-      data,
+      data: {
+        ...data,
+        technicalDocumentation: {
+          set: technicalDocumentation.map((id) => ({ id })),
+        },
+      },
       where: { code },
       select: {
         code: true,
@@ -163,31 +167,86 @@ export async function updateMachineByCode({
         maker: true,
         model: true,
         location: true,
-        criticality: true,
+        criticality: { select: { name: true } },
         function: true,
         specificData: true,
-        technicalDocumentation: true,
+        technicalDocumentation: {
+          select: { name: true },
+          orderBy: { id: 'asc' },
+        },
         area: { select: { name: true } },
         image: { select: { url: true } },
         engines: { orderBy: { code: 'asc' } },
       },
     })
   } catch (error) {
-    if (tempFilePath != null && fs.existsSync(tempFilePath)) {
-      await fs.unlink(tempFilePath)
-    }
-    if (
-      error instanceof PrismaClientKnownRequestError &&
-      error.code === 'P2003'
-    ) {
-      throw new ServiceError({
-        status: 404,
-        message: areaNotFoundMessage(updateDto.areaId),
-      })
-    }
     if (error instanceof ServiceError) {
       throw error
     }
     throw new ServiceError({ status: 500 })
+  }
+}
+
+export async function getFieldsToCreateMachine() {
+  const areas = await prisma.area.findMany({
+    select: { id: true, name: true },
+    orderBy: { id: 'asc' },
+  })
+  const criticalities = await prisma.criticality.findMany({
+    select: { id: true, name: true },
+    orderBy: { id: 'asc' },
+  })
+  const technicalDocumentation = await prisma.technicalDocumentation.findMany({
+    select: { id: true, name: true },
+    orderBy: { id: 'asc' },
+  })
+  return { areas, criticalities, technicalDocumentation }
+}
+
+interface GetFieldsToEditMachineProps {
+  code: string
+}
+export async function getFieldsToUpdateMachine({
+  code,
+}: GetFieldsToEditMachineProps) {
+  const foundMachine = await prisma.machine.findUnique({
+    where: { code },
+    select: {
+      name: true,
+      maker: true,
+      location: true,
+      areaId: true,
+      model: true,
+      function: true,
+      specificData: true,
+      criticalityId: true,
+      image: { select: { url: true } },
+      technicalDocumentation: { select: { id: true } },
+    },
+  })
+  if (foundMachine == null) {
+    throw new ServiceError({
+      status: 404,
+      message: machineNotFoundMessage(code),
+    })
+  }
+  const fields = await getFieldsToCreateMachine()
+  const { image, technicalDocumentation, ...machine } = foundMachine
+
+  return {
+    fields,
+    machine: {
+      ...machine,
+      code,
+      image:
+        image == null
+          ? image
+          : {
+              src: image.url,
+              alt: `Máquina ${machine.name}`,
+              type: 'image/webp',
+            },
+      technicalDocumentation: technicalDocumentation.map(({ id }) => id),
+    },
   }
 }

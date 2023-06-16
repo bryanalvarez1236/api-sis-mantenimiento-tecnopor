@@ -20,8 +20,9 @@ model Machine {
   model                  String?
   specificData           String?
   function               String?
-  technicalDocumentation TechnicalDocumentation[]
-  criticality            Criticality
+  technicalDocumentation TechnicalDocumentation[] @relation("MachineTechnicalDocumentation")
+  criticality            Criticality              @relation(fields: [criticalityId], references: [id])
+  criticalityId          Int
   image                  MachineImage?
   engines                Engine[]
   activities             Activity[]
@@ -30,16 +31,6 @@ model Machine {
   maintenanceRequests    MaintenanceRequest[]
   failureReports         FailureReport[]
   stores                 Store[]
-  createdAt              DateTime                 @default(now())
-  updatedAt              DateTime                 @default(now()) @updatedAt
-}
-
-model Area {
-  id       Int       @id @default(autoincrement())
-  name     String
-  hours    Int
-  days     Int
-  machines Machine[]
 }
 
 model CheckList {
@@ -77,20 +68,22 @@ model Engine {
   frequency   Int
   poles       Int
   ip          Int
-  boot        Boot
+  boot        Boot        @relation(fields: [bootId], references: [id])
+  bootId      Int
   workOrders  WorkOrder[]
 }
 
 model Activity {
-  code         String       @id @default(uuid())
-  machine      Machine      @relation(fields: [machineCode], references: [code])
-  machineCode  String
-  name         String
-  frequency    Int?
-  activityType ActivityType
-  pem          String?
-  state        State        @default(ACTIVE)
-  workOrders   WorkOrder[]
+  code           String       @id @default(uuid())
+  machine        Machine      @relation(fields: [machineCode], references: [code])
+  machineCode    String
+  name           String
+  frequency      Int?
+  activityType   ActivityType @relation(fields: [activityTypeId], references: [id])
+  activityTypeId Int
+  pem            String?
+  deleted        Boolean      @default(false)
+  workOrders     WorkOrder[]
 }
 
 model WorkOrder {
@@ -202,47 +195,43 @@ model StoreWorkOrder {
   amount        Int
 }
 
-enum State {
-  ACTIVE
-  INNACTIVE
-  DELETED
+// Manually created data
+model Area {
+  id       Int       @id
+  name     String    @unique
+  hours    Int
+  days     Int
+  machines Machine[]
 }
 
-enum MachineArea {
-  PRE_EXPANDED
-  RECYCLED
-  LOCKED
-  CUTTING
-  JOISTS
-  SERVICES
-  GENERAL
+model Criticality {
+  id       Int       @id
+  name     String    @unique
+  machines Machine[]
 }
 
-enum Criticality {
-  HIGH
-  MEDIUM
-  LOW
+model TechnicalDocumentation {
+  id       Int       @id
+  name     String    @unique
+  machines Machine[] @relation("MachineTechnicalDocumentation")
 }
 
-enum TechnicalDocumentation {
-  OPERATIONS_MANUAL
-  MAINTENANCE_MANUAL
-  ELECTRICAL_PLANS
-  MECHANICAL_PLANS
+model Boot {
+  id      Int      @id
+  name    String   @unique
+  engines Engine[]
 }
 
-enum Boot {
-  DIRECT
-  SOFT
+model ActivityType {
+  id         Int        @id
+  name       String     @unique
+  activities Activity[]
 }
 
-enum ActivityType {
-  CONDITION_CHECK
-  VISUAL_INSPECTIONS
-  LUBRICATION
-  AUTONOMOUS_MAINTENANCE
-  PERIODIC_MAINTENANCE
-  CORRECTIVE_MAINTENANCE
+model Frequency {
+  id    Int    @id
+  name  String @unique
+  value Int    @unique
 }
 
 enum WorkOrderState {

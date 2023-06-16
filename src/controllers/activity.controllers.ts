@@ -84,3 +84,19 @@ export async function deleteActivityByCode(
     return res.status(status).json({ message })
   }
 }
+
+export async function getFieldsToCreateActivity(
+  req: Request<never, never, never, { machineCode: string }>,
+  res: Response
+) {
+  const { machineCode = '' } = req.query
+  try {
+    const response = await activityService.getFieldsToCreateActivity({
+      machineCode: `${machineCode}`,
+    })
+    return res.json(response)
+  } catch (error) {
+    const { status, message } = error as ThrowError
+    return res.status(status).json({ message })
+  }
+}

@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import prisma from '../../src/libs/db'
-import { areas, machines } from '../machine/helpers'
+import { machines } from '../machine/helpers'
 import { api } from '../helpers/api'
 import {
   CREATED_DELETED_STORE_DTO,
@@ -17,10 +17,17 @@ import { machineNotFoundMessage } from '../../src/services/machine.service'
 import { storeAlreadyExistsMessage } from '../../src/services/store.service'
 import { units } from '../unit/helpers'
 import { unitNotFoundMessage } from '../../src/services/unit.service'
+import { areas } from '../area/helpers'
+import { criticalities } from '../criticality/helpers'
+import { technicalDocumentation } from '../technical-documentation/helpers'
 
 describe('Store EndPoint => POST', () => {
   beforeAll(async () => {
     await prisma.area.createMany({ data: areas })
+    await prisma.criticality.createMany({ data: criticalities })
+    await prisma.technicalDocumentation.createMany({
+      data: technicalDocumentation,
+    })
     await prisma.machine.createMany({ data: machines })
     await prisma.unit.createMany({ data: units })
     await prisma.store.create({ data: STORE_ALREADY_EXISTS })
@@ -96,6 +103,8 @@ describe('Store EndPoint => POST', () => {
     await prisma.store.deleteMany()
     await prisma.unit.deleteMany()
     await prisma.machine.deleteMany()
+    await prisma.technicalDocumentation.deleteMany()
+    await prisma.criticality.deleteMany()
     await prisma.area.deleteMany()
   })
 })

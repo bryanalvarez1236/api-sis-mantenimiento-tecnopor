@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest'
 import prisma from '../../src/libs/db'
-import { areas, machines } from '../machine/helpers'
+import { machines } from '../machine/helpers'
 import { api } from '../helpers/api'
 import {
   CREATED_FAILURE_REPORT_RESPONSE_DTO,
@@ -9,6 +9,9 @@ import {
   MACHINE_CODE,
 } from './helpers'
 import { machineNotFoundMessage } from '../../src/services/machine.service'
+import { areas } from '../area/helpers'
+import { criticalities } from '../criticality/helpers'
+import { technicalDocumentation } from '../technical-documentation/helpers'
 
 vi.mock('../../src/libs/cloudinary', () => ({
   uploadFile: vi.fn().mockImplementation(() => ({
@@ -21,6 +24,10 @@ vi.mock('../../src/libs/cloudinary', () => ({
 describe('Failure Report EndPoint => POST', () => {
   beforeAll(async () => {
     await prisma.area.createMany({ data: areas })
+    await prisma.criticality.createMany({ data: criticalities })
+    await prisma.technicalDocumentation.createMany({
+      data: technicalDocumentation,
+    })
     await prisma.machine.createMany({ data: machines })
   })
 
@@ -92,6 +99,8 @@ describe('Failure Report EndPoint => POST', () => {
     await prisma.failureReportImage.deleteMany()
     await prisma.failureReport.deleteMany()
     await prisma.machine.deleteMany()
+    await prisma.technicalDocumentation.deleteMany()
+    await prisma.criticality.deleteMany()
     await prisma.area.deleteMany()
   })
 })

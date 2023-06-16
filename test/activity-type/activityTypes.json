@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "INSPECCIONES VISUALES"
+  },
+  {
+    "id": 2,
+    "name": "LUBRICACIÓN"
+  },
+  {
+    "id": 3,
+    "name": "MANTENIMIENTO AUTÓNOMO"
+  },
+  {
+    "id": 4,
+    "name": "MANTENIMIENTO CORRECTIVO"
+  },
+  {
+    "id": 5,
+    "name": "MANTENIMIENTO PERIÓDICO"
+  },
+  {
+    "id": 6,
+    "name": "VERIFICACIÓN DE CONDICIÓN"
+  }
+]

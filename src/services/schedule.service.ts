@@ -38,8 +38,6 @@ export async function getSchedule({ date, strict }: GetScheduleProps) {
         {
           daySchedule: null,
           OR: [
-            // { onSchedule: null },
-            // { onSchedule: false },
             {
               createdAt: { ...monthly },
               OR: [{ onSchedule: null }, { onSchedule: false }],
@@ -49,7 +47,6 @@ export async function getSchedule({ date, strict }: GetScheduleProps) {
               OR: [{ onSchedule: null }, { onSchedule: false }],
             },
           ],
-          // AND: [{ onSchedule: { not: true } }],
           NOT: [{ state: 'DONE' }],
         },
       ],

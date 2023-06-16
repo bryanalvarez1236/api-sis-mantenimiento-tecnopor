@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import prisma from '../../src/libs/db'
-import { areas, machines } from '../machine/helpers'
+import { machines } from '../machine/helpers'
 import { workOrders } from '../work-order/helpers'
 import { engines } from '../engine/helpers'
 import { activities } from '../activity/helpers'
@@ -15,13 +15,27 @@ import {
 } from './helpers'
 import { machineNotFoundMessage } from '../../src/services/machine.service'
 import { INVALID_DATE_MESSAGE } from '../../src/libs/date'
+import { criticalities } from '../criticality/helpers'
+import { technicalDocumentation } from '../technical-documentation/helpers'
+import { activityTypes } from '../activity-type/helpers'
+import { frequencies } from '../frequency/helpers'
+import { boots } from '../boot/helpers'
+import { areas } from '../area/helpers'
 
 describe('Historical EndPoint => GET', () => {
   beforeAll(async () => {
     await prisma.area.createMany({ data: areas })
+    await prisma.criticality.createMany({ data: criticalities })
+    await prisma.technicalDocumentation.createMany({
+      data: technicalDocumentation,
+    })
     await prisma.machine.createMany({ data: machines })
-    await prisma.engine.createMany({ data: engines })
+    await prisma.activityType.createMany({ data: activityTypes })
+    await prisma.frequency.createMany({ data: frequencies })
     await prisma.activity.createMany({ data: activities })
+    await prisma.boot.createMany({ data: boots })
+    await prisma.engine.createMany({ data: engines })
+
     await prisma.workOrder.createMany({ data: workOrders })
   })
 
@@ -70,9 +84,15 @@ describe('Historical EndPoint => GET', () => {
 
   afterAll(async () => {
     await prisma.workOrder.deleteMany()
-    await prisma.activity.deleteMany()
+
     await prisma.engine.deleteMany()
+    await prisma.boot.deleteMany()
+    await prisma.activity.deleteMany()
+    await prisma.activityType.deleteMany()
+    await prisma.frequency.deleteMany()
     await prisma.machine.deleteMany()
+    await prisma.technicalDocumentation.deleteMany()
+    await prisma.criticality.deleteMany()
     await prisma.area.deleteMany()
   })
 })
