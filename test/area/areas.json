@@ -1,9 +1,0 @@
-[
-  { "id": 1, "name": "GENERAL", "hours": 24, "days": 6 },
-  { "id": 2, "name": "VIGUETAS", "hours": 8, "days": 6 },
-  { "id": 3, "name": "SERVICIOS", "hours": 24, "days": 6 },
-  { "id": 4, "name": "PRE EXPANDIDO", "hours": 24, "days": 6 },
-  { "id": 5, "name": "BLOQUEADO", "hours": 24, "days": 6 },
-  { "id": 6, "name": "CORTE", "hours": 16, "days": 6 },
-  { "id": 7, "name": "RECICLADO", "hours": 24, "days": 6 }
-]
