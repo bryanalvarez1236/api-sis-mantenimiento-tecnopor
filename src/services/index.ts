@@ -1,6 +1,6 @@
 import { Prisma, PrismaPromise } from '@prisma/client'
 
-export type HttpStatus = 400 | 404 | 405 | 406 | 409 | 412 | 500
+export type HttpStatus = 400 | 401 | 404 | 405 | 406 | 409 | 412 | 500
 
 export interface ThrowError {
   message?: string

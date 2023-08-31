@@ -19,6 +19,7 @@ import failureReportRouter, {
 } from './routes/failureReport.route'
 import engineRouter, { ENGINE_ROUTE } from './routes/engine.routes'
 import storeRouter, { STORE_ROUTE } from './routes/store.routes'
+import authRouter, { authRoute } from './routes/auth.route'
 
 export class Server {
   private app: Application
@@ -44,6 +45,7 @@ export class Server {
 
   private routes() {
     this.app.use(testRouter)
+    this.app.use(this.createRoute(authRoute), authRouter)
     this.app.use(this.createRoute(machineRoute), machineRouter)
     this.app.use(this.createRoute(ENGINE_ROUTE), engineRouter)
     this.app.use(this.createRoute(activityRoute), activityRouter)
